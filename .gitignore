@@ -1,0 +1,11 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.idea/
+media/posts/
+media/reports/
+
+# old web-based plan (outdated, the project is a desktop app now)
+plan/

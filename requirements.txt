@@ -1,0 +1,7 @@
+customtkinter==5.2.2
+tkintermapview==1.29
+pillow>=10.0
+bcrypt>=4.1
+mysql-connector-python>=9.0
+python-dotenv>=1.0
+
