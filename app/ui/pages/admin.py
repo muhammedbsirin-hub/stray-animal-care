@@ -27,7 +27,7 @@ class OverviewPage(Page):
         specs = [("in_shelters", "Animals in shelters"), ("under_treatment", "Under treatment"),
                  ("pending_applications", "Applications waiting"), ("open_cases", "Open injury cases"),
                  ("posts_24h", "Feeding posts (24 h)"), ("adoptions", "Adoptions"),
-                 ("overdue_vaccines", "Overdue vaccinations"), ("volunteers", "Active volunteers")]
+                 ("volunteers", "Active volunteers")]
         for i, (key, label) in enumerate(specs):
             tile = self.card(self.grid_box)
             tile.grid(row=i // 4, column=i % 4, sticky="nsew", padx=6, pady=6)
@@ -47,8 +47,7 @@ class OverviewPage(Page):
         data = ReportRepository.overview()
         for k, lbl in self.tiles.items():
             lbl.configure(text=str(data[k]),
-                          text_color=DANGER if k in ("overdue_vaccines",) and data[k] else
-                          ACCENT if k == "pending_applications" and data[k] else PRIMARY)
+                          text_color=ACCENT if k == "pending_applications" and data[k] else PRIMARY)
         rows = ShelterRepository.summaries()
         from app.db import query
         extra = {r["shelter_id"]: r for r in query("SELECT shelter_id, cat_count, dog_count FROM v_shelter_summary")}
@@ -118,8 +117,7 @@ class DossierDialog(Dialog):
         top = ctk.CTkFrame(self, fg_color="transparent")
         top.pack(fill="x", padx=20, pady=(16, 4))
         ctk.CTkLabel(top, text=d["applicant_name"], font=("Segoe UI", 20, "bold")).pack(anchor="w")
-        ctk.CTkLabel(top, text=f"@{d['username']}  ·  {d['email']}  ·  {d['phone']}  ·  member since "
-                               f"{fmt(d['member_since'])[:10]}", font=FONT_SMALL, text_color=MUTED).pack(anchor="w")
+        ctk.CTkLabel(top, text=f"@{d['username']}  ·  {d['email']}  ·  {d['phone']}", font=FONT_SMALL, text_color=MUTED).pack(anchor="w")
         ctk.CTkLabel(top, text=f"Wants to adopt: {d['animal_name']} ({d['species_name']}, {d['age_label']}) from "
                                f"{d['shelter_name']}", font=FONT_BOLD, text_color=PRIMARY, wraplength=700,
                      justify="left").pack(anchor="w", pady=(6, 0))
@@ -307,34 +305,55 @@ class SheltersPage(Page):
                 self.refresh()
 
 
-def _coords_errors(lat, lon):
-    try:
-        la, lo = float(lat), float(lon)
-    except ValueError:
-        return "Latitude and longitude must be numbers (e.g. 41.0123 and 29.0456)."
-    if not (40.5 <= la <= 41.7 and 27.9 <= lo <= 29.95):
-        return "The location must be inside Istanbul."
-    return None
+class LocationPicker(ctk.CTkFrame):
+    """Small map: the admin clicks the place instead of typing coordinates."""
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
+        self.coords = None
+        self.label = ctk.CTkLabel(self, text="Click on the map to choose the location *", font=FONT_SMALL,
+                                  text_color=MUTED, anchor="w")
+        self.label.pack(fill="x")
+        self.map = MapPanel(self, zoom=11, width=420, height=420)
+        self.map.pack(fill="both", expand=True, pady=(4, 0))
+        self.map.pick_location(self._picked)
+
+    def _picked(self, coords):
+        self.coords = (round(coords[0], 6), round(coords[1], 6))
+        self.label.configure(text=f"Selected: {self.coords[0]:.5f}, {self.coords[1]:.5f}", text_color=PRIMARY)
+        self.map.pick_location(self._picked)
+
+    def set(self, lat, lon):
+        self.coords = (float(lat), float(lon))
+        self.map.show_pick(*self.coords)
+        self.map.map.set_position(*self.coords)
+        self.map.map.set_zoom(13)
+        self.label.configure(text=f"Selected: {self.coords[0]:.5f}, {self.coords[1]:.5f}", text_color=PRIMARY)
+
+    def error(self):
+        return None if self.coords else "Click on the map to choose the location."
 
 
 class ShelterDialog(Dialog):
     def __init__(self, page, shelter_id):
-        super().__init__(page, "Shelter", 560, 600)
+        super().__init__(page, "Shelter", 1000, 560)
         self.page, self.shelter_id = page, shelter_id
-        f = ctk.CTkFrame(self, fg_color="transparent")
-        f.pack(padx=20, pady=16, fill="x")
+        top = ctk.CTkFrame(self, fg_color="transparent")
+        top.pack(padx=20, pady=16, fill="both", expand=True)
+        f = ctk.CTkFrame(top, fg_color="transparent")
+        f.pack(side="left", anchor="n")
+        self.location = LocationPicker(top)
+        self.location.pack(side="left", fill="both", expand=True, padx=(16, 0))
         self.name = form_row(f, 0, "Name", entry(f, width=300), True)
         self.district = form_row(f, 1, "District", ChoiceBox(f, width=300), True)
         self.district.set_options([(d["district_id"], d["district_name"]) for d in LookupRepository.districts()])
         self.address = form_row(f, 2, "Address", entry(f, width=300), True)
         self.phone = form_row(f, 3, "Phone", entry(f, width=300, placeholder="0212XXXXXXX"), True)
         self.capacity = form_row(f, 4, "Capacity", entry(f, width=300), True)
-        self.lat = form_row(f, 5, "Latitude", entry(f, width=300, placeholder="41.0xxxx"), True)
-        self.lon = form_row(f, 6, "Longitude", entry(f, width=300, placeholder="29.0xxxx"), True)
-        self.clinic = form_row(f, 7, "Partner clinic", ChoiceBox(f, width=300), True)
+        self.clinic = form_row(f, 5, "Partner clinic", ChoiceBox(f, width=300), True)
         self.clinic.set_options([(c["clinic_id"], c["clinic_name"]) for c in LookupRepository.clinics()])
         sp = ctk.CTkFrame(f, fg_color="transparent")
-        form_row(f, 8, "Accepts", sp, True)
+        form_row(f, 6, "Accepts", sp, True)
         self.species_boxes = {}
         for s in LookupRepository.species():
             cb = ctk.CTkCheckBox(sp, text=s["species_name"], font=FONT)
@@ -343,8 +362,9 @@ class ShelterDialog(Dialog):
         if shelter_id:
             s = ShelterRepository.get(shelter_id)
             for w, v in ((self.name, s["shelter_name"]), (self.address, s["address"]), (self.phone, s["phone"]),
-                         (self.capacity, s["capacity"]), (self.lat, s["latitude"]), (self.lon, s["longitude"])):
+                         (self.capacity, s["capacity"])):
                 w.insert(0, str(v))
+            self.location.set(s["latitude"], s["longitude"])
             self.district.set_value(s["district_id"])
             self.clinic.set_value(s["partner_clinic_id"])
             for sid in s["species_ids"]:
@@ -362,7 +382,7 @@ class ShelterDialog(Dialog):
             validators.min_length(self.address.get(), "Address", 5),
             validators.landline(self.phone.get()),
             validators.integer(self.capacity.get(), "Capacity", 1, 2000),
-            _coords_errors(self.lat.get(), self.lon.get()),
+            self.location.error(),
             None if self.clinic.value() else "Choose a partner clinic.",
             None if species else "Choose at least one species.")
         if err:
@@ -370,8 +390,8 @@ class ShelterDialog(Dialog):
             return
         data = {"shelter_name": self.name.get().strip(), "district_id": self.district.value(),
                 "address": self.address.get().strip(), "phone": self.phone.get().strip(),
-                "capacity": int(self.capacity.get()), "latitude": float(self.lat.get()),
-                "longitude": float(self.lon.get()), "partner_clinic_id": self.clinic.value(), "species_ids": species}
+                "capacity": int(self.capacity.get()), "latitude": self.location.coords[0],
+                "longitude": self.location.coords[1], "partner_clinic_id": self.clinic.value(), "species_ids": species}
         ok, _ = self.page.run(ShelterRepository.save, data, self.shelter_id)
         if ok:
             self.destroy()
@@ -416,22 +436,24 @@ class ClinicsPage(Page):
 
 class ClinicDialog(Dialog):
     def __init__(self, page, clinic_id):
-        super().__init__(page, "Clinic", 540, 440)
+        super().__init__(page, "Clinic", 1000, 520)
         self.page, self.clinic_id = page, clinic_id
-        f = ctk.CTkFrame(self, fg_color="transparent")
-        f.pack(padx=20, pady=16, fill="x")
+        top = ctk.CTkFrame(self, fg_color="transparent")
+        top.pack(padx=20, pady=16, fill="both", expand=True)
+        f = ctk.CTkFrame(top, fg_color="transparent")
+        f.pack(side="left", anchor="n")
+        self.location = LocationPicker(top)
+        self.location.pack(side="left", fill="both", expand=True, padx=(16, 0))
         self.name = form_row(f, 0, "Name", entry(f, width=300), True)
         self.district = form_row(f, 1, "District", ChoiceBox(f, width=300), True)
         self.district.set_options([(d["district_id"], d["district_name"]) for d in LookupRepository.districts()])
         self.address = form_row(f, 2, "Address", entry(f, width=300), True)
         self.phone = form_row(f, 3, "Phone", entry(f, width=300, placeholder="0216XXXXXXX"), True)
-        self.lat = form_row(f, 4, "Latitude", entry(f, width=300), True)
-        self.lon = form_row(f, 5, "Longitude", entry(f, width=300), True)
         if clinic_id:
             c = ClinicRepository.get(clinic_id)
-            for w, v in ((self.name, c["clinic_name"]), (self.address, c["address"]), (self.phone, c["phone"]),
-                         (self.lat, c["latitude"]), (self.lon, c["longitude"])):
+            for w, v in ((self.name, c["clinic_name"]), (self.address, c["address"]), (self.phone, c["phone"])):
                 w.insert(0, str(v))
+            self.location.set(c["latitude"], c["longitude"])
             self.district.set_value(c["district_id"])
         bar = ctk.CTkFrame(self, fg_color="transparent")
         bar.pack(pady=12)
@@ -443,13 +465,13 @@ class ClinicDialog(Dialog):
                                      None if self.district.value() else "Choose a district.",
                                      validators.min_length(self.address.get(), "Address", 5),
                                      validators.landline(self.phone.get()),
-                                     _coords_errors(self.lat.get(), self.lon.get()))
+                                     self.location.error())
         if err:
             error(err)
             return
         data = {"clinic_name": self.name.get().strip(), "district_id": self.district.value(),
                 "address": self.address.get().strip(), "phone": self.phone.get().strip(),
-                "latitude": float(self.lat.get()), "longitude": float(self.lon.get())}
+                "latitude": self.location.coords[0], "longitude": self.location.coords[1]}
         ok, _ = self.page.run(ClinicRepository.save, data, self.clinic_id)
         if ok:
             self.destroy()
@@ -504,7 +526,7 @@ class VetsPage(Page):
             error("Select a veterinarian first.")
             return
         if confirm(f"Close the account of {v['vet_name']}? Animals will be moved to a colleague of the same clinic."):
-            ok, _ = self.run(UserRepository.delete_account, v["user_id"])
+            ok, _ = self.run(UserRepository.delete_account, v["user_id"], self.session.user_id)
             if ok:
                 self.refresh()
 
@@ -525,7 +547,7 @@ class VetDialog(Dialog):
         self.clinic.set_options([(c["clinic_id"], c["clinic_name"]) for c in LookupRepository.clinics()])
         self.shift = form_row(f, 7, "Shift", ChoiceBox(f, [("MORNING", "Morning"), ("EVENING", "Evening")], width=300),
                               True)
-        self.license = form_row(f, 8, "License no", entry(f, width=300), True)
+        self.license = form_row(f, 8, "License no", entry(f, width=300, placeholder="TVHB-12345"), True)
         bar = ctk.CTkFrame(self, fg_color="transparent")
         bar.pack(pady=12)
         button(bar, "Cancel", self.destroy, kind="plain", width=110).pack(side="left", padx=6)
@@ -542,7 +564,7 @@ class VetDialog(Dialog):
                                      validators.phone(d["phone"]), validators.password(d["password"]),
                                      None if d["clinic_id"] else "Choose a clinic.",
                                      None if d["shift"] else "Choose a shift.",
-                                     validators.min_length(d["license_no"], "License no", 4))
+                                     validators.license_no(d["license_no"]))
         if not err and UserRepository.username_taken(d["username"]):
             err = "This username is already taken."
         if not err and UserRepository.email_taken(d["email"]):
@@ -578,7 +600,7 @@ class AnimalsPage(Page):
         self.table = DataTable(self.body, [("animal_id", "No", 45), ("display_name", "Name", 110),
                                            ("species_name", "Species", 65), ("breed_name", "Breed", 130),
                                            ("sex", "Sex", 75), ("age_label", "Age", 85), ("status", "Status", 120),
-                                           ("shelter_name", "Shelter", 250), ("responsible_vet_name", "Vet", 160)],
+                                           ("shelter_name", "Shelter", 300)],
                                height=20, key="animal_id", on_double=lambda r: self.calendar())
         self.table.pack(fill="both", expand=True)
 
@@ -684,7 +706,7 @@ class UsersPage(Page):
         self.table = DataTable(self.body, [("user_id", "No", 45), ("username", "Username", 120),
                                            ("full_name", "Name", 170), ("email", "E-mail", 230),
                                            ("phone", "Phone", 110), ("roles", "Roles", 170),
-                                           ("created_at", "Joined", 130), ("is_active", "Active", 60)],
+                                           ("is_active", "Active", 60)],
                                height=20, key="user_id")
         self.table.pack(fill="both", expand=True)
 
@@ -701,7 +723,7 @@ class UsersPage(Page):
             error("Use Settings to delete your own account.")
             return
         if confirm(f"Close the account of {u['username']}?"):
-            ok, _ = self.run(UserRepository.delete_account, u["user_id"])
+            ok, _ = self.run(UserRepository.delete_account, u["user_id"], self.session.user_id)
             if ok:
                 self.refresh()
 

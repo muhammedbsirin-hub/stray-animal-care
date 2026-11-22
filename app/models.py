@@ -20,9 +20,7 @@ class User:
     last_name: str
     email: str
     phone: str
-    district_id: Optional[int] = None
     is_active: bool = True
-    created_at: Optional[datetime] = None
     roles: set = field(default_factory=set)
 
     @property
@@ -142,7 +140,7 @@ class InjuryReport:
     status: str
     approx_age_weeks: Optional[int] = None
     color: Optional[str] = None
-    location_note: Optional[str] = None
+    district_name: Optional[str] = None
     reporter_name: Optional[str] = None
     reporter_phone: Optional[str] = None
     species_id: Optional[int] = None

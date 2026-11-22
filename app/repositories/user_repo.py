@@ -1,15 +1,15 @@
 """Accounts, roles, login, registration and settings."""
 from app import db
 from app.models import User, Veterinarian
-from app.security import hash_password
+
 
 
 class UserRepository:
 
     @staticmethod
     def find_login(username):
-        """Row with password hash (only used by AuthService)."""
-        return db.query_one("SELECT user_id, password_hash, is_active FROM user_account WHERE username = %s",
+        """Row with the password (only used by AuthService)."""
+        return db.query_one("SELECT user_id, password, is_active FROM user_account WHERE username = %s",
                             (username,))
 
     @staticmethod
@@ -43,11 +43,10 @@ class UserRepository:
     def register_volunteer(data):
         """New account + VOLUNTEER role in one transaction."""
         with db.transaction() as cur:
-            cur.execute("""INSERT INTO user_account (username, password_hash, first_name, last_name, email, phone,
-                                                     district_id)
-                           VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-                        (data["username"], hash_password(data["password"]), data["first_name"], data["last_name"],
-                         data["email"], data["phone"], data.get("district_id")))
+            cur.execute("""INSERT INTO user_account (username, password, first_name, last_name, email, phone)
+                           VALUES (%s, %s, %s, %s, %s, %s)""",
+                        (data["username"], data["password"], data["first_name"], data["last_name"],
+                         data["email"], data["phone"]))
             user_id = cur.lastrowid
             cur.execute("INSERT INTO user_role (user_id, role_id) SELECT %s, role_id FROM role WHERE role_name = 'VOLUNTEER'",
                         (user_id,))
@@ -60,9 +59,9 @@ class UserRepository:
     def create_vet(data):
         """Admin creates a veterinarian: account + VET role + veterinarian row (transaction)."""
         with db.transaction() as cur:
-            cur.execute("""INSERT INTO user_account (username, password_hash, first_name, last_name, email, phone)
+            cur.execute("""INSERT INTO user_account (username, password, first_name, last_name, email, phone)
                            VALUES (%s, %s, %s, %s, %s, %s)""",
-                        (data["username"], hash_password(data["password"]), data["first_name"], data["last_name"],
+                        (data["username"], data["password"], data["first_name"], data["last_name"],
                          data["email"], data["phone"]))
             user_id = cur.lastrowid
             cur.execute("INSERT INTO user_role (user_id, role_id) SELECT %s, role_id FROM role WHERE role_name = 'VET'",
@@ -72,30 +71,30 @@ class UserRepository:
         return user_id
 
     @staticmethod
-    def update_profile(user_id, first_name, last_name, email, phone, district_id):
-        db.execute("""UPDATE user_account SET first_name = %s, last_name = %s, email = %s, phone = %s, district_id = %s
-                       WHERE user_id = %s""", (first_name, last_name, email, phone, district_id, user_id))
+    def update_profile(user_id, first_name, last_name, email, phone):
+        db.execute("""UPDATE user_account SET first_name = %s, last_name = %s, email = %s, phone = %s
+                       WHERE user_id = %s""", (first_name, last_name, email, phone, user_id))
         db.call("sp_notify", (user_id, "ACCOUNT", "Profile updated", "Your profile information was changed.", None))
 
     @staticmethod
     def change_password(user_id, new_password):
-        db.execute("UPDATE user_account SET password_hash = %s WHERE user_id = %s",
-                   (hash_password(new_password), user_id))
+        db.execute("UPDATE user_account SET password = %s WHERE user_id = %s", (new_password, user_id))
         db.call("sp_notify", (user_id, "ACCOUNT", "Password changed", "Your password was changed successfully.", None))
 
     @staticmethod
-    def delete_account(user_id):
-        db.call("sp_delete_account", (user_id,))
+    def delete_account(user_id, actor_id):
+        """actor_id = who asks (the user himself/herself or the admin); the rules are in the procedure."""
+        db.call("sp_delete_account", (user_id, actor_id))
 
     @staticmethod
     def reactivate(user_id):
-        db.execute("UPDATE user_account SET is_active = TRUE, deactivated_at = NULL WHERE user_id = %s", (user_id,))
+        db.execute("UPDATE user_account SET is_active = TRUE WHERE user_id = %s", (user_id,))
 
     @staticmethod
     def list_users(search=""):
         like = f"%{search}%"
         return db.query("""SELECT u.user_id, u.username, CONCAT(u.first_name, ' ', u.last_name) AS full_name,
-                                  u.email, u.phone, u.is_active, u.created_at,
+                                  u.email, u.phone, u.is_active,
                                   GROUP_CONCAT(r.role_name ORDER BY r.role_id SEPARATOR ', ') AS roles
                              FROM user_account u
                              LEFT JOIN user_role ur ON ur.user_id = u.user_id

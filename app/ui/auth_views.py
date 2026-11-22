@@ -3,10 +3,9 @@ import customtkinter as ctk
 
 from app import validators
 from app.db import DbError
-from app.repositories import LookupRepository, UserRepository
+from app.repositories import UserRepository
 from app.services import AuthService
-from app.ui.widgets import (FONT, FONT_SMALL, FONT_TITLE, MUTED, DANGER, PRIMARY, ChoiceBox, button, entry,
-                            form_row, info)
+from app.ui.widgets import FONT, FONT_SMALL, FONT_TITLE, MUTED, DANGER, PRIMARY, button, entry, form_row, info
 
 
 class LoginView(ctk.CTkFrame):
@@ -63,23 +62,24 @@ class RegisterView(ctk.CTkFrame):
         self.username = form_row(form, 2, "Username", entry(form, placeholder="3-20 letters, digits, _"), True)
         self.email = form_row(form, 3, "E-mail", entry(form, placeholder="name@mail.com"), True)
         self.phone = form_row(form, 4, "Phone", entry(form, placeholder="05XXXXXXXXX"), True)
-        self.district = form_row(form, 5, "District", ChoiceBox(form, placeholder="(optional)"))
-        self.password = form_row(form, 6, "Password", entry(form, show="•"), True)
-        self.password2 = form_row(form, 7, "Repeat password", entry(form, show="•"), True)
-        self.rules = ctk.CTkLabel(form, text="", font=FONT_SMALL, text_color=MUTED, justify="left", anchor="w")
-        self.rules.grid(row=8, column=1, sticky="w")
-        self.status = ctk.CTkLabel(card, text="", font=FONT_SMALL, text_color=DANGER, wraplength=420)
+        self.password = form_row(form, 5, "Password", entry(form, show="•"), True)
+        self.password2 = form_row(form, 6, "Repeat password", entry(form, show="•"), True)
+        # fixed size: the form must not grow or shrink while the hint text changes
+        self.rules = ctk.CTkLabel(form, text="", font=FONT_SMALL, text_color=MUTED, justify="left", anchor="nw",
+                                  width=260, height=48, wraplength=255)
+        self.rules.grid(row=7, column=1, sticky="w")
+        self.status = ctk.CTkLabel(card, text="", font=FONT_SMALL, text_color=DANGER, wraplength=420,
+                                   width=420, height=20)
         self.status.grid(row=3, column=0, columnspan=2, pady=(8, 0))
         bar = ctk.CTkFrame(card, fg_color="transparent")
         bar.grid(row=4, column=0, columnspan=2, pady=(10, 26))
         button(bar, "Back to sign in", app.show_login, kind="plain").pack(side="left", padx=6)
         button(bar, "Create account", self.register, width=180).pack(side="left", padx=6)
-        self.password.bind("<KeyRelease>", lambda e: self._show_rules())
+        self.password.bind("<KeyRelease>", lambda e: self._show_rules(), add="+")
+        # an old warning disappears as soon as the user corrects a field
+        for w in (self.first, self.last, self.username, self.email, self.phone, self.password, self.password2):
+            w.bind("<KeyRelease>", lambda e: self.status.configure(text=""), add="+")
         self._show_rules()
-        try:
-            self.district.set_options([(d["district_id"], d["district_name"]) for d in LookupRepository.districts()])
-        except DbError as e:
-            self.status.configure(text=str(e))
 
     def _show_rules(self):
         problems = validators.password_problems(self.password.get())
@@ -94,7 +94,7 @@ class RegisterView(ctk.CTkFrame):
     def register(self):
         data = {"first_name": self.first.get().strip(), "last_name": self.last.get().strip(),
                 "username": self.username.get().strip(), "email": self.email.get().strip(),
-                "phone": self.phone.get().strip(), "district_id": self.district.value(),
+                "phone": self.phone.get().strip(),
                 "password": self.password.get(), "password2": self.password2.get()}
         try:
             problem = AuthService.validate_registration(data)

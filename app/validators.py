@@ -93,6 +93,14 @@ def birth_year(value):
     return None
 
 
+LICENSE_RE = re.compile(r"^TVHB-\d{5}$")
+
+
+def license_no(value):
+    return required(value, "License no") or (None if LICENSE_RE.match(value.strip()) else
+                                             "License no must look like TVHB-12345 (TVHB- and 5 digits).")
+
+
 def min_length(value, label, n):
     err = required(value, label)
     if err:

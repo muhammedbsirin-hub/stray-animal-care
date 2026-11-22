@@ -22,6 +22,7 @@ GRANT UPDATE         ON stray_db.vaccination_schedule TO 'r_vet';
 GRANT EXECUTE ON PROCEDURE stray_db.sp_report_not_arrived   TO 'r_vet';
 GRANT EXECUTE ON PROCEDURE stray_db.sp_finish_treatment     TO 'r_vet';
 GRANT EXECUTE ON PROCEDURE stray_db.sp_complete_vaccination TO 'r_vet';
+GRANT EXECUTE ON PROCEDURE stray_db.sp_undo_vaccination     TO 'r_vet';
 
 -- volunteer: own posts, emojis, reports and applications
 GRANT SELECT ON stray_db.v_active_feeding_posts TO 'r_volunteer';

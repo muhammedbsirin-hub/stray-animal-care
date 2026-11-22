@@ -73,6 +73,10 @@ class AnimalRepository:
         db.call("sp_complete_vaccination", (schedule_id, vet_user_id))
 
     @staticmethod
+    def undo_vaccination(schedule_id, vet_user_id):
+        db.call("sp_undo_vaccination", (schedule_id, vet_user_id))
+
+    @staticmethod
     def animals_of_vet(vet_id):
         return db.query("""SELECT ac.animal_id, ac.display_name, ac.species_name, ac.breed_name, ac.age_label,
                                   ac.shelter_name, ac.sex,

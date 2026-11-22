@@ -35,15 +35,12 @@ CREATE TABLE district (
 CREATE TABLE user_account (
     user_id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username        VARCHAR(20)  NOT NULL,
-    password_hash   CHAR(60)     NOT NULL,           -- bcrypt hash, never plain text
+    password        VARCHAR(64)  NOT NULL,           -- stored as plain text (group decision)
     first_name      VARCHAR(50)  NOT NULL,
     last_name       VARCHAR(50)  NOT NULL,
     email           VARCHAR(100) NOT NULL,
     phone           CHAR(11)     NOT NULL,
-    district_id     SMALLINT UNSIGNED NULL,
     is_active       BOOLEAN      NOT NULL DEFAULT TRUE,  -- FALSE = account closed (soft delete)
-    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deactivated_at  DATETIME     NULL,
     CONSTRAINT pk_user_account PRIMARY KEY (user_id),
     CONSTRAINT uq_user_username UNIQUE (username),
     CONSTRAINT uq_user_email UNIQUE (email),
@@ -100,7 +97,8 @@ CREATE TABLE veterinarian (                      -- specialisation of user_accou
     license_no  VARCHAR(20) NOT NULL,
     CONSTRAINT pk_veterinarian PRIMARY KEY (vet_id),
     CONSTRAINT uq_vet_user UNIQUE (user_id),
-    CONSTRAINT uq_vet_license UNIQUE (license_no)
+    CONSTRAINT uq_vet_license UNIQUE (license_no),
+    CONSTRAINT chk_vet_license CHECK (REGEXP_LIKE(license_no, '^TVHB-[0-9]{5}$', 'c'))
 );
 
 CREATE TABLE shelter (
@@ -157,7 +155,6 @@ CREATE TABLE injury_report (
     approx_age_weeks  SMALLINT UNSIGNED NULL,
     color             VARCHAR(40)  NULL,
     condition_desc    VARCHAR(500) NOT NULL,
-    location_note     VARCHAR(255) NULL,
     district_id       SMALLINT UNSIGNED NULL,
     latitude          DECIMAL(9,6) NULL,
     longitude         DECIMAL(9,6) NULL,
@@ -258,6 +255,7 @@ CREATE TABLE vaccination_schedule (
     status        ENUM('PLANNED','DONE','CANCELLED') NOT NULL DEFAULT 'PLANNED',
     done_date     DATE NULL,
     done_by       SMALLINT UNSIGNED NULL,
+    generated_from INT UNSIGNED NULL,                 -- dose planned automatically when this one was done
     notes         VARCHAR(255) NULL,
     CONSTRAINT pk_vaccination_schedule PRIMARY KEY (schedule_id),
     CONSTRAINT chk_schedule_done CHECK (status <> 'DONE' OR done_date IS NOT NULL)
@@ -353,10 +351,6 @@ CREATE TABLE notification (
 -- 2) FOREIGN KEYS
 -- =====================================================================
 
-ALTER TABLE user_account
-    ADD CONSTRAINT fk_user_district FOREIGN KEY (district_id) REFERENCES district (district_id)
-        ON DELETE SET NULL;
-
 ALTER TABLE user_role
     ADD CONSTRAINT fk_user_role_user FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE,
     ADD CONSTRAINT fk_user_role_role FOREIGN KEY (role_id) REFERENCES role (role_id);
@@ -417,7 +411,9 @@ ALTER TABLE vaccination_schedule
     ADD CONSTRAINT fk_sched_animal  FOREIGN KEY (animal_id)  REFERENCES animal (animal_id) ON DELETE CASCADE,
     ADD CONSTRAINT fk_sched_vaccine FOREIGN KEY (vaccine_id) REFERENCES vaccine (vaccine_id),
     ADD CONSTRAINT fk_sched_vet     FOREIGN KEY (vet_id)     REFERENCES veterinarian (vet_id),
-    ADD CONSTRAINT fk_sched_doneby  FOREIGN KEY (done_by)    REFERENCES veterinarian (vet_id);
+    ADD CONSTRAINT fk_sched_doneby  FOREIGN KEY (done_by)    REFERENCES veterinarian (vet_id),
+    ADD CONSTRAINT fk_sched_generated FOREIGN KEY (generated_from) REFERENCES vaccination_schedule (schedule_id)
+        ON DELETE CASCADE;                         -- recursive (unary) relationship
 
 ALTER TABLE feeding_post
     ADD CONSTRAINT fk_post_user FOREIGN KEY (user_id) REFERENCES user_account (user_id);

@@ -94,7 +94,7 @@ class DataTable(ctk.CTkFrame):
         self.tree = ttk.Treeview(self, columns=[c[0] for c in columns], show="headings", height=height,
                                  selectmode="browse")
         for k, heading, width in columns:
-            self.tree.heading(k, text=heading)
+            self.tree.heading(k, text=heading, anchor="w")   # same alignment as the cells
             self.tree.column(k, width=width, minwidth=40, anchor="w", stretch=True)
         bar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=bar.set)

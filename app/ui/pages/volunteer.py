@@ -111,7 +111,8 @@ class PostDialog(Dialog):
             ctk.CTkLabel(self, text="This post is not available any more.", font=FONT).pack(pady=40)
             return
         self.own = post["user_id"] == self.me
-        self.read_only = self.own or not page.session.is_volunteer()
+        self.expired = not post["on_map"]           # older than 24 hours: emojis can no longer be changed
+        self.read_only = self.own or self.expired or not page.session.is_volunteer()
         img = photo_image(post["photo_path"], 500, 330)
         ctk.CTkLabel(self, image=img, text="" if img else "(photo not found)").pack(padx=20, pady=(18, 8))
         ctk.CTkLabel(self, text=f"{post['full_name']}  (@{post['username']})", font=FONT_SUB).pack(anchor="w", padx=20)
@@ -137,8 +138,14 @@ class PostDialog(Dialog):
                 ctk.CTkLabel(self.summary, image=emoji_image(code, 22), text=f" {counts[code]}", compound="left",
                              font=FONT_BOLD).pack(side="left", padx=6)
         if self.read_only:
-            ctk.CTkLabel(self.choice, text="This is your post. Supporters:" if self.own else "Supporters:",
-                         font=FONT_BOLD).pack(anchor="w", padx=12, pady=(10, 4))
+            if self.own:
+                head = "This is your post. Supporters:"
+            elif self.expired and self.page.session.is_volunteer():
+                head = "This post is older than 24 hours, emojis cannot be changed. Supporters:"
+            else:
+                head = "Supporters:"
+            ctk.CTkLabel(self.choice, text=head, font=FONT_BOLD, wraplength=470, justify="left").pack(
+                anchor="w", padx=12, pady=(10, 4))
             people = FeedingRepository.reactions(self.post_id)
             text = "\n".join(f"{EMOJI_NAMES[r['emoji']]} – @{r['username']}" for r in people) or "Nobody yet."
             ctk.CTkLabel(self.choice, text=text, font=FONT_SMALL, justify="left").pack(anchor="w", padx=12,
@@ -220,38 +227,45 @@ class MyPostsPage(Page):
 
 class MyReactionsPage(Page):
     title = "My emojis"
-    subtitle = "Emojis you gave to other volunteers. You can change or remove them."
+    subtitle = ("Emojis you gave to other volunteers. They can be changed or removed only while the post is on "
+                "the map (24 hours).")
 
     def build(self):
         button(self.toolbar, "Change emoji", self.change, kind="plain", width=140).pack(side="left", padx=4)
         button(self.toolbar, "Remove emoji", self.remove, kind="danger", width=140).pack(side="left", padx=4)
         self.table = DataTable(self.body, [("reacted_at", "Given at", 140), ("emoji_name", "Emoji", 110),
                                            ("owner", "Volunteer", 160), ("posted_at", "Post date", 140),
-                                           ("note", "Post note", 360)], height=18, key="post_id",
-                               on_double=lambda r: PostDialog(self, r["post_id"]))
+                                           ("on_map", "On map", 80), ("note", "Post note", 320)],
+                               height=18, key="post_id", on_double=lambda r: PostDialog(self, r["post_id"]))
         self.table.pack(fill="both", expand=True)
 
     def refresh(self):
         rows = FeedingRepository.my_given_reactions(self.session.user_id)
         for r in rows:
             r["emoji_name"] = EMOJI_NAMES[r["emoji"]]
-        self.table.set_rows(rows)
+        self.table.set_rows(rows, tag_fn=lambda r: () if r["on_map"] else ("muted",))
+
+    def _editable_row(self):
+        row = self.table.selected()
+        if not row:
+            error("Select an emoji first.")
+            return None
+        if not row["on_map"]:
+            error("This post is older than 24 hours and is no longer on the map, so its emoji cannot be changed.")
+            return None
+        return row
 
     def change(self):
-        row = self.table.selected()
-        if not row:
-            error("Select an emoji first.")
-            return
-        dlg = PostDialog(self, row["post_id"])
-        dlg.bind("<Destroy>", lambda e: self.refresh() if e.widget is dlg else None)
+        row = self._editable_row()
+        if row:
+            dlg = PostDialog(self, row["post_id"])
+            dlg.bind("<Destroy>", lambda e: self.refresh() if e.widget is dlg else None)
 
     def remove(self):
-        row = self.table.selected()
-        if not row:
-            error("Select an emoji first.")
-            return
-        self.run(FeedingRepository.remove_reaction, row["post_id"], self.session.user_id)
-        self.refresh()
+        row = self._editable_row()
+        if row:
+            self.run(FeedingRepository.remove_reaction, row["post_id"], self.session.user_id)
+            self.refresh()
 
 
 # =============================================================================== injured animals
@@ -273,10 +287,9 @@ class ReportInjuryPage(Page):
         self.color = form_row(f, 2, "Color", entry(f, placeholder="optional"))
         self.condition = form_row(f, 3, "Condition", ctk.CTkTextbox(f, width=260, height=90, font=FONT), True)
         self.district = form_row(f, 4, "District", ChoiceBox(f, placeholder="(optional)"))
-        self.location_note = form_row(f, 5, "Where exactly", entry(f, placeholder="street, park..."))
-        self.clinic = form_row(f, 6, "Clinic", ChoiceBox(f, command=lambda v: self.show_clinic()), True)
+        self.clinic = form_row(f, 5, "Clinic", ChoiceBox(f, command=lambda v: self.show_clinic()), True)
         pbar = ctk.CTkFrame(f, fg_color="transparent")
-        form_row(f, 7, "Photo", pbar)
+        form_row(f, 6, "Photo", pbar)
         button(pbar, "Choose...", self.choose_photo, kind="plain", width=100).pack(side="left")
         self.photo_label = ctk.CTkLabel(pbar, text="(optional)", font=FONT_SMALL, text_color=MUTED)
         self.photo_label.pack(side="left", padx=8)
@@ -285,7 +298,7 @@ class ReportInjuryPage(Page):
         button(left, "Send report", self.submit, kind="accent", width=200).pack(anchor="w", padx=16, pady=16)
         right = ctk.CTkFrame(self.body, fg_color="transparent")
         right.grid(row=0, column=1, sticky="nsew")
-        self.map_hint = ctk.CTkLabel(right, text="Optional: click on the map where you found the animal.",
+        self.map_hint = ctk.CTkLabel(right, text="Click on the map where you found the animal (red pin).",
                                      font=FONT, text_color=MUTED, anchor="w")
         self.map_hint.pack(fill="x")
         self.map = MapPanel(right, zoom=11)
@@ -341,20 +354,19 @@ class ReportInjuryPage(Page):
         lat, lon = self.location if self.location else (None, None)
         ok, result = self.run(CaseRepository.create_report, self.session.user_id, self.species.value(),
                               int(self.age.get()) if self.age.get().strip() else None, self.color.get().strip(),
-                              condition, self.location_note.get().strip(), self.district.value(), lat, lon, photo,
-                              self.clinic.value())
+                              condition, self.district.value(), lat, lon, photo, self.clinic.value())
         if not ok:
             return
-        report_id, vet_name, shift = result
+        _, vet_name, shift = result
         clinic = next(c for c in self.clinics if c["clinic_id"] == self.clinic.value())
-        info(f"Case #{report_id} was created.\n\nPlease take the animal to:\n{clinic['clinic_name']}\n{clinic['address']}"
+        info(f"Please take the animal to:\n{clinic['clinic_name']}\n{clinic['address']}"
              f"\n\nYour veterinarian: {vet_name} ({shift.lower()} shift)", "Veterinarian assigned")
-        for w in (self.age, self.color, self.location_note):
+        for w in (self.age, self.color):
             w.delete(0, "end")
         self.condition.delete("1.0", "end")
         self.photo_path, self.location = None, None
         self.photo_label.configure(text="(optional)", text_color=MUTED)
-        self.map_hint.configure(text="Optional: click on the map where you found the animal.", text_color=MUTED)
+        self.map_hint.configure(text="Click on the map where you found the animal (red pin).", text_color=MUTED)
         self.main.refresh_badge()
         self.refresh()
 
@@ -364,7 +376,7 @@ class MyReportsPage(Page):
     subtitle = "Injured animals you reported and what happened to them."
 
     def build(self):
-        self.table = DataTable(self.body, [("report_id", "Case", 60), ("reported_at", "Reported", 140),
+        self.table = DataTable(self.body, [("reported_at", "Reported", 140),
                                            ("species_name", "Species", 70), ("clinic_name", "Clinic", 230),
                                            ("vet_name", "Veterinarian", 170), ("shift", "Shift", 80),
                                            ("status", "Status", 110), ("result", "Result", 170)],
@@ -391,7 +403,7 @@ class AdoptPage(Page):
         self.shelters_frame = ctk.CTkFrame(self.body, fg_color="transparent")
         self.shelters = DataTable(self.shelters_frame, [
             ("shelter_name", "Shelter", 280), ("district_name", "District", 110), ("address", "Address", 330),
-            ("accepted_species", "Accepts", 90), ("animal_count", "Animals", 70), ("capacity", "Capacity", 70)],
+            ("accepted_species", "Accepts", 90), ("animal_count", "Animals", 70)],
             height=20, key="shelter_id", on_double=lambda r: self.open_shelter())
         self.shelters.pack(fill="both", expand=True)
         # animals
@@ -588,7 +600,7 @@ class MyApplicationsPage(Page):
 
     def build(self):
         button(self.toolbar, "Withdraw selected", self.withdraw, kind="danger", width=170).pack(side="left", padx=4)
-        self.table = DataTable(self.body, [("application_id", "No", 50), ("applied_at", "Sent", 140),
+        self.table = DataTable(self.body, [("applied_at", "Sent", 140),
                                            ("display_name", "Animal", 120), ("species_name", "Species", 70),
                                            ("shelter_name", "Shelter", 260), ("status", "Status", 100),
                                            ("reviewed_at", "Reviewed", 140), ("admin_note", "Note", 280)],

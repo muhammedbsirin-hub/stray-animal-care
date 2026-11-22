@@ -48,7 +48,7 @@ The map needs an internet connection (OpenStreetMap tiles).
 
 | Role | Username | Notes |
 |---|---|---|
-| Admin | `admin`, `admin2` | applications, map, daily vet report, management |
+| Admin | `admin` | applications, map, daily vet report, management |
 | Veterinarian | `vet01` | Moda Paws Veterinary Clinic, morning shift, has 2 incoming cases |
 | Veterinarian | `vet04` | same clinic, evening shift, has 1 incoming case |
 | Veterinarian | `vet02` … `vet50` | 10 clinics, 2–7 vets each, every clinic has morning and evening vets |
@@ -64,7 +64,7 @@ app/db.py            connection, transaction(), friendly error messages
 app/models.py        entity classes (User, Animal, Shelter, FeedingPost, ...)
 app/repositories/    all SQL used by the screens
 app/services.py      login / registration rules
-app/validators.py    form checks (phone 05XXXXXXXXX, e-mail with @, strong password ...)
+app/validators.py    form checks (phone 05XXXXXXXXX, e-mail with @, strong password, license TVHB-12345 ...)
 app/ui/              windows and pages (volunteer, vet, admin, common)
 media/seed/          sample photos;  media/posts, media/reports: uploaded photos
 tools/               seed generator and database setup script

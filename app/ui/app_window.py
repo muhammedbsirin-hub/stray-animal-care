@@ -52,7 +52,7 @@ def build_menu(session):
                   ("Veterinarians", admin.VetsPage), ("Animals", admin.AnimalsPage), ("Users", admin.UsersPage)]
     if session.is_vet():
         items += [("Incoming cases", vet.CasesPage), ("Under treatment", vet.TreatmentsPage),
-                  ("Vaccination follow-up", vet.VaccinationPage), ("My shelter animals", vet.MyAnimalsPage)]
+                  ("Vaccination follow-up", vet.VaccinationPage)]
     if session.is_volunteer():
         items += [("Feeding map", volunteer.MapPage), ("My posts", volunteer.MyPostsPage),
                   ("My emojis", volunteer.MyReactionsPage), ("Report injured animal", volunteer.ReportInjuryPage),

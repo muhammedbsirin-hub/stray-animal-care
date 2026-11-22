@@ -18,7 +18,7 @@ class AuthService:
             raise DbError("There is no user with this username.")
         if not row["is_active"]:
             raise DbError("This account has been closed.")
-        if not check_password(password, row["password_hash"]):
+        if not check_password(password, row["password"]):
             raise DbError("Wrong password.")
         user = UserRepository.get(row["user_id"])
         vet = UserRepository.get_vet(user.user_id) if user.has_role("VET") else None
@@ -52,4 +52,4 @@ class AuthService:
     def verify_password(user_id, password):
         user = UserRepository.get(user_id)
         row = UserRepository.find_login(user.username)
-        return row is not None and check_password(password, row["password_hash"])
+        return row is not None and check_password(password, row["password"])

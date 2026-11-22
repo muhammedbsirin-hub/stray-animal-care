@@ -28,6 +28,7 @@ CONSTRAINT_MESSAGES = {
     "uq_clinic_name": "A clinic with this name already exists.",
     "uq_shelter_name": "A shelter with this name already exists.",
     "uq_vet_license": "This license number is already registered.",
+    "chk_vet_license": "License no must look like TVHB-12345 (TVHB- and 5 digits).",
     "chk_shelter_capacity": "Capacity must be between 1 and 2000.",
     "chk_shelter_phone": "Phone number must start with 0 and have 11 digits.",
     "chk_clinic_phone": "Phone number must start with 0 and have 11 digits.",

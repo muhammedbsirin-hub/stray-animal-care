@@ -7,6 +7,7 @@ SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 DROP FUNCTION IF EXISTS fn_current_age_weeks;
 DROP FUNCTION IF EXISTS fn_age_label;
 DROP FUNCTION IF EXISTS fn_shift_for_time;
+DROP FUNCTION IF EXISTS fn_reaction_message;
 
 DELIMITER //
 
@@ -18,22 +19,26 @@ BEGIN
     RETURN p_age_weeks + FLOOR(GREATEST(DATEDIFF(CURDATE(), p_intake_date), 0) / 7);
 END //
 
--- Human readable age:  < 12 weeks -> weeks,  12..52 weeks -> months,  > 52 weeks -> years
--- (always rounded down, no decimals)
+-- Human readable age (no decimals, always rounded down):
+--   < 12 weeks   -> weeks            e.g. '9 weeks'
+--   12..52 weeks -> months           e.g. '5 months'
+--   > 52 weeks   -> years + months   e.g. '1 year 8 months' (90 weeks), '3 years'
 CREATE FUNCTION fn_age_label(p_weeks INT)
-RETURNS VARCHAR(20)
+RETURNS VARCHAR(30)
 DETERMINISTIC NO SQL
 BEGIN
-    DECLARE v_n INT;
+    DECLARE v_years INT;
+    DECLARE v_months INT;
     IF p_weeks < 12 THEN
         RETURN CONCAT(p_weeks, IF(p_weeks = 1, ' week', ' weeks'));
     ELSEIF p_weeks <= 52 THEN
-        SET v_n = FLOOR(p_weeks / 4.345);
-        RETURN CONCAT(v_n, IF(v_n = 1, ' month', ' months'));
-    ELSE
-        SET v_n = FLOOR(p_weeks / 52);
-        RETURN CONCAT(v_n, IF(v_n = 1, ' year', ' years'));
+        SET v_months = FLOOR(p_weeks / 4.345);
+        RETURN CONCAT(v_months, IF(v_months = 1, ' month', ' months'));
     END IF;
+    SET v_years = FLOOR(p_weeks / 52);
+    SET v_months = FLOOR((p_weeks - v_years * 52) / 4.345);
+    RETURN CONCAT(v_years, IF(v_years = 1, ' year', ' years'),
+                  IF(v_months = 0, '', CONCAT(' ', v_months, IF(v_months = 1, ' month', ' months'))));
 END //
 
 -- MORNING shift 07:00-16:59, EVENING shift 17:00-06:59
@@ -45,6 +50,19 @@ BEGIN
         RETURN 'MORNING';
     END IF;
     RETURN 'EVENING';
+END //
+
+-- Text of the notification a volunteer gets when somebody reacts to a feeding post
+CREATE FUNCTION fn_reaction_message(p_post_id INT UNSIGNED, p_user_id INT UNSIGNED, p_emoji VARCHAR(10))
+RETURNS VARCHAR(255)
+NOT DETERMINISTIC READS SQL DATA
+BEGIN
+    RETURN CONCAT((SELECT username FROM user_account WHERE user_id = p_user_id),
+                  ' supported your feeding post from ',
+                  (SELECT DATE_FORMAT(posted_at, '%d.%m %H:%i') FROM feeding_post WHERE post_id = p_post_id),
+                  ' with "',
+                  CASE p_emoji WHEN 'HEART' THEN 'Love' WHEN 'CLAP' THEN 'Applause' WHEN 'PAW' THEN 'Paw'
+                               WHEN 'STRONG' THEN 'Strong' ELSE 'Thank you' END, '".');
 END //
 
 DELIMITER ;
@@ -162,7 +180,7 @@ WHERE t.outcome = 'UNDER_TREATMENT';
 CREATE OR REPLACE VIEW v_application_dossier AS
 SELECT ap.application_id, ap.status, ap.applied_at,
        ap.user_id, u.username, CONCAT(u.first_name, ' ', u.last_name) AS applicant_name,
-       u.email, u.phone, u.created_at AS member_since,
+       u.email, u.phone,
        YEAR(CURDATE()) - ap.birth_year AS applicant_age,
        ap.full_address, d.district_name, ap.housing_type, ap.ownership, ap.landlord_permission,
        ap.household_size, ap.has_children, ap.has_other_pets, ap.other_pets_note,

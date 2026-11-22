@@ -12,6 +12,7 @@ DROP PROCEDURE IF EXISTS sp_close_day;
 DROP PROCEDURE IF EXISTS sp_generate_vaccination_schedule;
 DROP PROCEDURE IF EXISTS sp_finish_treatment;
 DROP PROCEDURE IF EXISTS sp_complete_vaccination;
+DROP PROCEDURE IF EXISTS sp_undo_vaccination;
 DROP PROCEDURE IF EXISTS sp_approve_application;
 DROP PROCEDURE IF EXISTS sp_reject_application;
 DROP PROCEDURE IF EXISTS sp_delete_account;
@@ -36,7 +37,7 @@ END //
 -- ---------------------------------------------------------------------
 CREATE PROCEDURE sp_create_injury_report(
     IN  p_reporter_id INT UNSIGNED, IN p_species_id TINYINT UNSIGNED, IN p_age_weeks SMALLINT UNSIGNED,
-    IN  p_color VARCHAR(40), IN p_condition VARCHAR(500), IN p_location_note VARCHAR(255),
+    IN  p_color VARCHAR(40), IN p_condition VARCHAR(500),
     IN  p_district_id SMALLINT UNSIGNED, IN p_lat DECIMAL(9,6), IN p_lon DECIMAL(9,6),
     IN  p_photo_path VARCHAR(255), IN p_clinic_id SMALLINT UNSIGNED,
     OUT p_report_id INT UNSIGNED, OUT p_vet_name VARCHAR(120), OUT p_shift VARCHAR(10))
@@ -67,9 +68,9 @@ BEGIN
     SELECT clinic_name INTO v_clinic FROM clinic WHERE clinic_id = p_clinic_id;
     SELECT species_name INTO v_species FROM species WHERE species_id = p_species_id;
 
-    INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note,
+    INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc,
                                district_id, latitude, longitude, photo_path, clinic_id, shift, assigned_vet_id)
-    VALUES (p_reporter_id, p_species_id, p_age_weeks, p_color, TRIM(p_condition), p_location_note,
+    VALUES (p_reporter_id, p_species_id, p_age_weeks, p_color, TRIM(p_condition),
             p_district_id, p_lat, p_lon, p_photo_path, p_clinic_id, p_shift, v_vet_id);
     SET p_report_id = LAST_INSERT_ID();
 
@@ -77,7 +78,7 @@ BEGIN
                    CONCAT('Case #', p_report_id, ': injured ', LOWER(v_species), ' - ', LEFT(TRIM(p_condition), 120)),
                    CONCAT('NEW_CASE:', p_report_id));
     CALL sp_notify(p_reporter_id, 'REPORT_ASSIGNED', 'Veterinarian assigned',
-                   CONCAT('Case #', p_report_id, ': please take the animal to ', v_clinic, '. Your vet is ',
+                   CONCAT('Please take the injured ', LOWER(v_species), ' to ', v_clinic, '. Your vet is ',
                           p_vet_name, ' (', LOWER(p_shift), ' shift).'),
                    CONCAT('REPORT_ASSIGNED:', p_report_id));
     COMMIT;
@@ -116,7 +117,9 @@ BEGIN
 
     DELETE FROM notification WHERE user_id = p_vet_user_id AND event_key = CONCAT('NEW_CASE:', p_report_id);
     CALL sp_notify(v_reporter, 'REPORT_NOT_ARRIVED', 'Animal did not arrive',
-                   CONCAT('Case #', p_report_id, ' was closed: the animal did not arrive at the clinic.'),
+                   (SELECT CONCAT('The injured animal you reported on ', DATE_FORMAT(reported_at, '%d.%m %H:%i'),
+                                  ' did not arrive at the clinic. The report was closed.')
+                      FROM injury_report WHERE report_id = p_report_id),
                    CONCAT('REPORT_CLOSED:', p_report_id));
     COMMIT;
 END //
@@ -138,7 +141,8 @@ BEGIN
 
     INSERT IGNORE INTO notification (user_id, notif_type, title, message, event_key)
     SELECT r.reporter_id, 'REPORT_NOT_ARRIVED', 'Animal did not arrive',
-           CONCAT('Case #', r.report_id, ' was closed at the end of the day because the animal did not arrive.'),
+           CONCAT('The injured animal you reported on ', DATE_FORMAT(r.reported_at, '%d.%m %H:%i'),
+                  ' did not arrive at the clinic, so the report was closed at the end of the day.'),
            CONCAT('REPORT_CLOSED:', r.report_id)
       FROM injury_report r
      WHERE r.status = 'PENDING' AND (p_include_today OR DATE(r.reported_at) < CURDATE());
@@ -318,7 +322,7 @@ BEGIN
     IF v_report IS NOT NULL THEN
         SELECT reporter_id INTO v_reporter FROM injury_report WHERE report_id = v_report;
         CALL sp_notify(v_reporter, 'ANIMAL_DISCHARGED', 'Update about the animal you reported',
-                       CONCAT('Case #', v_report, ' (', v_name, '): ',
+                       CONCAT('The animal you reported (', v_name, '): ',
                               CASE p_outcome
                                    WHEN 'DISCHARGED_TO_SHELTER' THEN CONCAT('treatment finished, moved to ', v_shelter_name, '.')
                                    WHEN 'RELEASED' THEN 'treatment finished, the animal was released.'
@@ -367,9 +371,44 @@ BEGIN
         SELECT r.repeat_interval_weeks INTO v_repeat
           FROM vaccine_rule r JOIN animal a ON a.species_id = r.species_id
          WHERE a.animal_id = v_animal AND r.vaccine_id = v_vaccine;
-        INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-        VALUES (v_animal, v_vaccine, 'Annual', CURDATE() + INTERVAL v_repeat WEEK, v_assigned);
+        INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id, generated_from)
+        VALUES (v_animal, v_vaccine, 'Annual', CURDATE() + INTERVAL v_repeat WEEK, v_assigned, p_schedule_id);
     END IF;
+    COMMIT;
+END //
+
+-- ---------------------------------------------------------------------
+-- Vet takes back a "done" mark (e.g. clicked by mistake).  The yearly dose
+-- that was planned automatically because of it is removed again.
+-- ---------------------------------------------------------------------
+CREATE PROCEDURE sp_undo_vaccination(IN p_schedule_id INT UNSIGNED, IN p_vet_user_id INT UNSIGNED)
+BEGIN
+    DECLARE v_status VARCHAR(10);
+    DECLARE v_assigned SMALLINT UNSIGNED;
+    DECLARE v_me SMALLINT UNSIGNED;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+
+    START TRANSACTION;
+    SELECT status, vet_id INTO v_status, v_assigned
+      FROM vaccination_schedule WHERE schedule_id = p_schedule_id FOR UPDATE;
+    SELECT vet_id INTO v_me FROM veterinarian WHERE user_id = p_vet_user_id;
+
+    IF v_status IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Vaccination not found.';
+    END IF;
+    IF v_me IS NULL OR v_me <> v_assigned THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This vaccination is assigned to another veterinarian.';
+    END IF;
+    IF v_status <> 'DONE' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only a vaccination marked as done can be taken back.';
+    END IF;
+    IF EXISTS (SELECT 1 FROM vaccination_schedule WHERE generated_from = p_schedule_id AND status = 'DONE') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The next dose is already given, so this one cannot be taken back.';
+    END IF;
+
+    DELETE FROM vaccination_schedule WHERE generated_from = p_schedule_id AND status = 'PLANNED';
+    UPDATE vaccination_schedule SET status = 'PLANNED', done_date = NULL, done_by = NULL
+     WHERE schedule_id = p_schedule_id;
     COMMIT;
 END //
 
@@ -470,14 +509,19 @@ END //
 
 -- ---------------------------------------------------------------------
 -- Account deletion = closing the account (history is kept).  (transaction)
+--  * administrator accounts cannot be deleted
+--  * a veterinarian account can only be closed by an administrator
+--  * a volunteer can delete his/her own account (or an admin can close it)
+--  * username and e-mail are released, so they can be registered again
 -- ---------------------------------------------------------------------
-CREATE PROCEDURE sp_delete_account(IN p_user_id INT UNSIGNED)
+CREATE PROCEDURE sp_delete_account(IN p_user_id INT UNSIGNED, IN p_actor_id INT UNSIGNED)
 BEGIN
     DECLARE v_active BOOLEAN DEFAULT NULL;
     DECLARE v_vet SMALLINT UNSIGNED DEFAULT NULL;
     DECLARE v_clinic SMALLINT UNSIGNED;
     DECLARE v_shift VARCHAR(10);
     DECLARE v_other SMALLINT UNSIGNED DEFAULT NULL;
+    DECLARE v_actor_admin BOOLEAN;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
 
     SELECT is_active INTO v_active FROM user_account WHERE user_id = p_user_id;
@@ -485,15 +529,20 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account not found or already closed.';
     END IF;
 
+    SET v_actor_admin = EXISTS (SELECT 1 FROM user_role ur JOIN role r ON r.role_id = ur.role_id
+                                 WHERE ur.user_id = p_actor_id AND r.role_name = 'ADMIN');
+    IF p_actor_id <> p_user_id AND NOT v_actor_admin THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You can only delete your own account.';
+    END IF;
     IF EXISTS (SELECT 1 FROM user_role ur JOIN role r ON r.role_id = ur.role_id
-                WHERE ur.user_id = p_user_id AND r.role_name = 'ADMIN')
-       AND (SELECT COUNT(*) FROM user_role ur JOIN role r ON r.role_id = ur.role_id
-              JOIN user_account u ON u.user_id = ur.user_id
-             WHERE r.role_name = 'ADMIN' AND u.is_active = TRUE) <= 1 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The last administrator account cannot be deleted.';
+                WHERE ur.user_id = p_user_id AND r.role_name = 'ADMIN') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'An administrator account cannot be deleted.';
     END IF;
 
     SELECT vet_id, clinic_id, shift INTO v_vet, v_clinic, v_shift FROM veterinarian WHERE user_id = p_user_id;
+    IF v_vet IS NOT NULL AND NOT v_actor_admin THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Veterinarian accounts can only be closed by the administrator.';
+    END IF;
     IF v_vet IS NOT NULL THEN
         IF EXISTS (SELECT 1 FROM injury_report WHERE assigned_vet_id = v_vet AND status = 'PENDING')
            OR EXISTS (SELECT 1 FROM treatment WHERE vet_id = v_vet AND outcome = 'UNDER_TREATMENT') THEN
@@ -509,7 +558,12 @@ BEGIN
     END IF;
 
     START TRANSACTION;
-    UPDATE user_account SET is_active = FALSE, deactivated_at = NOW() WHERE user_id = p_user_id;
+    -- release the username and e-mail so that they can be used for a new account
+    UPDATE user_account
+       SET is_active = FALSE,
+           username  = CONCAT('deleted_', user_id),
+           email     = CONCAT('deleted_', user_id, '@closed.invalid')
+     WHERE user_id = p_user_id;
     UPDATE feeding_post SET is_deleted = TRUE WHERE user_id = p_user_id;
     DELETE FROM post_reaction WHERE user_id = p_user_id;
     UPDATE adoption_application SET status = 'WITHDRAWN' WHERE user_id = p_user_id AND status = 'PENDING';
@@ -529,6 +583,9 @@ DROP TRIGGER IF EXISTS trg_report_ai //
 DROP TRIGGER IF EXISTS trg_report_au //
 DROP TRIGGER IF EXISTS trg_reaction_bi //
 DROP TRIGGER IF EXISTS trg_reaction_ai //
+DROP TRIGGER IF EXISTS trg_reaction_bu //
+DROP TRIGGER IF EXISTS trg_reaction_au //
+DROP TRIGGER IF EXISTS trg_reaction_ad //
 DROP TRIGGER IF EXISTS trg_application_bi //
 DROP TRIGGER IF EXISTS trg_application_ai //
 DROP TRIGGER IF EXISTS trg_vet_bu //
@@ -561,21 +618,43 @@ BEGIN
     IF v_deleted THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post was deleted.';
     END IF;
+    IF (SELECT posted_at FROM feeding_post WHERE post_id = NEW.post_id) < NOW() - INTERVAL 24 HOUR THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post is older than 24 hours and is no longer on the map.';
+    END IF;
+END //
+
+-- changing an emoji is only possible while the post is on the map (24 hours)
+CREATE TRIGGER trg_reaction_bu BEFORE UPDATE ON post_reaction FOR EACH ROW
+BEGIN
+    IF NEW.emoji <> OLD.emoji
+       AND (SELECT posted_at FROM feeding_post WHERE post_id = NEW.post_id) < NOW() - INTERVAL 24 HOUR THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post is older than 24 hours, its emoji cannot be changed.';
+    END IF;
 END //
 
 -- the owner of the post is notified (only once per person per post)
 CREATE TRIGGER trg_reaction_ai AFTER INSERT ON post_reaction FOR EACH ROW
 BEGIN
-    DECLARE v_owner INT UNSIGNED;
-    DECLARE v_reactor VARCHAR(20);
-    SELECT user_id INTO v_owner FROM feeding_post WHERE post_id = NEW.post_id;
-    SELECT username INTO v_reactor FROM user_account WHERE user_id = NEW.user_id;
-    CALL sp_notify(v_owner, 'REACTION', 'New support on your feeding post',
-                   CONCAT(v_reactor, ' supported your feeding post #', NEW.post_id, ' with "',
-                          CASE NEW.emoji WHEN 'HEART' THEN 'Love' WHEN 'CLAP' THEN 'Applause'
-                                         WHEN 'PAW' THEN 'Paw' WHEN 'STRONG' THEN 'Strong'
-                                         ELSE 'Thank you' END, '".'),
+    CALL sp_notify((SELECT user_id FROM feeding_post WHERE post_id = NEW.post_id),
+                   'REACTION', 'New support on your feeding post', fn_reaction_message(NEW.post_id, NEW.user_id, NEW.emoji),
                    CONCAT('REACTION:', NEW.post_id, ':', NEW.user_id));
+END //
+
+-- emoji changed -> the same notification shows the new emoji and becomes unread again
+CREATE TRIGGER trg_reaction_au AFTER UPDATE ON post_reaction FOR EACH ROW
+BEGIN
+    IF NEW.emoji <> OLD.emoji THEN
+        UPDATE notification
+           SET message = fn_reaction_message(NEW.post_id, NEW.user_id, NEW.emoji),
+               is_read = FALSE, created_at = NOW()
+         WHERE event_key = CONCAT('REACTION:', NEW.post_id, ':', NEW.user_id);
+    END IF;
+END //
+
+-- emoji removed -> its notification is removed too
+CREATE TRIGGER trg_reaction_ad AFTER DELETE ON post_reaction FOR EACH ROW
+BEGIN
+    DELETE FROM notification WHERE event_key = CONCAT('REACTION:', OLD.post_id, ':', OLD.user_id);
 END //
 
 -- adoption rules checked by the database itself

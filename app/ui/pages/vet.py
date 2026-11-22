@@ -28,7 +28,7 @@ class CasesPage(Page):
         _vet_banner(self)
         self.table = DataTable(self.body, [("report_id", "Case", 55), ("reported_at", "Reported", 135),
                                            ("species_name", "Species", 65), ("condition_desc", "Condition", 330),
-                                           ("approx_age_weeks", "Age (w)", 60), ("location_note", "Found at", 170),
+                                           ("approx_age_weeks", "Age (w)", 60), ("district_name", "Found in", 170),
                                            ("reporter_name", "Volunteer", 130), ("reporter_phone", "Phone", 105)],
                                height=9, key="report_id", on_double=lambda r: self.arrived())
         self.table.pack(fill="both", expand=True)
@@ -180,7 +180,7 @@ class TreatmentsPage(Page):
         self.body.grid_columnconfigure(0, weight=3)
         self.body.grid_columnconfigure(1, weight=2)
         self.body.grid_rowconfigure(0, weight=1)
-        self.table = DataTable(self.body, [("treatment_id", "No", 45), ("display_name", "Animal", 100),
+        self.table = DataTable(self.body, [("display_name", "Animal", 100),
                                            ("species_name", "Species", 65), ("age_label", "Age", 80),
                                            ("diagnosis", "Diagnosis", 230), ("condition_level", "Condition", 85),
                                            ("started_at", "Started", 130)], height=18, key="treatment_id",
@@ -318,6 +318,7 @@ class CalendarDialog(Dialog):
         bar.pack(pady=(0, 14))
         button(bar, "Close", self.destroy, kind="plain", width=110).pack(side="left", padx=6)
         if not read_only:
+            button(bar, "Undo 'done'", self.undo, kind="danger", width=140).pack(side="left", padx=6)
             button(bar, "Mark selected as done", self.done, width=200).pack(side="left", padx=6)
         self.load()
 
@@ -337,27 +338,14 @@ class CalendarDialog(Dialog):
             self.load()
             self.page.refresh()
 
-
-class MyAnimalsPage(Page):
-    title = "My shelter animals"
-    subtitle = "Shelter animals whose vaccinations you follow. Double click to open the calendar."
-
-    def build(self):
-        button(self.toolbar, "Open calendar", self.open, width=150).pack(side="left", padx=4)
-        self.table = DataTable(self.body, [("display_name", "Animal", 120), ("species_name", "Species", 70),
-                                           ("breed_name", "Breed", 140), ("sex", "Sex", 80), ("age_label", "Age", 90),
-                                           ("shelter_name", "Shelter", 270), ("next_date", "Next vaccine", 110),
-                                           ("overdue", "Overdue", 70)], height=20, key="animal_id",
-                               on_double=lambda r: self.open())
-        self.table.pack(fill="both", expand=True)
-
-    def refresh(self):
-        self.table.set_rows(AnimalRepository.animals_of_vet(self.session.vet.vet_id), formatters={"sex": nice},
-                            tag_fn=lambda r: ("red",) if r["overdue"] else ())
-
-    def open(self):
-        row = self.table.selected()
-        if row is None:
-            error("Select an animal first.")
+    def undo(self):
+        v = self.table.selected()
+        if v is None or v.status != "DONE":
+            error("Select a vaccination that is marked as done.")
             return
-        CalendarDialog(self, row["animal_id"])
+        if not confirm(f"{v.vaccine_code} ({v.dose_label}) will be planned again. Continue?"):
+            return
+        ok, _ = self.page.run(AnimalRepository.undo_vaccination, v.schedule_id, self.page.session.user_id)
+        if ok:
+            self.load()
+            self.page.refresh()

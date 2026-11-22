@@ -2,7 +2,7 @@
 import customtkinter as ctk
 
 from app import validators
-from app.repositories import LookupRepository, NotificationRepository, UserRepository
+from app.repositories import NotificationRepository, UserRepository
 from app.services import AuthService
 from app.ui.pages.base import Page
 from app.ui.widgets import (DANGER, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, ChoiceBox, DataTable, Dialog,
@@ -104,7 +104,6 @@ class SettingsPage(Page):
         self.last = form_row(f, 2, "Last name", entry(f), True)
         self.email = form_row(f, 3, "E-mail", entry(f), True)
         self.phone = form_row(f, 4, "Phone", entry(f), True)
-        self.district = form_row(f, 5, "District", ChoiceBox(f, placeholder="(not set)"))
         button(prof, "Save profile", self.save_profile).grid(row=2, column=0, sticky="w", padx=16, pady=14)
 
         pw = self.card()
@@ -128,6 +127,9 @@ class SettingsPage(Page):
             ctk.CTkLabel(work, text=f"Clinic: {v.clinic_name}\nShift: {v.shift_text}\nLicense no: {v.license_no}",
                          font=FONT, justify="left").pack(anchor="w", padx=16, pady=(0, 14))
             row += 1
+        # only volunteers can delete their own account (vets are closed by the admin, the admin cannot be deleted)
+        if self.session.is_admin() or self.session.is_vet():
+            return
         danger = self.card()
         danger.grid(row=row, column=0, columnspan=2, sticky="ew")
         ctk.CTkLabel(danger, text="Delete account", font=FONT_SUB, text_color=DANGER).pack(anchor="w", padx=16,
@@ -146,8 +148,6 @@ class SettingsPage(Page):
                        (self.phone, u.phone)):
             w.delete(0, "end")
             w.insert(0, val)
-        self.district.set_options([(d["district_id"], d["district_name"]) for d in LookupRepository.districts()])
-        self.district.set_value(u.district_id)
 
     def save_profile(self):
         first, last = self.first.get().strip(), self.last.get().strip()
@@ -160,8 +160,7 @@ class SettingsPage(Page):
         if err:
             error(err)
             return
-        ok, _ = self.run(UserRepository.update_profile, self.session.user_id, first, last, email, phone,
-                         self.district.value())
+        ok, _ = self.run(UserRepository.update_profile, self.session.user_id, first, last, email, phone)
         if ok:
             self.main.reload_session()
             self.main.refresh_badge()
@@ -192,7 +191,7 @@ class SettingsPage(Page):
             if not AuthService.verify_password(self.session.user_id, password):
                 error("The password is wrong. Your account was not deleted.")
                 return
-            ok, _ = self.run(UserRepository.delete_account, self.session.user_id)
+            ok, _ = self.run(UserRepository.delete_account, self.session.user_id, self.session.user_id)
             if ok:
                 info("Your account was deleted. Goodbye!")
                 self.main.logout()

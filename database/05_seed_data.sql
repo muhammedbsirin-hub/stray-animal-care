@@ -74,77 +74,76 @@ INSERT INTO clinic (clinic_name, district_id, address, phone, latitude, longitud
   ('Sarıyer Forest Animal Clinic', 26, 'Veteriner Sk. No:75, Sarıyer / Istanbul', '02126184138', 41.162691, 29.051738),
   ('Kartal Coast Veterinary Clinic', 21, 'Veteriner Sk. No:48, Kartal / Istanbul', '02168735513', 40.883297, 29.19253);
 
-INSERT INTO user_account (username, password_hash, first_name, last_name, email, phone, district_id, created_at) VALUES
-  ('admin', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'System', 'Admin', 'admin@straycare.org', '05300000001', 19, NOW() - INTERVAL 220 DAY),
-  ('admin2', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Shelter', 'Coordinator', 'coordinator@straycare.org', '05300000002', 17, NOW() - INTERVAL 292 DAY),
-  ('vet01', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Demir', 'vet01@straycare.org', '05998716897', 19, NOW() - INTERVAL 296 DAY),
-  ('vet02', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Merve', 'Polat', 'vet02@straycare.org', '05569788093', 19, NOW() - INTERVAL 116 DAY),
-  ('vet03', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'İrem', 'Çelik', 'vet03@straycare.org', '05381967273', 19, NOW() - INTERVAL 97 DAY),
-  ('vet04', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Barış', 'Şahin', 'vet04@straycare.org', '05978486488', 19, NOW() - INTERVAL 98 DAY),
-  ('vet05', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Buse', 'Özdemir', 'vet05@straycare.org', '05963440029', 19, NOW() - INTERVAL 93 DAY),
-  ('vet06', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ece', 'Polat', 'vet06@straycare.org', '05953477876', 9, NOW() - INTERVAL 87 DAY),
-  ('vet07', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Hakan', 'Kaya', 'vet07@straycare.org', '05557178472', 9, NOW() - INTERVAL 51 DAY),
-  ('vet08', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Özdemir', 'vet08@straycare.org', '05347513627', 9, NOW() - INTERVAL 37 DAY),
-  ('vet09', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Umut', 'Yılmaz', 'vet09@straycare.org', '05307981933', 9, NOW() - INTERVAL 163 DAY),
-  ('vet10', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ahmet', 'Aksoy', 'vet10@straycare.org', '05384520599', 27, NOW() - INTERVAL 173 DAY),
-  ('vet11', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'İrem', 'Özdemir', 'vet11@straycare.org', '05483792984', 27, NOW() - INTERVAL 111 DAY),
-  ('vet12', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Zeynep', 'Koç', 'vet12@straycare.org', '05429486628', 27, NOW() - INTERVAL 91 DAY),
-  ('vet13', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Serkan', 'Aydın', 'vet13@straycare.org', '05901610550', 27, NOW() - INTERVAL 156 DAY),
-  ('vet14', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ayşe', 'Polat', 'vet14@straycare.org', '05954751779', 27, NOW() - INTERVAL 296 DAY),
-  ('vet15', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Murat', 'Yıldız', 'vet15@straycare.org', '05498369579', 27, NOW() - INTERVAL 202 DAY),
-  ('vet16', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Emre', 'Demir', 'vet16@straycare.org', '05903208073', 30, NOW() - INTERVAL 85 DAY),
-  ('vet17', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ozan', 'Yılmaz', 'vet17@straycare.org', '05483822264', 30, NOW() - INTERVAL 254 DAY),
-  ('vet18', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Erdem', 'vet18@straycare.org', '05916425247', 30, NOW() - INTERVAL 106 DAY),
-  ('vet19', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ozan', 'Koç', 'vet19@straycare.org', '05572587718', 30, NOW() - INTERVAL 115 DAY),
-  ('vet20', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Serkan', 'Polat', 'vet20@straycare.org', '05513301756', 30, NOW() - INTERVAL 47 DAY),
-  ('vet21', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Hakan', 'Yıldız', 'vet21@straycare.org', '05352589831', 17, NOW() - INTERVAL 115 DAY),
-  ('vet22', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Murat', 'Arslan', 'vet22@straycare.org', '05494948214', 17, NOW() - INTERVAL 98 DAY),
-  ('vet23', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ahmet', 'Koç', 'vet23@straycare.org', '05410521854', 17, NOW() - INTERVAL 231 DAY),
-  ('vet24', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Gizem', 'Demir', 'vet24@straycare.org', '05552441064', 6, NOW() - INTERVAL 270 DAY),
-  ('vet25', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Yılmaz', 'vet25@straycare.org', '05313041189', 6, NOW() - INTERVAL 299 DAY),
-  ('vet26', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Umut', 'Aslan', 'vet26@straycare.org', '05579906593', 6, NOW() - INTERVAL 34 DAY),
-  ('vet27', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Murat', 'Kurt', 'vet27@straycare.org', '05915846450', 6, NOW() - INTERVAL 173 DAY),
-  ('vet28', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Tolga', 'Koç', 'vet28@straycare.org', '05345414659', 6, NOW() - INTERVAL 133 DAY),
-  ('vet29', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ceren', 'Yılmaz', 'vet29@straycare.org', '05538012911', 6, NOW() - INTERVAL 283 DAY),
-  ('vet30', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Mehmet', 'Çelik', 'vet30@straycare.org', '05594069256', 6, NOW() - INTERVAL 206 DAY),
-  ('vet31', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Merve', 'Çetin', 'vet31@straycare.org', '05463228088', 2, NOW() - INTERVAL 297 DAY),
-  ('vet32', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Merve', 'Arslan', 'vet32@straycare.org', '05430048764', 2, NOW() - INTERVAL 67 DAY),
-  ('vet33', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Deniz', 'Çelik', 'vet33@straycare.org', '05328084585', 2, NOW() - INTERVAL 258 DAY),
-  ('vet34', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Mehmet', 'Yılmaz', 'vet34@straycare.org', '05470382653', 2, NOW() - INTERVAL 228 DAY),
-  ('vet35', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Hakan', 'Arslan', 'vet35@straycare.org', '05535577879', 2, NOW() - INTERVAL 99 DAY),
-  ('vet36', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Burak', 'Aydın', 'vet36@straycare.org', '05462705860', 11, NOW() - INTERVAL 186 DAY),
-  ('vet37', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Seda', 'Yıldız', 'vet37@straycare.org', '05345842108', 11, NOW() - INTERVAL 94 DAY),
-  ('vet38', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Fatma', 'Güneş', 'vet38@straycare.org', '05590668828', 11, NOW() - INTERVAL 280 DAY),
-  ('vet39', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ahmet', 'Demir', 'vet39@straycare.org', '05465844093', 11, NOW() - INTERVAL 40 DAY),
-  ('vet40', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Mustafa', 'Doğan', 'vet40@straycare.org', '05584526309', 11, NOW() - INTERVAL 261 DAY),
-  ('vet41', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Seda', 'Özdemir', 'vet41@straycare.org', '05958280258', 11, NOW() - INTERVAL 23 DAY),
-  ('vet42', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Elif', 'Yıldız', 'vet42@straycare.org', '05318051543', 26, NOW() - INTERVAL 49 DAY),
-  ('vet43', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Hakan', 'Çelik', 'vet43@straycare.org', '05421571164', 26, NOW() - INTERVAL 68 DAY),
-  ('vet44', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Murat', 'Doğan', 'vet44@straycare.org', '05357718835', 26, NOW() - INTERVAL 200 DAY),
-  ('vet45', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Onur', 'Kurt', 'vet45@straycare.org', '05511174432', 26, NOW() - INTERVAL 151 DAY),
-  ('vet46', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Deniz', 'Koç', 'vet46@straycare.org', '05557652373', 21, NOW() - INTERVAL 188 DAY),
-  ('vet47', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Barış', 'Aslan', 'vet47@straycare.org', '05569632792', 21, NOW() - INTERVAL 34 DAY),
-  ('vet48', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Arslan', 'vet48@straycare.org', '05515474284', 21, NOW() - INTERVAL 103 DAY),
-  ('vet49', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Emre', 'Kılıç', 'vet49@straycare.org', '05481449766', 21, NOW() - INTERVAL 277 DAY),
-  ('vet50', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ayşe', 'Erdem', 'vet50@straycare.org', '05565178836', 21, NOW() - INTERVAL 117 DAY),
-  ('elif_yildiz', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Elif', 'Yıldız', 'elif_yildiz@example.com', '05550620484', 19, NOW() - INTERVAL 66 DAY),
-  ('mert_kaya', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Mert', 'Kaya', 'mert_kaya@example.com', '05459967750', 9, NOW() - INTERVAL 236 DAY),
-  ('zeynep_ak', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Zeynep', 'Ak', 'zeynep_ak@example.com', '05331450378', 30, NOW() - INTERVAL 241 DAY),
-  ('can_demir', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Can', 'Demir', 'can_demir@example.com', '05595183801', 27, NOW() - INTERVAL 122 DAY),
-  ('selin_arslan', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Selin', 'Arslan', 'selin_arslan@example.com', '05453739241', 17, NOW() - INTERVAL 107 DAY),
-  ('burak_celik', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Burak', 'Çelik', 'burak_celik@example.com', '05989821046', 6, NOW() - INTERVAL 143 DAY),
-  ('deniz_sahin', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Deniz', 'Şahin', 'deniz_sahin@example.com', '05328837555', 2, NOW() - INTERVAL 135 DAY),
-  ('ece_koc', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ece', 'Koç', 'ece_koc@example.com', '05597475407', 23, NOW() - INTERVAL 273 DAY),
-  ('ozan_kurt', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Ozan', 'Kurt', 'ozan_kurt@example.com', '05407547354', 21, NOW() - INTERVAL 128 DAY),
-  ('irem_polat', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'İrem', 'Polat', 'irem_polat@example.com', '05943906188', 26, NOW() - INTERVAL 210 DAY),
-  ('umut_aksoy', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Umut', 'Aksoy', 'umut_aksoy@example.com', '05579188957', 11, NOW() - INTERVAL 101 DAY),
-  ('gizem_erdem', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Gizem', 'Erdem', 'gizem_erdem@example.com', '05555218248', 24, NOW() - INTERVAL 294 DAY),
-  ('kerem_gunes', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Kerem', 'Güneş', 'kerem_gunes@example.com', '05919307336', 29, NOW() - INTERVAL 236 DAY),
-  ('seda_dogan', '$2b$10$EVmushrTN./kKeOL.EgAhO.jrxVD2haISyTU7QD3c5NB8gkKt7guS', 'Seda', 'Doğan', 'seda_dogan@example.com', '05483472855', 16, NOW() - INTERVAL 236 DAY);
+INSERT INTO user_account (username, password, first_name, last_name, email, phone) VALUES
+  ('admin', 'Demo1234!', 'System', 'Admin', 'admin@straycare.org', '05300000001'),
+  ('vet01', 'Demo1234!', 'Kerem', 'Demir', 'vet01@straycare.org', '05998716897'),
+  ('vet02', 'Demo1234!', 'Merve', 'Polat', 'vet02@straycare.org', '05569788093'),
+  ('vet03', 'Demo1234!', 'İrem', 'Çelik', 'vet03@straycare.org', '05381967273'),
+  ('vet04', 'Demo1234!', 'Barış', 'Şahin', 'vet04@straycare.org', '05978486488'),
+  ('vet05', 'Demo1234!', 'Buse', 'Özdemir', 'vet05@straycare.org', '05963440029'),
+  ('vet06', 'Demo1234!', 'Ece', 'Polat', 'vet06@straycare.org', '05953477876'),
+  ('vet07', 'Demo1234!', 'Hakan', 'Kaya', 'vet07@straycare.org', '05557178472'),
+  ('vet08', 'Demo1234!', 'Kerem', 'Özdemir', 'vet08@straycare.org', '05347513627'),
+  ('vet09', 'Demo1234!', 'Umut', 'Yılmaz', 'vet09@straycare.org', '05307981933'),
+  ('vet10', 'Demo1234!', 'Ahmet', 'Aksoy', 'vet10@straycare.org', '05384520599'),
+  ('vet11', 'Demo1234!', 'İrem', 'Özdemir', 'vet11@straycare.org', '05483792984'),
+  ('vet12', 'Demo1234!', 'Zeynep', 'Koç', 'vet12@straycare.org', '05429486628'),
+  ('vet13', 'Demo1234!', 'Serkan', 'Aydın', 'vet13@straycare.org', '05901610550'),
+  ('vet14', 'Demo1234!', 'Ayşe', 'Polat', 'vet14@straycare.org', '05954751779'),
+  ('vet15', 'Demo1234!', 'Murat', 'Yıldız', 'vet15@straycare.org', '05498369579'),
+  ('vet16', 'Demo1234!', 'Emre', 'Demir', 'vet16@straycare.org', '05903208073'),
+  ('vet17', 'Demo1234!', 'Ozan', 'Yılmaz', 'vet17@straycare.org', '05483822264'),
+  ('vet18', 'Demo1234!', 'Kerem', 'Erdem', 'vet18@straycare.org', '05916425247'),
+  ('vet19', 'Demo1234!', 'Ozan', 'Koç', 'vet19@straycare.org', '05572587718'),
+  ('vet20', 'Demo1234!', 'Serkan', 'Polat', 'vet20@straycare.org', '05513301756'),
+  ('vet21', 'Demo1234!', 'Hakan', 'Yıldız', 'vet21@straycare.org', '05352589831'),
+  ('vet22', 'Demo1234!', 'Murat', 'Arslan', 'vet22@straycare.org', '05494948214'),
+  ('vet23', 'Demo1234!', 'Ahmet', 'Koç', 'vet23@straycare.org', '05410521854'),
+  ('vet24', 'Demo1234!', 'Gizem', 'Demir', 'vet24@straycare.org', '05552441064'),
+  ('vet25', 'Demo1234!', 'Kerem', 'Yılmaz', 'vet25@straycare.org', '05313041189'),
+  ('vet26', 'Demo1234!', 'Umut', 'Aslan', 'vet26@straycare.org', '05579906593'),
+  ('vet27', 'Demo1234!', 'Murat', 'Kurt', 'vet27@straycare.org', '05915846450'),
+  ('vet28', 'Demo1234!', 'Tolga', 'Koç', 'vet28@straycare.org', '05345414659'),
+  ('vet29', 'Demo1234!', 'Ceren', 'Yılmaz', 'vet29@straycare.org', '05538012911'),
+  ('vet30', 'Demo1234!', 'Mehmet', 'Çelik', 'vet30@straycare.org', '05594069256'),
+  ('vet31', 'Demo1234!', 'Merve', 'Çetin', 'vet31@straycare.org', '05463228088'),
+  ('vet32', 'Demo1234!', 'Merve', 'Arslan', 'vet32@straycare.org', '05430048764'),
+  ('vet33', 'Demo1234!', 'Deniz', 'Çelik', 'vet33@straycare.org', '05328084585'),
+  ('vet34', 'Demo1234!', 'Mehmet', 'Yılmaz', 'vet34@straycare.org', '05470382653'),
+  ('vet35', 'Demo1234!', 'Hakan', 'Arslan', 'vet35@straycare.org', '05535577879'),
+  ('vet36', 'Demo1234!', 'Burak', 'Aydın', 'vet36@straycare.org', '05462705860'),
+  ('vet37', 'Demo1234!', 'Seda', 'Yıldız', 'vet37@straycare.org', '05345842108'),
+  ('vet38', 'Demo1234!', 'Fatma', 'Güneş', 'vet38@straycare.org', '05590668828'),
+  ('vet39', 'Demo1234!', 'Ahmet', 'Demir', 'vet39@straycare.org', '05465844093'),
+  ('vet40', 'Demo1234!', 'Mustafa', 'Doğan', 'vet40@straycare.org', '05584526309'),
+  ('vet41', 'Demo1234!', 'Seda', 'Özdemir', 'vet41@straycare.org', '05958280258'),
+  ('vet42', 'Demo1234!', 'Elif', 'Yıldız', 'vet42@straycare.org', '05318051543'),
+  ('vet43', 'Demo1234!', 'Hakan', 'Çelik', 'vet43@straycare.org', '05421571164'),
+  ('vet44', 'Demo1234!', 'Murat', 'Doğan', 'vet44@straycare.org', '05357718835'),
+  ('vet45', 'Demo1234!', 'Onur', 'Kurt', 'vet45@straycare.org', '05511174432'),
+  ('vet46', 'Demo1234!', 'Deniz', 'Koç', 'vet46@straycare.org', '05557652373'),
+  ('vet47', 'Demo1234!', 'Barış', 'Aslan', 'vet47@straycare.org', '05569632792'),
+  ('vet48', 'Demo1234!', 'Kerem', 'Arslan', 'vet48@straycare.org', '05515474284'),
+  ('vet49', 'Demo1234!', 'Emre', 'Kılıç', 'vet49@straycare.org', '05481449766'),
+  ('vet50', 'Demo1234!', 'Ayşe', 'Erdem', 'vet50@straycare.org', '05565178836'),
+  ('elif_yildiz', 'Demo1234!', 'Elif', 'Yıldız', 'elif_yildiz@example.com', '05550620484'),
+  ('mert_kaya', 'Demo1234!', 'Mert', 'Kaya', 'mert_kaya@example.com', '05459967750'),
+  ('zeynep_ak', 'Demo1234!', 'Zeynep', 'Ak', 'zeynep_ak@example.com', '05331450378'),
+  ('can_demir', 'Demo1234!', 'Can', 'Demir', 'can_demir@example.com', '05595183801'),
+  ('selin_arslan', 'Demo1234!', 'Selin', 'Arslan', 'selin_arslan@example.com', '05453739241'),
+  ('burak_celik', 'Demo1234!', 'Burak', 'Çelik', 'burak_celik@example.com', '05989821046'),
+  ('deniz_sahin', 'Demo1234!', 'Deniz', 'Şahin', 'deniz_sahin@example.com', '05328837555'),
+  ('ece_koc', 'Demo1234!', 'Ece', 'Koç', 'ece_koc@example.com', '05597475407'),
+  ('ozan_kurt', 'Demo1234!', 'Ozan', 'Kurt', 'ozan_kurt@example.com', '05407547354'),
+  ('irem_polat', 'Demo1234!', 'İrem', 'Polat', 'irem_polat@example.com', '05943906188'),
+  ('umut_aksoy', 'Demo1234!', 'Umut', 'Aksoy', 'umut_aksoy@example.com', '05579188957'),
+  ('gizem_erdem', 'Demo1234!', 'Gizem', 'Erdem', 'gizem_erdem@example.com', '05555218248'),
+  ('kerem_gunes', 'Demo1234!', 'Kerem', 'Güneş', 'kerem_gunes@example.com', '05919307336'),
+  ('seda_dogan', 'Demo1234!', 'Seda', 'Doğan', 'seda_dogan@example.com', '05483472855');
 
 INSERT INTO user_role (user_id, role_id) VALUES
   (1, 1),
-  (2, 1),
+  (2, 2),
   (3, 2),
   (4, 2),
   (5, 2),
@@ -194,7 +193,7 @@ INSERT INTO user_role (user_id, role_id) VALUES
   (49, 2),
   (50, 2),
   (51, 2),
-  (52, 2),
+  (52, 3),
   (53, 3),
   (54, 3),
   (55, 3),
@@ -207,82 +206,81 @@ INSERT INTO user_role (user_id, role_id) VALUES
   (62, 3),
   (63, 3),
   (64, 3),
-  (65, 3),
-  (66, 3);
+  (65, 3);
 
 INSERT INTO veterinarian (user_id, clinic_id, shift, license_no) VALUES
-  (3, 1, 'MORNING', 'TVHB-30017'),
-  (4, 1, 'MORNING', 'TVHB-30034'),
-  (5, 1, 'MORNING', 'TVHB-30051'),
-  (6, 1, 'EVENING', 'TVHB-30068'),
-  (7, 1, 'EVENING', 'TVHB-30085'),
-  (8, 2, 'MORNING', 'TVHB-30102'),
-  (9, 2, 'MORNING', 'TVHB-30119'),
-  (10, 2, 'EVENING', 'TVHB-30136'),
-  (11, 2, 'EVENING', 'TVHB-30153'),
-  (12, 3, 'MORNING', 'TVHB-30170'),
-  (13, 3, 'MORNING', 'TVHB-30187'),
-  (14, 3, 'MORNING', 'TVHB-30204'),
-  (15, 3, 'EVENING', 'TVHB-30221'),
-  (16, 3, 'EVENING', 'TVHB-30238'),
-  (17, 3, 'EVENING', 'TVHB-30255'),
-  (18, 4, 'MORNING', 'TVHB-30272'),
-  (19, 4, 'MORNING', 'TVHB-30289'),
-  (20, 4, 'MORNING', 'TVHB-30306'),
-  (21, 4, 'EVENING', 'TVHB-30323'),
-  (22, 4, 'EVENING', 'TVHB-30340'),
-  (23, 5, 'MORNING', 'TVHB-30357'),
-  (24, 5, 'MORNING', 'TVHB-30374'),
-  (25, 5, 'EVENING', 'TVHB-30391'),
-  (26, 6, 'MORNING', 'TVHB-30408'),
-  (27, 6, 'MORNING', 'TVHB-30425'),
-  (28, 6, 'MORNING', 'TVHB-30442'),
-  (29, 6, 'MORNING', 'TVHB-30459'),
-  (30, 6, 'EVENING', 'TVHB-30476'),
-  (31, 6, 'EVENING', 'TVHB-30493'),
-  (32, 6, 'EVENING', 'TVHB-30510'),
-  (33, 7, 'MORNING', 'TVHB-30527'),
-  (34, 7, 'MORNING', 'TVHB-30544'),
-  (35, 7, 'MORNING', 'TVHB-30561'),
-  (36, 7, 'EVENING', 'TVHB-30578'),
-  (37, 7, 'EVENING', 'TVHB-30595'),
-  (38, 8, 'MORNING', 'TVHB-30612'),
-  (39, 8, 'MORNING', 'TVHB-30629'),
-  (40, 8, 'MORNING', 'TVHB-30646'),
-  (41, 8, 'EVENING', 'TVHB-30663'),
-  (42, 8, 'EVENING', 'TVHB-30680'),
-  (43, 8, 'EVENING', 'TVHB-30697'),
-  (44, 9, 'MORNING', 'TVHB-30714'),
-  (45, 9, 'MORNING', 'TVHB-30731'),
-  (46, 9, 'EVENING', 'TVHB-30748'),
-  (47, 9, 'EVENING', 'TVHB-30765'),
-  (48, 10, 'MORNING', 'TVHB-30782'),
-  (49, 10, 'MORNING', 'TVHB-30799'),
-  (50, 10, 'MORNING', 'TVHB-30816'),
-  (51, 10, 'EVENING', 'TVHB-30833'),
-  (52, 10, 'EVENING', 'TVHB-30850');
+  (2, 1, 'MORNING', 'TVHB-30017'),
+  (3, 1, 'MORNING', 'TVHB-30034'),
+  (4, 1, 'MORNING', 'TVHB-30051'),
+  (5, 1, 'EVENING', 'TVHB-30068'),
+  (6, 1, 'EVENING', 'TVHB-30085'),
+  (7, 2, 'MORNING', 'TVHB-30102'),
+  (8, 2, 'MORNING', 'TVHB-30119'),
+  (9, 2, 'EVENING', 'TVHB-30136'),
+  (10, 2, 'EVENING', 'TVHB-30153'),
+  (11, 3, 'MORNING', 'TVHB-30170'),
+  (12, 3, 'MORNING', 'TVHB-30187'),
+  (13, 3, 'MORNING', 'TVHB-30204'),
+  (14, 3, 'EVENING', 'TVHB-30221'),
+  (15, 3, 'EVENING', 'TVHB-30238'),
+  (16, 3, 'EVENING', 'TVHB-30255'),
+  (17, 4, 'MORNING', 'TVHB-30272'),
+  (18, 4, 'MORNING', 'TVHB-30289'),
+  (19, 4, 'MORNING', 'TVHB-30306'),
+  (20, 4, 'EVENING', 'TVHB-30323'),
+  (21, 4, 'EVENING', 'TVHB-30340'),
+  (22, 5, 'MORNING', 'TVHB-30357'),
+  (23, 5, 'MORNING', 'TVHB-30374'),
+  (24, 5, 'EVENING', 'TVHB-30391'),
+  (25, 6, 'MORNING', 'TVHB-30408'),
+  (26, 6, 'MORNING', 'TVHB-30425'),
+  (27, 6, 'MORNING', 'TVHB-30442'),
+  (28, 6, 'MORNING', 'TVHB-30459'),
+  (29, 6, 'EVENING', 'TVHB-30476'),
+  (30, 6, 'EVENING', 'TVHB-30493'),
+  (31, 6, 'EVENING', 'TVHB-30510'),
+  (32, 7, 'MORNING', 'TVHB-30527'),
+  (33, 7, 'MORNING', 'TVHB-30544'),
+  (34, 7, 'MORNING', 'TVHB-30561'),
+  (35, 7, 'EVENING', 'TVHB-30578'),
+  (36, 7, 'EVENING', 'TVHB-30595'),
+  (37, 8, 'MORNING', 'TVHB-30612'),
+  (38, 8, 'MORNING', 'TVHB-30629'),
+  (39, 8, 'MORNING', 'TVHB-30646'),
+  (40, 8, 'EVENING', 'TVHB-30663'),
+  (41, 8, 'EVENING', 'TVHB-30680'),
+  (42, 8, 'EVENING', 'TVHB-30697'),
+  (43, 9, 'MORNING', 'TVHB-30714'),
+  (44, 9, 'MORNING', 'TVHB-30731'),
+  (45, 9, 'EVENING', 'TVHB-30748'),
+  (46, 9, 'EVENING', 'TVHB-30765'),
+  (47, 10, 'MORNING', 'TVHB-30782'),
+  (48, 10, 'MORNING', 'TVHB-30799'),
+  (49, 10, 'MORNING', 'TVHB-30816'),
+  (50, 10, 'EVENING', 'TVHB-30833'),
+  (51, 10, 'EVENING', 'TVHB-30850');
 
 INSERT INTO shelter (shelter_name, district_id, address, phone, capacity, latitude, longitude, partner_clinic_id) VALUES
-  ('Kadıköy Municipality Animal Shelter', 19, 'Hayvan Bakımevi Cd. No:14, Kadıköy / Istanbul', '02166179249', 200, 40.988375, 29.023528, 1),
-  ('Üsküdar Municipality Animal Shelter', 30, 'Hayvan Bakımevi Cd. No:36, Üsküdar / Istanbul', '02169083375', 60, 41.032536, 29.032405, 4),
-  ('Beşiktaş Municipality Animal Shelter', 9, 'Hayvan Bakımevi Cd. No:13, Beşiktaş / Istanbul', '02122943688', 250, 41.058148, 28.995442, 3),
-  ('Şişli Municipality Animal Shelter', 27, 'Hayvan Bakımevi Cd. No:40, Şişli / Istanbul', '02123651916', 60, 41.043153, 28.995592, 2),
-  ('Fatih Municipality Animal Shelter', 17, 'Hayvan Bakımevi Cd. No:13, Fatih / Istanbul', '02128178919', 60, 41.005885, 28.945644, 5),
-  ('Bakırköy Municipality Animal Shelter', 6, 'Hayvan Bakımevi Cd. No:58, Bakırköy / Istanbul', '02125508565', 100, 40.981876, 28.858795, 6),
-  ('Ataşehir Municipality Animal Shelter', 2, 'Hayvan Bakımevi Cd. No:31, Ataşehir / Istanbul', '02169741223', 120, 40.993565, 29.101932, 7),
-  ('Maltepe Municipality Animal Shelter', 23, 'Hayvan Bakımevi Cd. No:32, Maltepe / Istanbul', '02163314374', 60, 40.950469, 29.143619, 7),
-  ('Kartal Municipality Animal Shelter', 21, 'Hayvan Bakımevi Cd. No:23, Kartal / Istanbul', '02168650692', 120, 40.900733, 29.192386, 10),
-  ('Pendik Municipality Animal Shelter', 24, 'Hayvan Bakımevi Cd. No:60, Pendik / Istanbul', '02166473593', 250, 40.881342, 29.238722, 10),
-  ('Tuzla Municipality Animal Shelter', 28, 'Hayvan Bakımevi Cd. No:30, Tuzla / Istanbul', '02168861121', 100, 40.806194, 29.307281, 10),
-  ('Ümraniye Municipality Animal Shelter', 29, 'Hayvan Bakımevi Cd. No:53, Ümraniye / Istanbul', '02169897146', 60, 41.017844, 29.135858, 7),
-  ('Beykoz Municipality Animal Shelter', 10, 'Hayvan Bakımevi Cd. No:6, Beykoz / Istanbul', '02161702516', 60, 41.146543, 29.08487, 9),
-  ('Sarıyer Municipality Animal Shelter', 26, 'Hayvan Bakımevi Cd. No:7, Sarıyer / Istanbul', '02127479933', 250, 41.168106, 29.048098, 9),
-  ('Eyüpsultan Municipality Animal Shelter', 16, 'Hayvan Bakımevi Cd. No:30, Eyüpsultan / Istanbul', '02129030089', 150, 41.052819, 28.935999, 5),
-  ('Başakşehir Municipality Animal Shelter', 7, 'Hayvan Bakımevi Cd. No:9, Başakşehir / Istanbul', '02121445994', 60, 41.073879, 28.817927, 6),
-  ('Küçükçekmece Municipality Animal Shelter', 22, 'Hayvan Bakımevi Cd. No:56, Küçükçekmece / Istanbul', '02125277321', 60, 40.995674, 28.766727, 6),
-  ('Beylikdüzü Municipality Animal Shelter', 11, 'Hayvan Bakımevi Cd. No:5, Beylikdüzü / Istanbul', '02129737793', 60, 41.020875, 28.652957, 8),
-  ('Esenyurt Municipality Animal Shelter', 15, 'Hayvan Bakımevi Cd. No:22, Esenyurt / Istanbul', '02123570821', 100, 41.043298, 28.69426, 8),
-  ('Zeytinburnu Municipality Animal Shelter', 31, 'Hayvan Bakımevi Cd. No:46, Zeytinburnu / Istanbul', '02128862948', 200, 41.012328, 28.89368, 6);
+  ('Kadıköy Municipality Animal Shelter', 19, 'Hayvan Bakımevi Cd. No:40, Kadıköy / Istanbul', '02164171791', 80, 41.009888, 29.02468, 1),
+  ('Üsküdar Municipality Animal Shelter', 30, 'Hayvan Bakımevi Cd. No:10, Üsküdar / Istanbul', '02163415550', 80, 41.027271, 29.023193, 4),
+  ('Beşiktaş Municipality Animal Shelter', 9, 'Hayvan Bakımevi Cd. No:37, Beşiktaş / Istanbul', '02122024716', 250, 41.054893, 29.018966, 2),
+  ('Şişli Municipality Animal Shelter', 27, 'Hayvan Bakımevi Cd. No:51, Şişli / Istanbul', '02126022133', 250, 41.066666, 28.968381, 3),
+  ('Fatih Municipality Animal Shelter', 17, 'Hayvan Bakımevi Cd. No:35, Fatih / Istanbul', '02126983608', 80, 41.006159, 28.930702, 5),
+  ('Bakırköy Municipality Animal Shelter', 6, 'Hayvan Bakımevi Cd. No:4, Bakırköy / Istanbul', '02124114424', 200, 40.978292, 28.860463, 6),
+  ('Ataşehir Municipality Animal Shelter', 2, 'Hayvan Bakımevi Cd. No:32, Ataşehir / Istanbul', '02161486701', 100, 40.970156, 29.111649, 7),
+  ('Maltepe Municipality Animal Shelter', 23, 'Hayvan Bakımevi Cd. No:35, Maltepe / Istanbul', '02162543320', 120, 40.923837, 29.124566, 7),
+  ('Kartal Municipality Animal Shelter', 21, 'Hayvan Bakımevi Cd. No:58, Kartal / Istanbul', '02166444262', 80, 40.896216, 29.186272, 10),
+  ('Pendik Municipality Animal Shelter', 24, 'Hayvan Bakımevi Cd. No:1, Pendik / Istanbul', '02161975917', 60, 40.885593, 29.216611, 10),
+  ('Tuzla Municipality Animal Shelter', 28, 'Hayvan Bakımevi Cd. No:45, Tuzla / Istanbul', '02165315564', 100, 40.810121, 29.313754, 10),
+  ('Ümraniye Municipality Animal Shelter', 29, 'Hayvan Bakımevi Cd. No:13, Ümraniye / Istanbul', '02162510852', 120, 41.02627, 29.110552, 7),
+  ('Beykoz Municipality Animal Shelter', 10, 'Hayvan Bakımevi Cd. No:54, Beykoz / Istanbul', '02163863352', 80, 41.140536, 29.080977, 9),
+  ('Sarıyer Municipality Animal Shelter', 26, 'Hayvan Bakımevi Cd. No:14, Sarıyer / Istanbul', '02127246991', 80, 41.155986, 29.068717, 9),
+  ('Eyüpsultan Municipality Animal Shelter', 16, 'Hayvan Bakımevi Cd. No:47, Eyüpsultan / Istanbul', '02128099740', 120, 41.048434, 28.947816, 5),
+  ('Başakşehir Municipality Animal Shelter', 7, 'Hayvan Bakımevi Cd. No:20, Başakşehir / Istanbul', '02128389971', 150, 41.107247, 28.810202, 6),
+  ('Küçükçekmece Municipality Animal Shelter', 22, 'Hayvan Bakımevi Cd. No:58, Küçükçekmece / Istanbul', '02124540890', 200, 41.004264, 28.763671, 6),
+  ('Beylikdüzü Municipality Animal Shelter', 11, 'Hayvan Bakımevi Cd. No:23, Beylikdüzü / Istanbul', '02123651916', 60, 40.989818, 28.653242, 8),
+  ('Esenyurt Municipality Animal Shelter', 15, 'Hayvan Bakımevi Cd. No:13, Esenyurt / Istanbul', '02128178919', 60, 41.020885, 28.685644, 8),
+  ('Zeytinburnu Municipality Animal Shelter', 31, 'Hayvan Bakımevi Cd. No:58, Zeytinburnu / Istanbul', '02125508565', 100, 40.995876, 28.889795, 6);
 
 INSERT INTO shelter_species (shelter_id, species_id) VALUES
   (1, 1),
@@ -353,87 +351,82 @@ INSERT INTO vaccine_rule (species_id, vaccine_id, first_dose_week, series_interv
   (1, 3, 12, NULL, 12, NULL, 52);
 
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, is_neutered, status, shelter_id, description) VALUES
-  ('Sütlaç', 1, 5, 'FEMALE', 'Black', 115, CURDATE() - INTERVAL 35 DAY, TRUE, 'IN_SHELTER', 1, 'Found near a park, healthy now.'),
-  (NULL, 1, 4, 'MALE', 'Ginger', 465, CURDATE() - INTERVAL 12 DAY, TRUE, 'IN_SHELTER', 1, 'A bit shy at first, loves treats.'),
-  (NULL, 1, 3, 'FEMALE', 'Tabby', 96, CURDATE() - INTERVAL 13 DAY, FALSE, 'IN_SHELTER', 1, 'Energetic, needs a home with space.'),
-  ('Mocha', 1, 6, 'MALE', 'Cream', 334, CURDATE() - INTERVAL 32 DAY, FALSE, 'IN_SHELTER', 1, 'Friendly and calm.'),
-  ('Kuki', 2, 8, 'MALE', 'Brown', 5, CURDATE() - INTERVAL 18 DAY, FALSE, 'IN_SHELTER', 2, 'Gentle, likes to be held.'),
-  ('Leo', 1, 1, 'UNKNOWN', 'Ginger', 28, CURDATE() - INTERVAL 31 DAY, FALSE, 'IN_SHELTER', 2, 'Friendly and calm.'),
-  ('Atlas', 2, 10, 'MALE', 'Brown', 10, CURDATE() - INTERVAL 26 DAY, FALSE, 'IN_SHELTER', 2, 'Found near a park, healthy now.'),
-  ('Biber', 1, 2, 'FEMALE', 'Ginger', 51, CURDATE() - INTERVAL 32 DAY, FALSE, 'IN_SHELTER', 3, 'Found near a park, healthy now.'),
-  ('Karabaş', 2, 8, 'MALE', 'Grey', 388, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 3, 'A bit shy at first, loves treats.'),
-  ('Mırmır', 1, NULL, 'FEMALE', 'Grey', 295, CURDATE() - INTERVAL 11 DAY, TRUE, 'IN_SHELTER', 3, 'Friendly and calm.'),
-  ('Şeker', 1, 1, 'MALE', 'Grey', 10, CURDATE() - INTERVAL 32 DAY, FALSE, 'IN_SHELTER', 3, 'Very playful, good with other animals.'),
-  ('Pamuk', 1, 1, 'FEMALE', 'Black & white', 355, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 3, 'Gentle, likes to be held.'),
-  ('Simit', 1, 1, 'MALE', 'White', 46, CURDATE() - INTERVAL 29 DAY, TRUE, 'IN_SHELTER', 4, 'A bit shy at first, loves treats.'),
-  (NULL, 2, 11, 'UNKNOWN', 'Spotted', 134, CURDATE() - INTERVAL 7 DAY, TRUE, 'IN_SHELTER', 4, 'Friendly and calm.'),
-  ('Maya', 2, 7, 'MALE', 'Cream', 8, CURDATE() - INTERVAL 24 DAY, FALSE, 'IN_SHELTER', 4, 'Energetic, needs a home with space.'),
-  ('Duman', 1, 1, 'FEMALE', 'Cream', 19, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 4, 'Found near a park, healthy now.'),
-  ('Max', 2, 12, 'FEMALE', 'Golden', 40, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 4, 'Very playful, good with other animals.'),
-  (NULL, 1, 2, 'FEMALE', 'Calico', 4, CURDATE() - INTERVAL 25 DAY, FALSE, 'IN_SHELTER', 5, 'A bit shy at first, loves treats.'),
-  ('Limon', 1, 2, 'MALE', 'Grey', 5, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 5, 'Found near a park, healthy now.'),
-  (NULL, 1, 5, 'UNKNOWN', 'Calico', 208, CURDATE() - INTERVAL 22 DAY, FALSE, 'IN_SHELTER', 5, 'Found near a park, healthy now.'),
-  ('Zeytin', 1, 1, 'UNKNOWN', 'Calico', 8, CURDATE() - INTERVAL 10 DAY, FALSE, 'IN_SHELTER', 5, 'Found near a park, healthy now.'),
-  ('Mia', 1, 6, 'MALE', 'Calico', 36, CURDATE() - INTERVAL 2 DAY, FALSE, 'IN_SHELTER', 6, 'Gentle, likes to be held.'),
-  (NULL, 2, 10, 'FEMALE', 'Black & tan', 481, CURDATE() - INTERVAL 39 DAY, TRUE, 'IN_SHELTER', 6, 'Very playful, good with other animals.'),
-  ('Boby', 2, 10, 'UNKNOWN', 'Grey', 12, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 6, 'Gentle, likes to be held.'),
-  ('Odin', 2, 7, 'FEMALE', 'Spotted', 13, CURDATE() - INTERVAL 39 DAY, FALSE, 'IN_SHELTER', 6, 'Found near a park, healthy now.'),
-  ('Lucky', 2, 10, 'UNKNOWN', 'Brown', 133, CURDATE() - INTERVAL 34 DAY, TRUE, 'IN_SHELTER', 6, 'Friendly and calm.'),
-  ('Kahve', 1, 5, 'FEMALE', 'Black', 41, CURDATE() - INTERVAL 26 DAY, TRUE, 'IN_SHELTER', 7, 'Very playful, good with other animals.'),
-  ('Pati', 1, NULL, 'FEMALE', 'Cream', 5, CURDATE() - INTERVAL 40 DAY, FALSE, 'IN_SHELTER', 7, 'Found near a park, healthy now.'),
-  (NULL, 1, NULL, 'FEMALE', 'Cream', 476, CURDATE() - INTERVAL 21 DAY, TRUE, 'IN_SHELTER', 7, 'Friendly and calm.'),
-  (NULL, 2, 10, 'MALE', 'Golden', 11, CURDATE() - INTERVAL 8 DAY, FALSE, 'IN_SHELTER', 8, 'Friendly and calm.'),
-  ('Gece', 1, 1, 'MALE', 'Cream', 269, CURDATE() - INTERVAL 30 DAY, TRUE, 'IN_SHELTER', 8, 'Friendly and calm.'),
-  ('Tarçın', 1, 6, 'MALE', 'Ginger', 39, CURDATE() - INTERVAL 27 DAY, FALSE, 'IN_SHELTER', 8, 'Friendly and calm.'),
-  ('Fıstık', 1, 5, 'UNKNOWN', 'Calico', 6, CURDATE() - INTERVAL 27 DAY, FALSE, 'IN_SHELTER', 9, 'Friendly and calm.'),
-  ('Lokum', 1, 4, 'MALE', 'Calico', 16, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 9, 'Found near a park, healthy now.'),
-  ('Zeus', 2, 11, 'MALE', 'Black & tan', 6, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 9, 'Found near a park, healthy now.'),
-  ('Rocky', 2, 8, 'UNKNOWN', 'Grey', 28, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 9, 'Very playful, good with other animals.'),
-  ('Kömür', 2, 7, 'FEMALE', 'Grey', 7, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 10, 'Energetic, needs a home with space.'),
-  ('Boncuk', 1, 6, 'MALE', 'Black & white', 260, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 10, 'Found near a park, healthy now.'),
-  ('Fındık', 2, 10, 'FEMALE', 'Grey', 344, CURDATE() - INTERVAL 24 DAY, FALSE, 'IN_SHELTER', 10, 'Very playful, good with other animals.'),
-  ('Bal', 2, 10, 'MALE', 'Black & tan', 10, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 10, 'Gentle, likes to be held.'),
-  ('Marley', 2, 9, 'MALE', 'Black & tan', 274, CURDATE() - INTERVAL 0 DAY, TRUE, 'IN_SHELTER', 11, 'Friendly and calm.'),
-  (NULL, 2, 12, 'FEMALE', 'Spotted', 4, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 11, 'Energetic, needs a home with space.'),
-  ('Toprak', 2, NULL, 'MALE', 'Black', 18, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 11, 'Friendly and calm.'),
-  ('Luna', 2, NULL, 'UNKNOWN', 'Black & tan', 11, CURDATE() - INTERVAL 26 DAY, FALSE, 'IN_SHELTER', 12, 'Very playful, good with other animals.'),
-  ('Karamel', 2, 10, 'FEMALE', 'Cream', 4, CURDATE() - INTERVAL 38 DAY, FALSE, 'IN_SHELTER', 12, 'Found near a park, healthy now.'),
-  ('Minnoş', 1, NULL, 'MALE', 'White', 10, CURDATE() - INTERVAL 0 DAY, FALSE, 'IN_SHELTER', 12, 'Very playful, good with other animals.'),
-  (NULL, 1, 2, 'FEMALE', 'Cream', 273, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 12, 'A bit shy at first, loves treats.'),
-  ('Paşa', 2, 7, 'MALE', 'Golden', 8, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 12, 'Very playful, good with other animals.'),
-  ('Çakıl', 2, 9, 'UNKNOWN', 'Black & tan', 58, CURDATE() - INTERVAL 35 DAY, TRUE, 'IN_SHELTER', 13, 'Very playful, good with other animals.'),
-  ('Badem', 2, NULL, 'UNKNOWN', 'White', 5, CURDATE() - INTERVAL 29 DAY, FALSE, 'IN_SHELTER', 13, 'Gentle, likes to be held.'),
-  (NULL, 2, 8, 'FEMALE', 'Cream', 498, CURDATE() - INTERVAL 12 DAY, TRUE, 'IN_SHELTER', 13, 'Energetic, needs a home with space.'),
-  (NULL, 2, 12, 'MALE', 'Grey', 49, CURDATE() - INTERVAL 12 DAY, TRUE, 'IN_SHELTER', 13, 'A bit shy at first, loves treats.'),
-  (NULL, 2, 11, 'FEMALE', 'Brown', 6, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 14, 'Very playful, good with other animals.'),
-  (NULL, 1, 6, 'MALE', 'Calico', 295, CURDATE() - INTERVAL 9 DAY, TRUE, 'IN_SHELTER', 14, 'Found near a park, healthy now.'),
-  (NULL, 1, 3, 'MALE', 'Black', 5, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 14, 'Very playful, good with other animals.'),
-  (NULL, 2, 7, 'FEMALE', 'Golden', 15, CURDATE() - INTERVAL 5 DAY, FALSE, 'IN_SHELTER', 14, 'A bit shy at first, loves treats.'),
-  (NULL, 1, 1, 'FEMALE', 'Ginger', 58, CURDATE() - INTERVAL 1 DAY, FALSE, 'IN_SHELTER', 15, 'Very playful, good with other animals.'),
-  (NULL, 1, NULL, 'MALE', 'Grey', 45, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 15, 'A bit shy at first, loves treats.'),
-  (NULL, 1, 6, 'MALE', 'Cream', 48, CURDATE() - INTERVAL 27 DAY, TRUE, 'IN_SHELTER', 15, 'Energetic, needs a home with space.'),
-  (NULL, 2, 11, 'FEMALE', 'Grey', 156, CURDATE() - INTERVAL 25 DAY, TRUE, 'IN_SHELTER', 15, 'Friendly and calm.'),
-  (NULL, 1, 6, 'UNKNOWN', 'Tabby', 15, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 15, 'A bit shy at first, loves treats.'),
-  (NULL, 2, 7, 'FEMALE', 'Black', 34, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 16, 'Found near a park, healthy now.'),
-  (NULL, 1, 2, 'MALE', 'Tabby', 195, CURDATE() - INTERVAL 7 DAY, TRUE, 'IN_SHELTER', 16, 'Gentle, likes to be held.'),
-  (NULL, 2, NULL, 'FEMALE', 'White', 37, CURDATE() - INTERVAL 38 DAY, FALSE, 'IN_SHELTER', 16, 'Very playful, good with other animals.'),
-  (NULL, 1, 3, 'MALE', 'Black & white', 39, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 16, 'Found near a park, healthy now.'),
-  (NULL, 1, NULL, 'FEMALE', 'Ginger', 10, CURDATE() - INTERVAL 38 DAY, FALSE, 'IN_SHELTER', 16, 'Gentle, likes to be held.'),
-  (NULL, 2, 12, 'FEMALE', 'Grey', 32, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 17, 'Friendly and calm.'),
-  (NULL, 1, 1, 'MALE', 'White', 148, CURDATE() - INTERVAL 14 DAY, FALSE, 'IN_SHELTER', 17, 'A bit shy at first, loves treats.'),
-  (NULL, 2, NULL, 'MALE', 'Brown', 291, CURDATE() - INTERVAL 17 DAY, FALSE, 'IN_SHELTER', 17, 'Energetic, needs a home with space.'),
-  (NULL, 2, 7, 'FEMALE', 'Spotted', 375, CURDATE() - INTERVAL 21 DAY, FALSE, 'IN_SHELTER', 17, 'Friendly and calm.'),
-  (NULL, 2, 10, 'FEMALE', 'Golden', 314, CURDATE() - INTERVAL 5 DAY, TRUE, 'IN_SHELTER', 17, 'Energetic, needs a home with space.'),
-  (NULL, 1, NULL, 'FEMALE', 'Ginger', 320, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 18, 'Very playful, good with other animals.'),
-  (NULL, 1, 1, 'FEMALE', 'White', 29, CURDATE() - INTERVAL 36 DAY, FALSE, 'IN_SHELTER', 18, 'Very playful, good with other animals.'),
-  (NULL, 2, NULL, 'MALE', 'Cream', 45, CURDATE() - INTERVAL 17 DAY, FALSE, 'IN_SHELTER', 18, 'Found near a park, healthy now.'),
-  (NULL, 1, 5, 'FEMALE', 'Black & white', 5, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 18, 'Energetic, needs a home with space.'),
-  (NULL, 1, 6, 'MALE', 'Grey', 4, CURDATE() - INTERVAL 40 DAY, FALSE, 'IN_SHELTER', 19, 'A bit shy at first, loves treats.'),
-  (NULL, 1, NULL, 'MALE', 'Black', 4, CURDATE() - INTERVAL 28 DAY, FALSE, 'IN_SHELTER', 19, 'Friendly and calm.'),
-  (NULL, 1, 2, 'MALE', 'Ginger', 357, CURDATE() - INTERVAL 14 DAY, TRUE, 'IN_SHELTER', 19, 'Found near a park, healthy now.'),
-  (NULL, 1, 4, 'UNKNOWN', 'Black', 11, CURDATE() - INTERVAL 26 DAY, FALSE, 'IN_SHELTER', 20, 'Energetic, needs a home with space.'),
-  (NULL, 2, 7, 'FEMALE', 'Golden', 512, CURDATE() - INTERVAL 15 DAY, TRUE, 'IN_SHELTER', 20, 'Friendly and calm.'),
-  (NULL, 1, 5, 'FEMALE', 'Tabby', 7, CURDATE() - INTERVAL 3 DAY, FALSE, 'IN_SHELTER', 20, 'Very playful, good with other animals.');
+  ('Kahve', 1, 4, 'UNKNOWN', 'Tabby', 48, CURDATE() - INTERVAL 9 DAY, FALSE, 'IN_SHELTER', 1, 'A bit shy at first, loves treats.'),
+  (NULL, 1, 2, 'UNKNOWN', 'Tabby', 5, CURDATE() - INTERVAL 2 DAY, FALSE, 'IN_SHELTER', 1, 'Energetic, needs a home with space.'),
+  ('Mocha', 1, 1, 'FEMALE', 'Calico', 319, CURDATE() - INTERVAL 30 DAY, TRUE, 'IN_SHELTER', 1, 'Energetic, needs a home with space.'),
+  (NULL, 1, 2, 'UNKNOWN', 'Grey', 257, CURDATE() - INTERVAL 26 DAY, TRUE, 'IN_SHELTER', 1, 'A bit shy at first, loves treats.'),
+  ('Pamuk', 1, 5, 'MALE', 'Cream', 19, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 1, 'Friendly and calm.'),
+  ('Lokum', 1, 5, 'MALE', 'Calico', 14, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 2, 'Gentle, likes to be held.'),
+  ('Zeus', 2, NULL, 'UNKNOWN', 'Cream', 39, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 2, 'Friendly and calm.'),
+  ('Kömür', 2, 7, 'UNKNOWN', 'Golden', 353, CURDATE() - INTERVAL 7 DAY, FALSE, 'IN_SHELTER', 2, 'Found near a park, healthy now.'),
+  ('Marley', 2, 8, 'MALE', 'Cream', 178, CURDATE() - INTERVAL 33 DAY, TRUE, 'IN_SHELTER', 2, 'Very playful, good with other animals.'),
+  ('Lucky', 2, 8, 'UNKNOWN', 'Spotted', 4, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 3, 'Energetic, needs a home with space.'),
+  ('Pati', 1, NULL, 'UNKNOWN', 'Tabby', 41, CURDATE() - INTERVAL 12 DAY, FALSE, 'IN_SHELTER', 3, 'Found near a park, healthy now.'),
+  ('Biber', 1, 6, 'MALE', 'Tabby', 22, CURDATE() - INTERVAL 18 DAY, FALSE, 'IN_SHELTER', 3, 'Gentle, likes to be held.'),
+  ('Tarçın', 1, 1, 'UNKNOWN', 'Ginger', 28, CURDATE() - INTERVAL 31 DAY, FALSE, 'IN_SHELTER', 4, 'Friendly and calm.'),
+  ('Odin', 2, 10, 'MALE', 'Brown', 10, CURDATE() - INTERVAL 26 DAY, FALSE, 'IN_SHELTER', 4, 'Found near a park, healthy now.'),
+  ('Minnoş', 1, 2, 'FEMALE', 'Ginger', 51, CURDATE() - INTERVAL 32 DAY, FALSE, 'IN_SHELTER', 4, 'Found near a park, healthy now.'),
+  ('Maya', 2, 8, 'MALE', 'Grey', 388, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 4, 'A bit shy at first, loves treats.'),
+  ('Sütlaç', 1, NULL, 'FEMALE', 'Grey', 295, CURDATE() - INTERVAL 11 DAY, TRUE, 'IN_SHELTER', 4, 'Friendly and calm.'),
+  ('Zeytin', 1, 6, 'MALE', 'Grey', 98, CURDATE() - INTERVAL 32 DAY, FALSE, 'IN_SHELTER', 5, 'Friendly and calm.'),
+  (NULL, 1, 1, 'MALE', 'Calico', 174, CURDATE() - INTERVAL 38 DAY, FALSE, 'IN_SHELTER', 5, 'Energetic, needs a home with space.'),
+  ('Boncuk', 1, 1, 'MALE', 'White', 46, CURDATE() - INTERVAL 29 DAY, TRUE, 'IN_SHELTER', 5, 'A bit shy at first, loves treats.'),
+  (NULL, 2, 11, 'UNKNOWN', 'Spotted', 134, CURDATE() - INTERVAL 7 DAY, TRUE, 'IN_SHELTER', 6, 'Friendly and calm.'),
+  ('Toprak', 2, 7, 'MALE', 'Cream', 8, CURDATE() - INTERVAL 24 DAY, FALSE, 'IN_SHELTER', 6, 'Energetic, needs a home with space.'),
+  ('Mırmır', 1, 1, 'FEMALE', 'Cream', 19, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 6, 'Found near a park, healthy now.'),
+  ('Çakıl', 2, 12, 'FEMALE', 'Golden', 40, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 6, 'Very playful, good with other animals.'),
+  ('Atlas', 2, 11, 'UNKNOWN', 'White', 105, CURDATE() - INTERVAL 18 DAY, FALSE, 'IN_SHELTER', 6, 'Found near a park, healthy now.'),
+  ('Kuki', 2, 8, 'MALE', 'Grey', 5, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 7, 'Found near a park, healthy now.'),
+  (NULL, 1, 5, 'UNKNOWN', 'Calico', 208, CURDATE() - INTERVAL 22 DAY, FALSE, 'IN_SHELTER', 7, 'Found near a park, healthy now.'),
+  ('Duman', 1, 1, 'UNKNOWN', 'Calico', 8, CURDATE() - INTERVAL 10 DAY, FALSE, 'IN_SHELTER', 7, 'Found near a park, healthy now.'),
+  ('Fıstık', 1, 6, 'MALE', 'Calico', 36, CURDATE() - INTERVAL 2 DAY, FALSE, 'IN_SHELTER', 8, 'Gentle, likes to be held.'),
+  (NULL, 2, 10, 'FEMALE', 'Black & tan', 481, CURDATE() - INTERVAL 39 DAY, TRUE, 'IN_SHELTER', 8, 'Very playful, good with other animals.'),
+  ('Paşa', 2, 10, 'UNKNOWN', 'Grey', 12, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 8, 'Gentle, likes to be held.'),
+  ('Fındık', 2, 7, 'FEMALE', 'Spotted', 13, CURDATE() - INTERVAL 39 DAY, FALSE, 'IN_SHELTER', 8, 'Found near a park, healthy now.'),
+  ('Badem', 2, 10, 'UNKNOWN', 'Brown', 133, CURDATE() - INTERVAL 34 DAY, TRUE, 'IN_SHELTER', 8, 'Friendly and calm.'),
+  ('Leo', 1, 5, 'FEMALE', 'Black', 41, CURDATE() - INTERVAL 26 DAY, TRUE, 'IN_SHELTER', 9, 'Very playful, good with other animals.'),
+  ('Mia', 1, NULL, 'FEMALE', 'Cream', 5, CURDATE() - INTERVAL 40 DAY, FALSE, 'IN_SHELTER', 9, 'Found near a park, healthy now.'),
+  (NULL, 1, NULL, 'FEMALE', 'Cream', 476, CURDATE() - INTERVAL 21 DAY, TRUE, 'IN_SHELTER', 9, 'Friendly and calm.'),
+  (NULL, 2, 10, 'MALE', 'Golden', 11, CURDATE() - INTERVAL 8 DAY, FALSE, 'IN_SHELTER', 10, 'Friendly and calm.'),
+  ('Simit', 1, 1, 'MALE', 'Cream', 269, CURDATE() - INTERVAL 30 DAY, TRUE, 'IN_SHELTER', 10, 'Friendly and calm.'),
+  ('Şeker', 1, 6, 'MALE', 'Ginger', 39, CURDATE() - INTERVAL 27 DAY, FALSE, 'IN_SHELTER', 10, 'Friendly and calm.'),
+  ('Karabaş', 2, 11, 'UNKNOWN', 'Black & tan', 6, CURDATE() - INTERVAL 27 DAY, FALSE, 'IN_SHELTER', 11, 'Friendly and calm.'),
+  ('Max', 2, 10, 'MALE', 'Black & tan', 16, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 11, 'Found near a park, healthy now.'),
+  ('Rocky', 2, 11, 'MALE', 'Black & tan', 6, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 11, 'Found near a park, healthy now.'),
+  ('Karamel', 2, 8, 'UNKNOWN', 'Grey', 28, CURDATE() - INTERVAL 33 DAY, FALSE, 'IN_SHELTER', 11, 'Very playful, good with other animals.'),
+  ('Bal', 2, 7, 'FEMALE', 'Grey', 7, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 12, 'Energetic, needs a home with space.'),
+  ('Limon', 1, 6, 'MALE', 'Black & white', 260, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 12, 'Found near a park, healthy now.'),
+  ('Luna', 2, 10, 'FEMALE', 'Grey', 344, CURDATE() - INTERVAL 24 DAY, FALSE, 'IN_SHELTER', 12, 'Very playful, good with other animals.'),
+  ('Boby', 2, 10, 'MALE', 'Black & tan', 10, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 12, 'Gentle, likes to be held.'),
+  (NULL, 2, 9, 'MALE', 'Black & tan', 274, CURDATE() - INTERVAL 16 DAY, TRUE, 'IN_SHELTER', 13, 'A bit shy at first, loves treats.'),
+  (NULL, 2, 7, 'FEMALE', 'Spotted', 6, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 13, 'Energetic, needs a home with space.'),
+  (NULL, 2, NULL, 'MALE', 'White', 18, CURDATE() - INTERVAL 7 DAY, FALSE, 'IN_SHELTER', 13, 'Energetic, needs a home with space.'),
+  ('Gece', 1, 5, 'MALE', 'Cream', 89, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 14, 'Very playful, good with other animals.'),
+  (NULL, 2, 12, 'MALE', 'White', 338, CURDATE() - INTERVAL 3 DAY, TRUE, 'IN_SHELTER', 14, 'A bit shy at first, loves treats.'),
+  (NULL, 2, 8, 'UNKNOWN', 'Golden', 327, CURDATE() - INTERVAL 3 DAY, TRUE, 'IN_SHELTER', 14, 'Gentle, likes to be held.'),
+  (NULL, 2, 8, 'MALE', 'Black & tan', 52, CURDATE() - INTERVAL 6 DAY, FALSE, 'IN_SHELTER', 15, 'Found near a park, healthy now.'),
+  (NULL, 1, 5, 'UNKNOWN', 'White', 41, CURDATE() - INTERVAL 13 DAY, TRUE, 'IN_SHELTER', 15, 'Energetic, needs a home with space.'),
+  (NULL, 2, 8, 'MALE', 'Golden', 5, CURDATE() - INTERVAL 4 DAY, FALSE, 'IN_SHELTER', 15, 'Very playful, good with other animals.'),
+  (NULL, 2, 7, 'FEMALE', 'Black', 492, CURDATE() - INTERVAL 17 DAY, TRUE, 'IN_SHELTER', 15, 'A bit shy at first, loves treats.'),
+  (NULL, 2, NULL, 'UNKNOWN', 'Black', 5, CURDATE() - INTERVAL 14 DAY, FALSE, 'IN_SHELTER', 16, 'Found near a park, healthy now.'),
+  (NULL, 2, 8, 'FEMALE', 'Cream', 498, CURDATE() - INTERVAL 12 DAY, TRUE, 'IN_SHELTER', 16, 'Energetic, needs a home with space.'),
+  (NULL, 1, 6, 'MALE', 'Grey', 49, CURDATE() - INTERVAL 12 DAY, TRUE, 'IN_SHELTER', 16, 'A bit shy at first, loves treats.'),
+  (NULL, 2, 11, 'FEMALE', 'Black & tan', 52, CURDATE() - INTERVAL 34 DAY, TRUE, 'IN_SHELTER', 16, 'Gentle, likes to be held.'),
+  (NULL, 1, 6, 'MALE', 'Calico', 295, CURDATE() - INTERVAL 9 DAY, TRUE, 'IN_SHELTER', 17, 'Found near a park, healthy now.'),
+  (NULL, 1, 3, 'MALE', 'Black', 5, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 17, 'Very playful, good with other animals.'),
+  (NULL, 2, 7, 'FEMALE', 'Golden', 15, CURDATE() - INTERVAL 5 DAY, FALSE, 'IN_SHELTER', 17, 'A bit shy at first, loves treats.'),
+  (NULL, 1, 1, 'FEMALE', 'Ginger', 58, CURDATE() - INTERVAL 1 DAY, FALSE, 'IN_SHELTER', 17, 'Very playful, good with other animals.'),
+  (NULL, 2, NULL, 'MALE', 'Grey', 45, CURDATE() - INTERVAL 34 DAY, FALSE, 'IN_SHELTER', 18, 'A bit shy at first, loves treats.'),
+  (NULL, 1, 6, 'MALE', 'Cream', 48, CURDATE() - INTERVAL 27 DAY, TRUE, 'IN_SHELTER', 18, 'Energetic, needs a home with space.'),
+  (NULL, 2, 11, 'FEMALE', 'Grey', 156, CURDATE() - INTERVAL 25 DAY, TRUE, 'IN_SHELTER', 18, 'Friendly and calm.'),
+  (NULL, 1, 6, 'UNKNOWN', 'Tabby', 15, CURDATE() - INTERVAL 30 DAY, FALSE, 'IN_SHELTER', 19, 'A bit shy at first, loves treats.'),
+  (NULL, 2, 7, 'FEMALE', 'Black', 34, CURDATE() - INTERVAL 15 DAY, FALSE, 'IN_SHELTER', 19, 'Found near a park, healthy now.'),
+  (NULL, 1, 2, 'MALE', 'Tabby', 195, CURDATE() - INTERVAL 7 DAY, TRUE, 'IN_SHELTER', 19, 'Gentle, likes to be held.'),
+  (NULL, 2, NULL, 'FEMALE', 'White', 37, CURDATE() - INTERVAL 38 DAY, FALSE, 'IN_SHELTER', 19, 'Very playful, good with other animals.'),
+  (NULL, 1, 3, 'MALE', 'Black & white', 39, CURDATE() - INTERVAL 35 DAY, FALSE, 'IN_SHELTER', 19, 'Found near a park, healthy now.'),
+  (NULL, 1, NULL, 'FEMALE', 'Cream', 35, CURDATE() - INTERVAL 16 DAY, FALSE, 'IN_SHELTER', 20, 'Very playful, good with other animals.'),
+  (NULL, 1, 6, 'FEMALE', 'Black', 466, CURDATE() - INTERVAL 12 DAY, FALSE, 'IN_SHELTER', 20, 'A bit shy at first, loves treats.'),
+  (NULL, 1, 6, 'FEMALE', 'Calico', 26, CURDATE() - INTERVAL 39 DAY, FALSE, 'IN_SHELTER', 20, 'Found near a park, healthy now.');
 
 -- demo: animals of the shelters served by clinic 1 are followed by vet01
 UPDATE animal SET responsible_vet_id = 1
@@ -517,11 +510,6 @@ CALL sp_generate_vaccination_schedule(73);
 CALL sp_generate_vaccination_schedule(74);
 CALL sp_generate_vaccination_schedule(75);
 CALL sp_generate_vaccination_schedule(76);
-CALL sp_generate_vaccination_schedule(77);
-CALL sp_generate_vaccination_schedule(78);
-CALL sp_generate_vaccination_schedule(79);
-CALL sp_generate_vaccination_schedule(80);
-CALL sp_generate_vaccination_schedule(81);
 
 -- some calendars: first dose already done, some doses overdue (for the demo)
 UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() - INTERVAL 2 DAY, done_by = vet_id
@@ -532,93 +520,93 @@ UPDATE vaccination_schedule SET planned_date = CURDATE() - INTERVAL (2 + MOD(ani
 DELETE FROM notification WHERE notif_type = 'VACCINE_ASSIGNED';
 
 -- ===================== injured animal reports =====================
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (53, 1, NULL, 'Tabby', 'Limping on the front left leg, cannot step on it.', 'Near the main street in Kadıköy', 19, 40.980112, 29.023123, 1, 'MORNING', 1, NOW() - INTERVAL 35 MINUTE);
-CALL sp_notify(3, 'NEW_CASE', 'New injured animal is on the way', 'Case #1: injured cat - Limping on the front left leg, cannot step on it.', 'NEW_CASE:1');
-CALL sp_notify(53, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Case #1: please take the animal to Moda Paws Veterinary Clinic. Your vet is Dr. Kerem Demir (morning shift).', 'REPORT_ASSIGNED:1');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (55, 2, NULL, 'Spotted', 'Deep cut on the back, bleeding a little.', 'Near the main street in Üsküdar', 30, 41.019187, 29.012801, 1, 'MORNING', 1, NOW() - INTERVAL 80 MINUTE);
-CALL sp_notify(3, 'NEW_CASE', 'New injured animal is on the way', 'Case #2: injured dog - Deep cut on the back, bleeding a little.', 'NEW_CASE:2');
-CALL sp_notify(55, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Case #2: please take the animal to Moda Paws Veterinary Clinic. Your vet is Dr. Kerem Demir (morning shift).', 'REPORT_ASSIGNED:2');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (59, 1, NULL, 'Cream', 'Eye infection, both eyes closed and wet.', 'Near the main street in Kadıköy', 19, 40.999282, 29.036516, 1, 'EVENING', 4, NOW() - INTERVAL 50 MINUTE);
-CALL sp_notify(6, 'NEW_CASE', 'New injured animal is on the way', 'Case #3: injured cat - Eye infection, both eyes closed and wet.', 'NEW_CASE:3');
-CALL sp_notify(59, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Case #3: please take the animal to Moda Paws Veterinary Clinic. Your vet is Dr. Barış Şahin (evening shift).', 'REPORT_ASSIGNED:3');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (54, 2, NULL, 'Cream', 'Hit by a car, back leg injured.', 'Near the main street in Beşiktaş', 9, 41.034972, 29.015167, 2, 'MORNING', 7, NOW() - INTERVAL 300 MINUTE);
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (52, 1, NULL, 'Calico', 'Limping on the front left leg, cannot step on it.', 19, 40.98933, 29.028093, 1, 'MORNING', 1, NOW() - INTERVAL 35 MINUTE);
+CALL sp_notify(2, 'NEW_CASE', 'New injured animal is on the way', 'Case #1: injured cat - Limping on the front left leg, cannot step on it.', 'NEW_CASE:1');
+CALL sp_notify(52, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Please take the injured cat to Moda Paws Veterinary Clinic. Your vet is Dr. Kerem Demir (morning shift).', 'REPORT_ASSIGNED:1');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (54, 2, NULL, 'Black & tan', 'Deep cut on the back, bleeding a little.', 30, 41.030089, 29.019412, 1, 'MORNING', 1, NOW() - INTERVAL 80 MINUTE);
+CALL sp_notify(2, 'NEW_CASE', 'New injured animal is on the way', 'Case #2: injured dog - Deep cut on the back, bleeding a little.', 'NEW_CASE:2');
+CALL sp_notify(54, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Please take the injured dog to Moda Paws Veterinary Clinic. Your vet is Dr. Kerem Demir (morning shift).', 'REPORT_ASSIGNED:2');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (58, 1, NULL, 'Calico', 'Eye infection, both eyes closed and wet.', 19, 40.993881, 29.031616, 1, 'EVENING', 4, NOW() - INTERVAL 50 MINUTE);
+CALL sp_notify(5, 'NEW_CASE', 'New injured animal is on the way', 'Case #3: injured cat - Eye infection, both eyes closed and wet.', 'NEW_CASE:3');
+CALL sp_notify(58, 'REPORT_ASSIGNED', 'Veterinarian assigned', 'Please take the injured cat to Moda Paws Veterinary Clinic. Your vet is Dr. Barış Şahin (evening shift).', 'REPORT_ASSIGNED:3');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (53, 2, NULL, 'Grey', 'Hit by a car, back leg injured.', 9, 41.049672, 29.012557, 2, 'MORNING', 7, NOW() - INTERVAL 300 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 2, 7, 'MALE', 'Brown', 150, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Beşiktaş.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 260 MINUTE, resolved_by = 9, animal_id = 82 WHERE report_id = 4;
+  (NULL, 2, 7, 'FEMALE', 'Golden', 10, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Beşiktaş.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 260 MINUTE, resolved_by = 8, animal_id = 77 WHERE report_id = 4;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (82, 7, 4, NOW() - INTERVAL 260 MINUTE, 'Fractured femur', 'SEVERE', 'Examined after arrival.');
+  (77, 7, 4, NOW() - INTERVAL 260 MINUTE, 'Fractured femur', 'SEVERE', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (1, 9, '1 g IV, once a day', 7),
   (1, 6, '50 mg, twice a day', 5);
-CALL sp_notify(54, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #4: the animal arrived and is being treated by Dr. Hakan Kaya.', 'REPORT_ARRIVED:4');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (56, 1, NULL, 'Black & white', 'Not eating, very weak.', 'Near the main street in Şişli', 27, 41.051634, 28.996966, 3, 'MORNING', 11, NOW() - INTERVAL 260 MINUTE);
+CALL sp_notify(53, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured dog you reported arrived and is being treated by Dr. Hakan Kaya.', 'REPORT_ARRIVED:4');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (55, 1, NULL, 'Black', 'Not eating, very weak.', 27, 41.064895, 28.985378, 3, 'MORNING', 11, NOW() - INTERVAL 260 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 1, 1, 'MALE', 'Black', 80, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Şişli.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 220 MINUTE, resolved_by = 13, animal_id = 83 WHERE report_id = 5;
+  (NULL, 1, 1, 'MALE', 'Tabby', 40, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Şişli.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 220 MINUTE, resolved_by = 12, animal_id = 78 WHERE report_id = 5;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (83, 11, 5, NOW() - INTERVAL 220 MINUTE, 'Dehydration and gastritis', 'MODERATE', 'Examined after arrival.');
+  (78, 11, 5, NOW() - INTERVAL 220 MINUTE, 'Dehydration and gastritis', 'MODERATE', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (2, 10, '100 ml SC, once a day', 3),
   (2, 12, '5 mg, once a day', 5);
-CALL sp_notify(56, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #5: the animal arrived and is being treated by Dr. İrem Özdemir.', 'REPORT_ARRIVED:5');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (57, 1, NULL, 'Cream', 'Wound on the ear, infected.', 'Near the main street in Fatih', 17, 41.024647, 28.945522, 5, 'MORNING', 22, NOW() - INTERVAL 400 MINUTE);
+CALL sp_notify(55, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured cat you reported arrived and is being treated by Dr. İrem Özdemir.', 'REPORT_ARRIVED:5');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (56, 1, NULL, 'Grey', 'Wound on the ear, infected.', 17, 41.019432, 28.93259, 5, 'MORNING', 22, NOW() - INTERVAL 400 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 1, 1, 'MALE', 'Grey', 80, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Fatih.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 360 MINUTE, resolved_by = 24, animal_id = 84 WHERE report_id = 6;
+  (NULL, 1, 1, 'FEMALE', 'Ginger', 150, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Fatih.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 360 MINUTE, resolved_by = 23, animal_id = 79 WHERE report_id = 6;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (84, 22, 6, NOW() - INTERVAL 360 MINUTE, 'Infected ear wound', 'MILD', 'Examined after arrival.');
+  (79, 22, 6, NOW() - INTERVAL 360 MINUTE, 'Infected ear wound', 'MILD', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (3, 2, '50 mg, twice a day', 7),
   (3, 13, 'Apply twice a day', 10);
-CALL sp_notify(57, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #6: the animal arrived and is being treated by Dr. Murat Arslan.', 'REPORT_ARRIVED:6');
-CALL sp_finish_treatment(3, 24, 'DISCHARGED_TO_SHELTER', 5);
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (58, 2, NULL, 'Cream', 'Skin problem, losing hair.', 'Near the main street in Bakırköy', 6, 40.985735, 28.875071, 6, 'MORNING', 25, NOW() - INTERVAL 380 MINUTE);
+CALL sp_notify(56, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured cat you reported arrived and is being treated by Dr. Murat Arslan.', 'REPORT_ARRIVED:6');
+CALL sp_finish_treatment(3, 23, 'DISCHARGED_TO_SHELTER', 5);
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (57, 2, NULL, 'Brown', 'Skin problem, losing hair.', 6, 40.975305, 28.876468, 6, 'MORNING', 25, NOW() - INTERVAL 380 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 2, 7, 'MALE', 'White', 150, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Bakırköy.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 340 MINUTE, resolved_by = 27, animal_id = 85 WHERE report_id = 7;
+  (NULL, 2, 7, 'MALE', 'Black & tan', 40, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Bakırköy.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 340 MINUTE, resolved_by = 26, animal_id = 80 WHERE report_id = 7;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (85, 25, 7, NOW() - INTERVAL 340 MINUTE, 'Mange (sarcoptic)', 'MODERATE', 'Examined after arrival.');
+  (80, 25, 7, NOW() - INTERVAL 340 MINUTE, 'Mange (sarcoptic)', 'MODERATE', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (4, 8, '0.2 mg/kg SC, weekly', 21);
-CALL sp_notify(58, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #7: the animal arrived and is being treated by Dr. Kerem Yılmaz.', 'REPORT_ARRIVED:7');
-CALL sp_finish_treatment(4, 27, 'DISCHARGED_TO_SHELTER', 6);
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (60, 1, NULL, 'Ginger', 'Kitten with a runny nose and eyes.', 'Near the main street in Ataşehir', 2, 40.985893, 29.106167, 7, 'MORNING', 32, NOW() - INTERVAL 330 MINUTE);
+CALL sp_notify(57, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured dog you reported arrived and is being treated by Dr. Kerem Yılmaz.', 'REPORT_ARRIVED:7');
+CALL sp_finish_treatment(4, 26, 'DISCHARGED_TO_SHELTER', 6);
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (59, 1, NULL, 'Black', 'Kitten with a runny nose and eyes.', 2, 40.989524, 29.101569, 7, 'MORNING', 32, NOW() - INTERVAL 330 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 1, 1, 'FEMALE', 'Tabby', 20, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Ataşehir.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 290 MINUTE, resolved_by = 34, animal_id = 86 WHERE report_id = 8;
+  (NULL, 1, 1, 'MALE', 'Calico', 150, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Ataşehir.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 290 MINUTE, resolved_by = 33, animal_id = 81 WHERE report_id = 8;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (86, 32, 8, NOW() - INTERVAL 290 MINUTE, 'Upper respiratory infection', 'MILD', 'Examined after arrival.');
+  (81, 32, 8, NOW() - INTERVAL 290 MINUTE, 'Upper respiratory infection', 'MILD', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (5, 4, '5 mg/kg, once a day', 7),
   (5, 14, '1 drop, three times a day', 7);
-CALL sp_notify(60, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #8: the animal arrived and is being treated by Dr. Merve Arslan.', 'REPORT_ARRIVED:8');
-CALL sp_finish_treatment(5, 34, 'RELEASED', NULL);
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (61, 2, NULL, 'Black', 'Paw cut by glass.', 'Near the main street in Kartal', 21, 40.895795, 29.199798, 10, 'MORNING', 47, NOW() - INTERVAL 200 MINUTE);
+CALL sp_notify(59, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured cat you reported arrived and is being treated by Dr. Merve Arslan.', 'REPORT_ARRIVED:8');
+CALL sp_finish_treatment(5, 33, 'RELEASED', NULL);
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (60, 2, NULL, 'Cream', 'Paw cut by glass.', 21, 40.89508, 29.187953, 10, 'MORNING', 47, NOW() - INTERVAL 200 MINUTE);
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, status, description) VALUES
-  (NULL, 2, 7, 'FEMALE', 'Black', 150, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Kartal.');
-UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 160 MINUTE, resolved_by = 49, animal_id = 87 WHERE report_id = 9;
+  (NULL, 2, 7, 'MALE', 'Grey', 80, CURDATE(), 'UNDER_TREATMENT', 'Brought by a volunteer from Kartal.');
+UPDATE injury_report SET status = 'ARRIVED', resolved_at = NOW() - INTERVAL 160 MINUTE, resolved_by = 48, animal_id = 82 WHERE report_id = 9;
 INSERT INTO treatment (animal_id, vet_id, report_id, started_at, diagnosis, condition_level, notes) VALUES
-  (87, 47, 9, NOW() - INTERVAL 160 MINUTE, 'Paw laceration', 'MILD', 'Examined after arrival.');
+  (82, 47, 9, NOW() - INTERVAL 160 MINUTE, 'Paw laceration', 'MILD', 'Examined after arrival.');
 INSERT INTO prescription_item (treatment_id, medicine_id, dosage, duration_days) VALUES
   (6, 1, '250 mg, twice a day', 5);
-CALL sp_notify(61, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'Case #9: the animal arrived and is being treated by Dr. Barış Aslan.', 'REPORT_ARRIVED:9');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (62, 2, NULL, 'Cream', 'Seen limping, ran away when approached.', 'Near the main street in Sarıyer', 26, 41.164356, 29.057488, 9, 'EVENING', 44, NOW() - INTERVAL 1560 MINUTE);
+CALL sp_notify(60, 'REPORT_ARRIVED', 'The animal arrived at the clinic', 'The injured dog you reported arrived and is being treated by Dr. Barış Aslan.', 'REPORT_ARRIVED:9');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (61, 2, NULL, 'Brown', 'Seen limping, ran away when approached.', 26, 41.165077, 29.051172, 9, 'EVENING', 44, NOW() - INTERVAL 1560 MINUTE);
 UPDATE injury_report SET status = 'NOT_ARRIVED', resolved_at = TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '23:59:00'), resolved_by = NULL WHERE report_id = 10;
-CALL sp_notify(62, 'REPORT_NOT_ARRIVED', 'Animal did not arrive', 'Case #10 was closed at the end of the day because the animal did not arrive.', 'REPORT_CLOSED:10');
-INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, location_note, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
-  (63, 1, NULL, 'Black', 'Seen limping, ran away when approached.', 'Near the main street in Beylikdüzü', 11, 41.008253, 28.650202, 8, 'EVENING', 39, NOW() - INTERVAL 1560 MINUTE);
+CALL sp_notify(61, 'REPORT_NOT_ARRIVED', 'Animal did not arrive', 'The injured dog you reported yesterday did not arrive at the clinic, so the report was closed at the end of the day.', 'REPORT_CLOSED:10');
+INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc, district_id, latitude, longitude, clinic_id, shift, assigned_vet_id, reported_at) VALUES
+  (62, 1, NULL, 'Tabby', 'Seen limping, ran away when approached.', 11, 41.006773, 28.633009, 8, 'EVENING', 39, NOW() - INTERVAL 1560 MINUTE);
 UPDATE injury_report SET status = 'NOT_ARRIVED', resolved_at = TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '23:59:00'), resolved_by = NULL WHERE report_id = 11;
-CALL sp_notify(63, 'REPORT_NOT_ARRIVED', 'Animal did not arrive', 'Case #11 was closed at the end of the day because the animal did not arrive.', 'REPORT_CLOSED:11');
+CALL sp_notify(62, 'REPORT_NOT_ARRIVED', 'Animal did not arrive', 'The injured cat you reported yesterday did not arrive at the clinic, so the report was closed at the end of the day.', 'REPORT_CLOSED:11');
 
 -- the log rows were written by the triggers; give them the real event times
 UPDATE report_status_log l JOIN injury_report r ON r.report_id = l.report_id
@@ -626,114 +614,137 @@ UPDATE report_status_log l JOIN injury_report r ON r.report_id = l.report_id
 
 -- ===================== feeding posts and emoji reactions =====================
 INSERT INTO feeding_post (user_id, latitude, longitude, photo_path, note, posted_at) VALUES
-  (57, 40.994956, 29.028124, 'media/seed/post_01.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 487 MINUTE),
-  (64, 40.872288, 29.225341, 'media/seed/post_02.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 1352 MINUTE),
-  (61, 40.877161, 29.182611, 'media/seed/post_03.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 532 MINUTE),
-  (63, 40.999033, 28.636277, 'media/seed/post_04.jpg', NULL, NOW() - INTERVAL 360 MINUTE),
-  (55, 41.026781, 29.026573, 'media/seed/post_05.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 1099 MINUTE),
-  (62, 41.158301, 29.040049, 'media/seed/post_06.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 1122 MINUTE),
-  (53, 40.999069, 29.015919, 'media/seed/post_07.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 955 MINUTE),
-  (57, 40.985347, 28.782467, 'media/seed/post_08.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 1268 MINUTE),
-  (58, 40.971831, 28.887251, 'media/seed/post_09.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 1038 MINUTE),
-  (56, 41.07178, 28.97984, 'media/seed/post_10.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 410 MINUTE),
-  (56, 41.074064, 28.980112, 'media/seed/post_11.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 1198 MINUTE),
-  (59, 40.979374, 29.120165, 'media/seed/post_12.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 843 MINUTE),
-  (63, 41.003672, 28.634349, 'media/seed/post_13.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 925 MINUTE),
-  (65, 41.03, 29.113624, 'media/seed/post_14.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 456 MINUTE),
-  (56, 41.06789, 28.994727, 'media/seed/post_15.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 436 MINUTE),
-  (60, 40.931764, 29.127806, 'media/seed/post_16.jpg', NULL, NOW() - INTERVAL 847 MINUTE),
-  (54, 41.088113, 28.794582, 'media/seed/post_17.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 760 MINUTE),
-  (53, 40.976317, 29.040024, 'media/seed/post_18.jpg', NULL, NOW() - INTERVAL 687 MINUTE),
-  (53, 40.997419, 29.015435, 'media/seed/post_19.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 3 DAY),
-  (54, 41.057321, 28.98659, 'media/seed/post_20.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 8 DAY),
-  (55, 41.015416, 29.008835, 'media/seed/post_21.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 12 DAY),
-  (54, 41.046058, 29.010977, 'media/seed/post_22.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 9 DAY),
-  (54, 41.054393, 29.00863, 'media/seed/post_23.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 11 DAY),
-  (66, 41.039069, 28.93249, 'media/seed/post_24.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 6 DAY),
-  (55, 41.027031, 29.016718, 'media/seed/post_25.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 10 DAY),
-  (57, 41.018664, 28.933488, 'media/seed/post_26.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 10 DAY),
-  (54, 41.054477, 29.020767, 'media/seed/post_27.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 2 DAY),
-  (62, 41.159972, 29.038412, 'media/seed/post_28.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 5 DAY),
-  (57, 41.013673, 28.926974, 'media/seed/post_29.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 2 DAY),
-  (64, 40.890953, 29.224232, 'media/seed/post_30.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 2 DAY);
+  (52, 41.026789, 29.019042, 'media/seed/post_01.jpg', NULL, NOW() - INTERVAL 51 MINUTE),
+  (57, 41.000667, 28.906537, 'media/seed/post_02.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 326 MINUTE),
+  (63, 40.874104, 29.235647, 'media/seed/post_03.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 79 MINUTE),
+  (55, 41.004575, 29.130916, 'media/seed/post_04.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 429 MINUTE),
+  (64, 41.000921, 28.63987, 'media/seed/post_05.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 951 MINUTE),
+  (52, 40.991182, 29.038583, 'media/seed/post_06.jpg', NULL, NOW() - INTERVAL 880 MINUTE),
+  (58, 40.973968, 29.097231, 'media/seed/post_07.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 678 MINUTE),
+  (58, 41.029237, 29.026827, 'media/seed/post_08.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 1295 MINUTE),
+  (64, 41.044503, 29.007121, 'media/seed/post_09.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 1354 MINUTE),
+  (55, 41.063361, 28.999331, 'media/seed/post_10.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 1005 MINUTE),
+  (60, 40.88935, 29.192147, 'media/seed/post_11.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 798 MINUTE),
+  (61, 41.170339, 29.057191, 'media/seed/post_12.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 1109 MINUTE),
+  (58, 40.988514, 29.093238, 'media/seed/post_13.jpg', NULL, NOW() - INTERVAL 707 MINUTE),
+  (64, 41.024489, 29.129808, 'media/seed/post_14.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 108 MINUTE),
+  (58, 41.046013, 28.921951, 'media/seed/post_15.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 1057 MINUTE),
+  (59, 40.937425, 29.138178, 'media/seed/post_16.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 1332 MINUTE),
+  (53, 41.040594, 29.0064, 'media/seed/post_17.jpg', NULL, NOW() - INTERVAL 852 MINUTE),
+  (61, 41.162756, 29.036074, 'media/seed/post_18.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 1191 MINUTE),
+  (58, 40.87989, 29.18123, 'media/seed/post_19.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 422 MINUTE),
+  (53, 41.030867, 29.015367, 'media/seed/post_20.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 612 MINUTE),
+  (56, 41.033733, 28.951296, 'media/seed/post_21.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 641 MINUTE),
+  (65, 41.035064, 28.918101, 'media/seed/post_22.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 210 MINUTE),
+  (59, 40.934374, 29.137539, 'media/seed/post_23.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 449 MINUTE),
+  (56, 41.013893, 28.943538, 'media/seed/post_24.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 1369 MINUTE),
+  (58, 40.98456, 29.10034, 'media/seed/post_25.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 180 MINUTE),
+  (53, 41.03588, 29.004603, 'media/seed/post_26.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 291 MINUTE),
+  (62, 41.0055, 28.63061, 'media/seed/post_27.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 564 MINUTE),
+  (59, 40.977258, 29.017651, 'media/seed/post_28.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 563 MINUTE),
+  (62, 40.998561, 28.636142, 'media/seed/post_29.jpg', NULL, NOW() - INTERVAL 154 MINUTE),
+  (52, 40.980447, 28.910653, 'media/seed/post_30.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 709 MINUTE);
 
 INSERT INTO post_reaction (post_id, user_id, emoji) VALUES
-  (1, 59, 'STRONG'),
-  (1, 64, 'PAW'),
-  (1, 56, 'STRONG'),
-  (3, 62, 'THANKS'),
-  (3, 66, 'STRONG'),
-  (5, 62, 'PAW'),
-  (5, 58, 'HEART'),
-  (5, 53, 'THANKS'),
-  (6, 59, 'STRONG'),
-  (6, 53, 'PAW'),
-  (7, 56, 'THANKS'),
-  (7, 60, 'HEART'),
-  (8, 61, 'STRONG'),
-  (8, 56, 'HEART'),
-  (8, 59, 'STRONG'),
+  (1, 64, 'THANKS'),
+  (1, 65, 'HEART'),
+  (1, 59, 'CLAP'),
+  (1, 53, 'CLAP'),
+  (2, 63, 'PAW'),
+  (2, 54, 'STRONG'),
+  (2, 55, 'PAW'),
+  (2, 64, 'HEART'),
+  (2, 56, 'PAW'),
+  (3, 55, 'PAW'),
+  (3, 64, 'PAW'),
+  (4, 58, 'CLAP'),
+  (6, 53, 'HEART'),
+  (7, 56, 'CLAP'),
+  (7, 63, 'CLAP'),
+  (7, 53, 'HEART'),
+  (7, 54, 'PAW'),
+  (7, 65, 'PAW'),
   (8, 65, 'PAW'),
-  (8, 54, 'THANKS'),
-  (11, 53, 'STRONG'),
-  (11, 64, 'HEART'),
-  (12, 54, 'CLAP'),
-  (13, 54, 'HEART'),
-  (15, 59, 'THANKS'),
-  (15, 58, 'PAW'),
-  (16, 65, 'THANKS'),
-  (16, 63, 'STRONG'),
-  (18, 55, 'CLAP'),
-  (18, 60, 'CLAP'),
-  (18, 58, 'HEART'),
-  (18, 61, 'THANKS'),
-  (19, 63, 'CLAP'),
-  (19, 58, 'THANKS'),
-  (19, 57, 'THANKS'),
-  (20, 58, 'STRONG'),
-  (20, 66, 'PAW'),
-  (21, 57, 'HEART'),
-  (21, 61, 'STRONG'),
-  (21, 53, 'CLAP'),
-  (21, 59, 'HEART'),
-  (21, 64, 'HEART'),
-  (22, 63, 'HEART'),
-  (23, 55, 'CLAP'),
-  (23, 56, 'CLAP'),
-  (24, 58, 'CLAP'),
-  (24, 53, 'CLAP'),
-  (24, 54, 'STRONG'),
-  (24, 60, 'CLAP'),
-  (24, 61, 'CLAP'),
-  (25, 66, 'STRONG'),
-  (25, 65, 'PAW'),
-  (25, 60, 'THANKS'),
-  (25, 62, 'HEART'),
-  (25, 61, 'STRONG'),
-  (26, 65, 'CLAP'),
-  (26, 66, 'PAW'),
-  (26, 54, 'CLAP'),
-  (28, 60, 'PAW'),
-  (28, 64, 'HEART'),
-  (28, 63, 'STRONG'),
-  (29, 59, 'CLAP'),
-  (29, 61, 'THANKS'),
-  (30, 57, 'STRONG'),
-  (30, 60, 'STRONG');
+  (8, 59, 'CLAP'),
+  (9, 55, 'CLAP'),
+  (9, 63, 'THANKS'),
+  (9, 60, 'CLAP'),
+  (9, 54, 'STRONG'),
+  (9, 65, 'STRONG'),
+  (10, 65, 'PAW'),
+  (10, 61, 'HEART'),
+  (12, 54, 'THANKS'),
+  (13, 54, 'CLAP'),
+  (14, 56, 'STRONG'),
+  (14, 61, 'CLAP'),
+  (14, 60, 'HEART'),
+  (14, 52, 'PAW'),
+  (15, 65, 'CLAP'),
+  (15, 63, 'CLAP'),
+  (15, 57, 'THANKS'),
+  (17, 58, 'THANKS'),
+  (19, 57, 'STRONG'),
+  (19, 65, 'THANKS'),
+  (19, 63, 'HEART'),
+  (19, 56, 'THANKS'),
+  (20, 58, 'CLAP'),
+  (20, 57, 'CLAP'),
+  (21, 63, 'HEART'),
+  (21, 55, 'THANKS'),
+  (21, 62, 'PAW'),
+  (21, 65, 'HEART'),
+  (22, 56, 'CLAP'),
+  (22, 64, 'CLAP'),
+  (22, 53, 'HEART'),
+  (23, 58, 'CLAP'),
+  (23, 57, 'STRONG'),
+  (23, 63, 'PAW'),
+  (24, 52, 'THANKS'),
+  (24, 57, 'THANKS'),
+  (24, 61, 'STRONG'),
+  (26, 61, 'PAW'),
+  (26, 57, 'HEART'),
+  (26, 52, 'THANKS'),
+  (27, 58, 'STRONG'),
+  (27, 52, 'PAW'),
+  (28, 54, 'THANKS'),
+  (28, 58, 'HEART'),
+  (29, 59, 'STRONG'),
+  (29, 55, 'HEART'),
+  (29, 57, 'STRONG'),
+  (29, 64, 'PAW'),
+  (29, 53, 'THANKS');
+
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 3 DAY WHERE post_id = 19;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 11 DAY WHERE post_id = 20;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 11 DAY WHERE post_id = 21;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 2 DAY WHERE post_id = 22;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 6 DAY WHERE post_id = 23;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 11 DAY WHERE post_id = 24;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 8 DAY WHERE post_id = 25;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 2 DAY WHERE post_id = 26;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 8 DAY WHERE post_id = 27;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 9 DAY WHERE post_id = 28;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 9 DAY WHERE post_id = 29;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 7 DAY WHERE post_id = 30;
+UPDATE post_reaction r JOIN feeding_post p ON p.post_id = r.post_id
+   SET r.reacted_at = p.posted_at + INTERVAL 2 HOUR WHERE p.posted_at < NOW() - INTERVAL 24 HOUR;
+UPDATE notification n JOIN post_reaction r ON n.event_key = CONCAT('REACTION:', r.post_id, ':', r.user_id)
+   SET n.message = fn_reaction_message(r.post_id, r.user_id, r.emoji), n.created_at = r.reacted_at;
 
 -- ===================== adoption applications =====================
 INSERT INTO adoption_application (user_id, animal_id, applied_at, full_address, district_id, birth_year, housing_type, ownership, landlord_permission, household_size, has_children, has_other_pets, other_pets_note, pet_experience, hours_alone_per_day, reason, agrees_home_visit, agrees_neutering, agrees_vaccination) VALUES
-  (53, 70, NOW() - INTERVAL 5 DAY, 'Example Sk. No:67 D:18, Kadıköy / Istanbul', 19, 1992, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 2, FALSE, FALSE, NULL, 'EXPERIENCED', 4, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (56, 70, NOW() - INTERVAL 4 DAY, 'Example Sk. No:41 D:10, Şişli / Istanbul', 27, 1995, 'APARTMENT', 'OWNER', NULL, 4, FALSE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (54, 26, NOW() - INTERVAL 6 DAY, 'Example Sk. No:18 D:16, Beşiktaş / Istanbul', 9, 2001, 'APARTMENT', 'TENANT', TRUE, 3, TRUE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (57, 76, NOW() - INTERVAL 3 DAY, 'Example Sk. No:19 D:4, Fatih / Istanbul', 17, 1981, 'APARTMENT', 'OWNER', NULL, 2, FALSE, FALSE, NULL, 'NONE', 10, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (55, 9, NOW() - INTERVAL 1 DAY, 'Example Sk. No:66 D:11, Üsküdar / Istanbul', 30, 1997, 'DETACHED_HOUSE', 'OWNER', NULL, 5, FALSE, FALSE, NULL, 'EXPERIENCED', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (59, 50, NOW() - INTERVAL 0 DAY, 'Example Sk. No:12 D:1, Ataşehir / Istanbul', 2, 1996, 'APARTMENT', 'TENANT', TRUE, 5, TRUE, TRUE, NULL, 'SOME', 8, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (60, 50, NOW() - INTERVAL 0 DAY, 'Example Sk. No:41 D:19, Maltepe / Istanbul', 23, 1988, 'APARTMENT', 'OWNER', NULL, 5, FALSE, FALSE, NULL, 'SOME', 5, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (61, 44, NOW() - INTERVAL 2 DAY, 'Example Sk. No:41 D:10, Kartal / Istanbul', 21, 1998, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 1, TRUE, FALSE, NULL, 'EXPERIENCED', 3, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE);
+  (52, 60, NOW() - INTERVAL 5 DAY, 'Example Sk. No:50 D:8, Kadıköy / Istanbul', 19, 1986, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 4, FALSE, FALSE, NULL, 'EXPERIENCED', 4, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (55, 60, NOW() - INTERVAL 4 DAY, 'Example Sk. No:82 D:13, Şişli / Istanbul', 27, 1989, 'APARTMENT', 'OWNER', NULL, 5, FALSE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (53, 66, NOW() - INTERVAL 6 DAY, 'Example Sk. No:61 D:13, Beşiktaş / Istanbul', 9, 1982, 'APARTMENT', 'TENANT', TRUE, 2, FALSE, TRUE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (56, 12, NOW() - INTERVAL 3 DAY, 'Example Sk. No:64 D:15, Fatih / Istanbul', 17, 2001, 'APARTMENT', 'OWNER', NULL, 5, TRUE, FALSE, NULL, 'NONE', 10, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (54, 45, NOW() - INTERVAL 1 DAY, 'Example Sk. No:45 D:11, Üsküdar / Istanbul', 30, 1995, 'DETACHED_HOUSE', 'OWNER', NULL, 2, FALSE, FALSE, NULL, 'EXPERIENCED', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (58, 71, NOW() - INTERVAL 0 DAY, 'Example Sk. No:62 D:13, Ataşehir / Istanbul', 2, 2001, 'APARTMENT', 'TENANT', TRUE, 4, FALSE, FALSE, NULL, 'SOME', 8, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (59, 71, NOW() - INTERVAL 0 DAY, 'Example Sk. No:30 D:9, Maltepe / Istanbul', 23, 1988, 'APARTMENT', 'OWNER', NULL, 5, FALSE, TRUE, NULL, 'SOME', 5, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (60, 63, NOW() - INTERVAL 2 DAY, 'Example Sk. No:27 D:19, Kartal / Istanbul', 21, 1987, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 3, FALSE, FALSE, NULL, 'EXPERIENCED', 3, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE);
 
 CALL sp_approve_application(1, 1, 'Great home with a garden. Welcome!');
-CALL sp_approve_application(3, 2, 'Landlord permission checked by phone.');
+CALL sp_approve_application(3, 1, 'Landlord permission checked by phone.');
 CALL sp_reject_application(4, 1, 'The animal would stay alone more than 8 hours a day.');
 UPDATE adoption SET adopted_at = NOW() - INTERVAL 2 DAY;
 UPDATE adoption_application SET reviewed_at = applied_at + INTERVAL 1 DAY WHERE status <> 'PENDING';

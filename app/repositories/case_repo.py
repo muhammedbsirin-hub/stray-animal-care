@@ -4,11 +4,12 @@ from app.models import InjuryReport
 
 _REPORT_SELECT = """
 SELECT r.report_id, r.reported_at, s.species_name, r.species_id, r.condition_desc, r.approx_age_weeks, r.color,
-       r.location_note, c.clinic_name, CONCAT('Dr. ', vu.first_name, ' ', vu.last_name) AS vet_name, r.shift,
+       d.district_name, c.clinic_name, CONCAT('Dr. ', vu.first_name, ' ', vu.last_name) AS vet_name, r.shift,
        r.status, CONCAT(ru.first_name, ' ', ru.last_name) AS reporter_name, ru.phone AS reporter_phone,
        t.outcome AS result
   FROM injury_report r
   JOIN species s        ON s.species_id = r.species_id
+  LEFT JOIN district d  ON d.district_id = r.district_id
   JOIN clinic c         ON c.clinic_id = r.clinic_id
   JOIN veterinarian v   ON v.vet_id = r.assigned_vet_id
   JOIN user_account vu  ON vu.user_id = v.user_id
@@ -21,13 +22,13 @@ class CaseRepository:
 
     # ------------------------------------------------------------ volunteer side
     @staticmethod
-    def create_report(reporter_id, species_id, age_weeks, color, condition, location_note, district_id,
+    def create_report(reporter_id, species_id, age_weeks, color, condition, district_id,
                       lat, lon, photo_path, clinic_id):
         """Calls sp_create_injury_report -> (report_id, vet_name, shift)."""
         args = db.call("sp_create_injury_report",
-                       (reporter_id, species_id, age_weeks, color or None, condition, location_note or None,
+                       (reporter_id, species_id, age_weeks, color or None, condition,
                         district_id, lat, lon, photo_path, clinic_id, 0, "", ""))
-        return args[11], args[12], args[13]
+        return args[10], args[11], args[12]
 
     @staticmethod
     def my_reports(user_id):
@@ -97,7 +98,8 @@ class CaseRepository:
                         (vet.user_id, f"NEW_CASE:{report_id}"))
             cur.execute("CALL sp_notify(%s, 'REPORT_ARRIVED', 'The animal arrived at the clinic', %s, %s)",
                         (case["reporter_id"],
-                         f"Case #{report_id}: the animal arrived and is being treated. Thank you for your help!",
+                         "The injured animal you reported arrived at the clinic and is being treated. "
+                         "Thank you for your help!",
                          f"REPORT_ARRIVED:{report_id}"))
         return animal_id, treatment_id
 

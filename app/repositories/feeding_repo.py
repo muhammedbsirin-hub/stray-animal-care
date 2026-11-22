@@ -25,7 +25,8 @@ class FeedingRepository:
     @staticmethod
     def get(post_id):
         row = db.query_one("""SELECT p.post_id, p.user_id, u.username, CONCAT(u.first_name, ' ', u.last_name) AS full_name,
-                                     p.latitude, p.longitude, p.photo_path, p.note, p.posted_at, p.is_deleted
+                                     p.latitude, p.longitude, p.photo_path, p.note, p.posted_at, p.is_deleted,
+                                     (p.posted_at >= NOW() - INTERVAL 24 HOUR) AS on_map
                                 FROM feeding_post p JOIN user_account u ON u.user_id = p.user_id
                                WHERE p.post_id = %s""", (post_id,))
         return row
@@ -73,7 +74,8 @@ class FeedingRepository:
 
     @staticmethod
     def my_given_reactions(user_id):
-        return db.query("""SELECT r.post_id, r.emoji, r.reacted_at, u.username AS owner, p.posted_at, p.note
+        return db.query("""SELECT r.post_id, r.emoji, r.reacted_at, u.username AS owner, p.posted_at, p.note,
+                                  (p.posted_at >= NOW() - INTERVAL 24 HOUR) AS on_map
                              FROM post_reaction r
                              JOIN feeding_post p ON p.post_id = r.post_id
                              JOIN user_account u ON u.user_id = p.user_id
