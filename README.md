@@ -50,10 +50,10 @@ The map needs an internet connection (OpenStreetMap tiles).
 |---|---|---|
 | Admin | `admin` | applications, map, daily vet report, management |
 | Veterinarian | `vet01` | Moda Paws Veterinary Clinic, morning shift, has 2 incoming cases |
-| Veterinarian | `vet04` | same clinic, evening shift, has 1 incoming case |
-| Veterinarian | `vet02` … `vet50` | 10 clinics, 2–7 vets each, every clinic has morning and evening vets |
+| Veterinarian | `vet03` | same clinic, evening shift, has 1 incoming case |
+| Veterinarian | `vet02` … `vet12` | 5 clinics, 2–3 vets each, every clinic has morning and evening vets |
 | Volunteer | `elif_yildiz` | approved adopter (has "My adoptions") |
-| Volunteer | `mert_kaya`, `zeynep_ak`, `can_demir`, `selin_arslan`, `deniz_sahin`, `ece_koc` … | 14 volunteers |
+| Volunteer | `mert_kaya`, `zeynep_ak`, `can_demir`, `selin_arslan`, `deniz_sahin`, `ece_koc` … | 8 volunteers |
 
 ## Project structure
 

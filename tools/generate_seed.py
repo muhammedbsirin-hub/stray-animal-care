@@ -79,20 +79,11 @@ CLINICS = [  # name, district
     ("Bosphorus Animal Hospital", "Beşiktaş"),
     ("Mecidiyeköy Vet Clinic", "Şişli"),
     ("Üsküdar Friends Veterinary Clinic", "Üsküdar"),
-    ("Old City Veterinary Center", "Fatih"),
     ("Bakırköy Seaside Animal Clinic", "Bakırköy"),
-    ("Ataşehir Care Animal Hospital", "Ataşehir"),
-    ("West Istanbul Vet Clinic", "Beylikdüzü"),
-    ("Sarıyer Forest Animal Clinic", "Sarıyer"),
-    ("Kartal Coast Veterinary Clinic", "Kartal"),
 ]
-VETS_PER_CLINIC = [5, 4, 6, 5, 3, 7, 5, 6, 4, 5]  # min 2, average 5, total 50
+VETS_PER_CLINIC = [3, 2, 3, 2, 2]  # every clinic: at least 1 morning + 1 evening vet, total 12
 
-SHELTER_DISTRICTS = [
-    "Kadıköy", "Üsküdar", "Beşiktaş", "Şişli", "Fatih", "Bakırköy", "Ataşehir", "Maltepe",
-    "Kartal", "Pendik", "Tuzla", "Ümraniye", "Beykoz", "Sarıyer", "Eyüpsultan", "Başakşehir",
-    "Küçükçekmece", "Beylikdüzü", "Esenyurt", "Zeytinburnu",
-]
+SHELTER_DISTRICTS = ["Kadıköy", "Üsküdar", "Beşiktaş", "Şişli", "Fatih", "Bakırköy", "Ataşehir", "Beykoz"]
 CAT_ONLY = {"Beyoğlu", "Kadıköy", "Fatih"}
 DOG_ONLY = {"Beykoz", "Tuzla"}
 
@@ -107,9 +98,6 @@ VOLUNTEERS = [  # username, first, last, district
     ("zeynep_ak", "Zeynep", "Ak", "Üsküdar"), ("can_demir", "Can", "Demir", "Şişli"),
     ("selin_arslan", "Selin", "Arslan", "Fatih"), ("burak_celik", "Burak", "Çelik", "Bakırköy"),
     ("deniz_sahin", "Deniz", "Şahin", "Ataşehir"), ("ece_koc", "Ece", "Koç", "Maltepe"),
-    ("ozan_kurt", "Ozan", "Kurt", "Kartal"), ("irem_polat", "İrem", "Polat", "Sarıyer"),
-    ("umut_aksoy", "Umut", "Aksoy", "Beylikdüzü"), ("gizem_erdem", "Gizem", "Erdem", "Pendik"),
-    ("kerem_gunes", "Kerem", "Güneş", "Ümraniye"), ("seda_dogan", "Seda", "Doğan", "Eyüpsultan"),
 ]
 
 CAT_NAMES = ["Pamuk", "Boncuk", "Zeytin", "Duman", "Tarçın", "Minnoş", "Şeker", "Sütlaç", "Fıstık",
@@ -294,7 +282,7 @@ def main():
         return random.randint(53, 520)
 
     for sh in shelter_meta:
-        for _ in range(random.randint(3, 5)):
+        for _ in range(random.randint(2, 3)):
             sp = random.choice(sh["accepts"])
             sp_id = 1 if sp == "Cat" else 2
             weeks = age_weeks()
@@ -373,14 +361,12 @@ def main():
          "SEVERE", [(9, "1 g IV, once a day", 7), (6, "50 mg, twice a day", 5)], None),
         (vol_ids[3], "Cat", 3, "MORNING", 260, "Not eating, very weak.", "Şişli", "Dehydration and gastritis",
          "MODERATE", [(10, "100 ml SC, once a day", 3), (12, "5 mg, once a day", 5)], None),
-        (vol_ids[4], "Cat", 5, "MORNING", 400, "Wound on the ear, infected.", "Fatih", "Infected ear wound",
+        (vol_ids[4], "Cat", 4, "MORNING", 400, "Wound on the ear, infected.", "Üsküdar", "Infected ear wound",
          "MILD", [(2, "50 mg, twice a day", 7), (13, "Apply twice a day", 10)], "DISCHARGED_TO_SHELTER"),
-        (vol_ids[5], "Dog", 6, "MORNING", 380, "Skin problem, losing hair.", "Bakırköy", "Mange (sarcoptic)",
+        (vol_ids[5], "Dog", 5, "MORNING", 380, "Skin problem, losing hair.", "Bakırköy", "Mange (sarcoptic)",
          "MODERATE", [(8, "0.2 mg/kg SC, weekly", 21)], "DISCHARGED_TO_SHELTER"),
-        (vol_ids[7], "Cat", 7, "MORNING", 330, "Kitten with a runny nose and eyes.", "Ataşehir", "Upper respiratory infection",
+        (vol_ids[7], "Cat", 1, "MORNING", 330, "Kitten with a runny nose and eyes.", "Kadıköy", "Upper respiratory infection",
          "MILD", [(4, "5 mg/kg, once a day", 7), (14, "1 drop, three times a day", 7)], "RELEASED"),
-        (vol_ids[8], "Dog", 10, "MORNING", 200, "Paw cut by glass.", "Kartal", "Paw laceration",
-         "MILD", [(1, "250 mg, twice a day", 5)], None),
     ]
     for (rep, sp, clinic, shift, mins, cond, dist, diag, level, presc, finish) in arrived_cases:
         vet = vet_of(clinic, shift, 1)
@@ -412,7 +398,7 @@ def main():
             sql.append(f"CALL sp_finish_treatment({treat_no}, {vet['user_id']}, '{finish}', {shelter_arg});")
 
     # 3) yesterday: animals that never arrived (closed by the end-of-day job)
-    for (rep, sp, clinic, dist) in [(vol_ids[9], "Dog", 9, "Sarıyer"), (vol_ids[10], "Cat", 8, "Beylikdüzü")]:
+    for (rep, sp, clinic, dist) in [(vol_ids[2], "Dog", 2, "Beşiktaş"), (vol_ids[6], "Cat", 5, "Bakırköy")]:
         vet = vet_of(clinic, "EVENING")
         r = add_report(rep, sp, clinic, "EVENING", vet, 60 * 26, "Seen limping, ran away when approached.", dist)
         sql.append(f"UPDATE injury_report SET status = 'NOT_ARRIVED', resolved_at = TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '23:59:00'), "
@@ -428,7 +414,7 @@ def main():
     # ---------------------------------------------------------------- feeding posts
     sql.append("-- ===================== feeding posts and emoji reactions =====================")
     post_rows, post_owner, old_dates = [], [], []
-    for i in range(1, 31):
+    for i in range(1, 13):
         owner_idx = random.randrange(len(VOLUNTEERS))
         owner = vol_ids[owner_idx]
         dist = VOLUNTEERS[owner_idx][3] if random.random() < 0.7 else random.choice(SHELTER_DISTRICTS)
@@ -438,7 +424,7 @@ def main():
         # old posts are first inserted as recent ones (emojis are only allowed for 24 hours),
         # and moved back to their real date after the emojis are added
         when = raw(f"NOW() - INTERVAL {random.randint(10, 1380)} MINUTE")
-        if i > 18:
+        if i > 8:
             old_dates.append((i, random.randint(2, 12)))
         note = random.choice(["Left dry food and fresh water.", "Three cats were waiting here today.",
                               "Refilled the bowl, the area is clean.", "Wet food for the kittens.",
@@ -450,7 +436,7 @@ def main():
     reactions = []
     for pid, owner in enumerate(post_owner, start=1):
         others = [v for v in vol_ids if v != owner]
-        for reactor in random.sample(others, random.randint(0, 5)):
+        for reactor in random.sample(others, random.randint(0, 3)):
             reactions.append((pid, reactor, random.choice(["HEART", "CLAP", "PAW", "STRONG", "THANKS"])))
     sql.append(insert("post_reaction", ["post_id", "user_id", "emoji"], reactions))
     for pid, days in old_dates:
@@ -487,7 +473,7 @@ def main():
         app_row(2, picks[3], 1, housing="DETACHED_HOUSE", exp="EXPERIENCED"),            # 5 pending
         app_row(6, picks[4], 0, ownership="TENANT", hours=8),                             # 6 pending
         app_row(7, picks[4], 0, exp="SOME", hours=5),                                     # 7 pending (same animal)
-        app_row(8, picks[5], 2, housing="HOUSE_WITH_GARDEN", exp="EXPERIENCED", hours=3), # 8 pending
+        app_row(5, picks[5], 2, housing="HOUSE_WITH_GARDEN", exp="EXPERIENCED", hours=3), # 8 pending
     ]
     sql.append(insert("adoption_application", app_cols, apps))
     sql.append("CALL sp_approve_application(1, 1, 'Great home with a garden. Welcome!');")
