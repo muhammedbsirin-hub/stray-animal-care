@@ -199,10 +199,6 @@ class Dialog(ctk.CTkToplevel):
             pass
 
 
-def section(master, text):
-    return ctk.CTkLabel(master, text=text, font=FONT_SUB, anchor="w")
-
-
 def form_row(parent, row, label, widget, required=False, hint=None):
     ctk.CTkLabel(parent, text=label + (" *" if required else ""), font=FONT, anchor="w").grid(
         row=row, column=0, sticky="w", padx=(0, 12), pady=5)

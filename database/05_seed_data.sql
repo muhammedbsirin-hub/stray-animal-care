@@ -8,38 +8,38 @@ INSERT INTO role (role_name) VALUES
   ('VOLUNTEER'),
   ('ADOPTER');
 
-INSERT INTO district (district_name, side) VALUES
-  ('Adalar', 'ASIA'),
-  ('Ataşehir', 'ASIA'),
-  ('Avcılar', 'EUROPE'),
-  ('Bağcılar', 'EUROPE'),
-  ('Bahçelievler', 'EUROPE'),
-  ('Bakırköy', 'EUROPE'),
-  ('Başakşehir', 'EUROPE'),
-  ('Bayrampaşa', 'EUROPE'),
-  ('Beşiktaş', 'EUROPE'),
-  ('Beykoz', 'ASIA'),
-  ('Beylikdüzü', 'EUROPE'),
-  ('Beyoğlu', 'EUROPE'),
-  ('Büyükçekmece', 'EUROPE'),
-  ('Çekmeköy', 'ASIA'),
-  ('Esenyurt', 'EUROPE'),
-  ('Eyüpsultan', 'EUROPE'),
-  ('Fatih', 'EUROPE'),
-  ('Gaziosmanpaşa', 'EUROPE'),
-  ('Kadıköy', 'ASIA'),
-  ('Kağıthane', 'EUROPE'),
-  ('Kartal', 'ASIA'),
-  ('Küçükçekmece', 'EUROPE'),
-  ('Maltepe', 'ASIA'),
-  ('Pendik', 'ASIA'),
-  ('Sancaktepe', 'ASIA'),
-  ('Sarıyer', 'EUROPE'),
-  ('Şişli', 'EUROPE'),
-  ('Tuzla', 'ASIA'),
-  ('Ümraniye', 'ASIA'),
-  ('Üsküdar', 'ASIA'),
-  ('Zeytinburnu', 'EUROPE');
+INSERT INTO district (district_name) VALUES
+  ('Adalar'),
+  ('Ataşehir'),
+  ('Avcılar'),
+  ('Bağcılar'),
+  ('Bahçelievler'),
+  ('Bakırköy'),
+  ('Başakşehir'),
+  ('Bayrampaşa'),
+  ('Beşiktaş'),
+  ('Beykoz'),
+  ('Beylikdüzü'),
+  ('Beyoğlu'),
+  ('Büyükçekmece'),
+  ('Çekmeköy'),
+  ('Esenyurt'),
+  ('Eyüpsultan'),
+  ('Fatih'),
+  ('Gaziosmanpaşa'),
+  ('Kadıköy'),
+  ('Kağıthane'),
+  ('Kartal'),
+  ('Küçükçekmece'),
+  ('Maltepe'),
+  ('Pendik'),
+  ('Sancaktepe'),
+  ('Sarıyer'),
+  ('Şişli'),
+  ('Tuzla'),
+  ('Ümraniye'),
+  ('Üsküdar'),
+  ('Zeytinburnu');
 
 INSERT INTO species (species_name) VALUES
   ('Cat'),
@@ -233,7 +233,7 @@ CALL sp_generate_vaccination_schedule(20);
 CALL sp_generate_vaccination_schedule(21);
 
 -- some doses done, some late (for demo)
-UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() - INTERVAL 2 DAY, done_by = vet_id
+UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() - INTERVAL 2 DAY
  WHERE dose_label IN ('Catch-up dose','Dose 1') AND planned_date = CURDATE() AND MOD(animal_id, 3) = 1;
 UPDATE vaccination_schedule SET planned_date = CURDATE() - INTERVAL (2 + MOD(animal_id, 6)) DAY
  WHERE dose_label IN ('Catch-up dose','Dose 1') AND status = 'PLANNED' AND planned_date = CURDATE()

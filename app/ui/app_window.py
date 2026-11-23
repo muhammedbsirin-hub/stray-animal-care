@@ -7,7 +7,7 @@ from app.repositories import CaseRepository, NotificationRepository
 from app.services import AuthService
 from app.ui.auth_views import LoginView, RegisterView
 from app.ui.pages import admin, common, vet, volunteer
-from app.ui.widgets import DANGER, FONT, FONT_BOLD, FONT_SMALL, MUTED, PRIMARY, PRIMARY_DARK, error, style_tables
+from app.ui.widgets import DANGER, FONT, FONT_BOLD, FONT_SMALL, MUTED, PRIMARY, error, style_tables
 
 
 class App(ctk.CTk):

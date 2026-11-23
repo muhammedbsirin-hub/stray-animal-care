@@ -101,8 +101,8 @@ SELECT sh.shelter_id, sh.shelter_name, d.district_name, sh.address, sh.phone, sh
           FROM shelter_species ss JOIN species sp ON sp.species_id = ss.species_id
          WHERE ss.shelter_id = sh.shelter_id) AS accepted_species,
        COUNT(a.animal_id) AS animal_count,
-       SUM(a.species_id = (SELECT species_id FROM species WHERE species_name = 'Cat')) AS cat_count,
-       SUM(a.species_id = (SELECT species_id FROM species WHERE species_name = 'Dog')) AS dog_count,
+       COALESCE(SUM(a.species_id = (SELECT species_id FROM species WHERE species_name = 'Cat')), 0) AS cat_count,
+       COALESCE(SUM(a.species_id = (SELECT species_id FROM species WHERE species_name = 'Dog')), 0) AS dog_count,
        ROUND(100 * COUNT(a.animal_id) / sh.capacity) AS occupancy_pct
 FROM shelter sh
 JOIN district d ON d.district_id = sh.district_id

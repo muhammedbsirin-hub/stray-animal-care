@@ -3,7 +3,6 @@ from app import validators
 from app.db import DbError
 from app.models import Session
 from app.repositories import UserRepository
-from app.security import check_password
 
 
 class AuthService:
@@ -18,7 +17,7 @@ class AuthService:
             raise DbError("There is no user with this username.")
         if not row["is_active"]:
             raise DbError("This account has been closed.")
-        if not check_password(password, row["password"]):
+        if password != row["password"]:          # plain text (group decision)
             raise DbError("Wrong password.")
         user = UserRepository.get(row["user_id"])
         vet = UserRepository.get_vet(user.user_id) if user.has_role("VET") else None
@@ -51,4 +50,4 @@ class AuthService:
     @staticmethod
     def verify_password(user_id, password):
         stored = UserRepository.get_password(user_id)
-        return stored is not None and check_password(password, stored)
+        return stored is not None and stored == password

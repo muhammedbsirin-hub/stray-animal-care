@@ -61,12 +61,12 @@ class CaseRepository:
     @staticmethod
     def mark_arrived(report_id, vet, animal, treatment, prescriptions):
         """
-        One transaction: lock the case, create the animal, the treatment and the
+        One transaction: check the case, create the animal, the treatment and the
         prescription, close the case as ARRIVED and notify the volunteer.
         """
         with db.transaction() as cur:
             cur.execute("""SELECT status, reporter_id, assigned_vet_id, species_id FROM injury_report
-                            WHERE report_id = %s FOR UPDATE""", (report_id,))
+                            WHERE report_id = %s""", (report_id,))
             case = cur.fetchone()
             if case is None:
                 raise db.DbError("Case not found.")

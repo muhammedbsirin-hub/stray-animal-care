@@ -5,7 +5,7 @@ from app import validators
 from app.repositories import NotificationRepository, UserRepository
 from app.services import AuthService
 from app.ui.pages.base import Page
-from app.ui.widgets import (DANGER, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, ChoiceBox, DataTable, Dialog,
+from app.ui.widgets import (DANGER, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, DataTable, Dialog,
                             button, confirm, entry, error, form_row, info, nice)
 
 

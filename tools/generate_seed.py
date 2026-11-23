@@ -169,7 +169,7 @@ def main():
            "USE stray_db;", "SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;", ""]
 
     sql.append(insert("role", ["role_name"], [("ADMIN",), ("VET",), ("VOLUNTEER",), ("ADOPTER",)]))
-    sql.append(insert("district", ["district_name", "side"], [(d[0], d[1]) for d in DISTRICTS]))
+    sql.append(insert("district", ["district_name"], [(d[0],) for d in DISTRICTS]))
     sql.append(insert("species", ["species_name"], [("Cat",), ("Dog",)]))
     breed_rows, breed_ids, bid = [], {"Cat": [], "Dog": []}, 0
     for sp_i, sp in enumerate(["Cat", "Dog"], start=1):
@@ -304,7 +304,7 @@ def main():
         sql.append(f"CALL sp_generate_vaccination_schedule({a['id']});")
     sql.append("")
     sql.append("-- some doses done, some late (for demo)\n"
-               "UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() - INTERVAL 2 DAY, done_by = vet_id\n"
+               "UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() - INTERVAL 2 DAY\n"
                " WHERE dose_label IN ('Catch-up dose','Dose 1') AND planned_date = CURDATE() AND MOD(animal_id, 3) = 1;\n"
                "UPDATE vaccination_schedule SET planned_date = CURDATE() - INTERVAL (2 + MOD(animal_id, 6)) DAY\n"
                " WHERE dose_label IN ('Catch-up dose','Dose 1') AND status = 'PLANNED' AND planned_date = CURDATE()\n"

@@ -76,18 +76,6 @@ class AnimalRepository:
     def undo_vaccination(schedule_id, vet_user_id):
         db.call("sp_undo_vaccination", (schedule_id, vet_user_id))
 
-    @staticmethod
-    def animals_of_vet(vet_id):
-        return db.query("""SELECT ac.animal_id, ac.display_name, ac.species_name, ac.breed_name, ac.age_label,
-                                  ac.shelter_name, ac.sex,
-                                  (SELECT COUNT(*) FROM v_vaccination_due d
-                                    WHERE d.animal_id = ac.animal_id AND d.due_state = 'OVERDUE') AS overdue,
-                                  (SELECT MIN(planned_date) FROM vaccination_schedule s
-                                    WHERE s.animal_id = ac.animal_id AND s.status = 'PLANNED') AS next_date
-                             FROM v_animal_card ac
-                            WHERE ac.responsible_vet_id = %s AND ac.status = 'IN_SHELTER'
-                            ORDER BY overdue DESC, next_date""", (vet_id,))
-
 
 class ShelterRepository:
 

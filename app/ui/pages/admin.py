@@ -8,7 +8,7 @@ from app.ui.map_panel import MapPanel
 from app.ui.pages.base import Page
 from app.ui.pages.vet import CalendarDialog
 from app.ui.pages.volunteer import PostDialog
-from app.ui.widgets import (ACCENT, CARD, DANGER, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, PRIMARY, ChoiceBox,
+from app.ui.widgets import (ACCENT, CARD, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, PRIMARY, ChoiceBox,
                             DataTable, Dialog, button, confirm, entry, error, fmt, form_row, info, nice, text_value)
 
 
@@ -49,11 +49,6 @@ class OverviewPage(Page):
             lbl.configure(text=str(data[k]),
                           text_color=ACCENT if k == "pending_applications" and data[k] else PRIMARY)
         rows = ShelterRepository.summaries()
-        from app.db import query
-        extra = {r["shelter_id"]: r for r in query("SELECT shelter_id, cat_count, dog_count FROM v_shelter_summary")}
-        for r in rows:
-            r.cat_count = extra[r.shelter_id]["cat_count"] or 0
-            r.dog_count = extra[r.shelter_id]["dog_count"] or 0
         self.shelters.set_rows(rows, tag_fn=lambda r: ("red",) if (r.occupancy_pct or 0) >= 90 else ())
 
 

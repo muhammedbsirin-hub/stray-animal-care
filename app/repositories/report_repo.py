@@ -13,7 +13,6 @@ class ReportRepository:
                    (SELECT COUNT(*) FROM injury_report WHERE status = 'PENDING')        AS open_cases,
                    (SELECT COUNT(*) FROM v_active_feeding_posts)                        AS posts_24h,
                    (SELECT COUNT(*) FROM adoption)                                      AS adoptions,
-                   (SELECT COUNT(*) FROM v_vaccination_due WHERE due_state = 'OVERDUE') AS overdue_vaccines,
                    (SELECT COUNT(*) FROM user_account u JOIN user_role ur ON ur.user_id = u.user_id
                      JOIN role r ON r.role_id = ur.role_id
                      WHERE r.role_name = 'VOLUNTEER' AND u.is_active)                   AS volunteers""")

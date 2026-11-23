@@ -4,8 +4,8 @@ import customtkinter as ctk
 from app import validators
 from app.repositories import AnimalRepository, CaseRepository, LookupRepository, ShelterRepository
 from app.ui.pages.base import Page
-from app.ui.widgets import (DANGER, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, PRIMARY, ChoiceBox, DataTable,
-                            Dialog, button, confirm, entry, error, fmt, form_row, info, nice, photo_image, text_value)
+from app.ui.widgets import (FONT, FONT_BOLD, FONT_SMALL, FONT_SUB, MUTED, PRIMARY, ChoiceBox, DataTable,
+                            Dialog, button, confirm, entry, error, form_row, info, nice, text_value)
 
 
 def _vet_banner(page):

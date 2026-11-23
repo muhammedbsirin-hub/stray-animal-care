@@ -106,6 +106,8 @@ class Shelter:
     animal_count: int
     occupancy_pct: Optional[int]
     partner_clinic: str
+    cat_count: int = 0
+    dog_count: int = 0
     latitude: float = 0
     longitude: float = 0
 

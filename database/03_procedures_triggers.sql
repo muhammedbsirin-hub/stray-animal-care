@@ -39,10 +39,6 @@ BEGIN
     DECLARE v_species VARCHAR(30);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
 
-    IF p_condition IS NULL OR TRIM(p_condition) = '' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Please describe the condition of the animal.';
-    END IF;
-
     SET p_shift = fn_shift_for_time(CURTIME());
 
     START TRANSACTION;
@@ -86,8 +82,7 @@ BEGIN
     START TRANSACTION;
     SELECT r.status, r.reporter_id, v.user_id INTO v_status, v_reporter, v_owner
       FROM injury_report r JOIN veterinarian v ON v.vet_id = r.assigned_vet_id
-     WHERE r.report_id = p_report_id
-       FOR UPDATE;
+     WHERE r.report_id = p_report_id;
 
     IF v_status IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Case not found.';
@@ -240,18 +235,13 @@ BEGIN
     DECLARE v_free INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
 
-    IF p_outcome NOT IN ('DISCHARGED_TO_SHELTER','RELEASED','DECEASED') THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Unknown treatment result.';
-    END IF;
-
     START TRANSACTION;
     SELECT t.outcome, v.user_id, t.animal_id, a.species_id, t.report_id, COALESCE(a.name, CONCAT('#', a.animal_id))
       INTO v_outcome, v_owner, v_animal, v_species, v_report, v_name
       FROM treatment t
       JOIN veterinarian v ON v.vet_id = t.vet_id
       JOIN animal a       ON a.animal_id = t.animal_id
-     WHERE t.treatment_id = p_treatment_id
-       FOR UPDATE;
+     WHERE t.treatment_id = p_treatment_id;
 
     IF v_outcome IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Treatment not found.';
@@ -264,9 +254,6 @@ BEGIN
     END IF;
 
     IF p_outcome = 'DISCHARGED_TO_SHELTER' THEN
-        IF p_shelter_id IS NULL THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Please choose a shelter.';
-        END IF;
         IF NOT EXISTS (SELECT 1 FROM shelter_species WHERE shelter_id = p_shelter_id AND species_id = v_species) THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The selected shelter does not accept this species.';
         END IF;
@@ -279,10 +266,7 @@ BEGIN
         END IF;
     END IF;
 
-    UPDATE treatment
-       SET outcome = p_outcome, ended_at = NOW(),
-           discharge_shelter_id = IF(p_outcome = 'DISCHARGED_TO_SHELTER', p_shelter_id, NULL)
-     WHERE treatment_id = p_treatment_id;
+    UPDATE treatment SET outcome = p_outcome, ended_at = NOW() WHERE treatment_id = p_treatment_id;
 
     IF p_outcome = 'DISCHARGED_TO_SHELTER' THEN
         -- age first, then intake date
@@ -322,7 +306,7 @@ BEGIN
 
     START TRANSACTION;
     SELECT status, animal_id, vaccine_id, vet_id INTO v_status, v_animal, v_vaccine, v_assigned
-      FROM vaccination_schedule WHERE schedule_id = p_schedule_id FOR UPDATE;
+      FROM vaccination_schedule WHERE schedule_id = p_schedule_id;
     SELECT vet_id INTO v_me FROM veterinarian WHERE user_id = p_vet_user_id;
 
     IF v_status IS NULL THEN
@@ -335,8 +319,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This vaccination is not planned any more.';
     END IF;
 
-    UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE(), done_by = v_me
-     WHERE schedule_id = p_schedule_id;
+    UPDATE vaccination_schedule SET status = 'DONE', done_date = CURDATE() WHERE schedule_id = p_schedule_id;
 
     SELECT COUNT(*) INTO v_left FROM vaccination_schedule
      WHERE animal_id = v_animal AND vaccine_id = v_vaccine AND status = 'PLANNED';
@@ -360,7 +343,7 @@ BEGIN
 
     START TRANSACTION;
     SELECT status, vet_id INTO v_status, v_assigned
-      FROM vaccination_schedule WHERE schedule_id = p_schedule_id FOR UPDATE;
+      FROM vaccination_schedule WHERE schedule_id = p_schedule_id;
     SELECT vet_id INTO v_me FROM veterinarian WHERE user_id = p_vet_user_id;
 
     IF v_status IS NULL THEN
@@ -377,8 +360,7 @@ BEGIN
     END IF;
 
     DELETE FROM vaccination_schedule WHERE generated_from = p_schedule_id AND status = 'PLANNED';
-    UPDATE vaccination_schedule SET status = 'PLANNED', done_date = NULL, done_by = NULL
-     WHERE schedule_id = p_schedule_id;
+    UPDATE vaccination_schedule SET status = 'PLANNED', done_date = NULL WHERE schedule_id = p_schedule_id;
     COMMIT;
 END //
 
@@ -402,8 +384,7 @@ BEGIN
     SELECT ap.status, ap.animal_id, ap.user_id, a.status, COALESCE(a.name, CONCAT('#', a.animal_id))
       INTO v_status, v_animal, v_user, v_animal_status, v_name
       FROM adoption_application ap JOIN animal a ON a.animal_id = ap.animal_id
-     WHERE ap.application_id = p_application_id
-       FOR UPDATE;
+     WHERE ap.application_id = p_application_id;
 
     IF v_status IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Application not found.';
@@ -416,7 +397,7 @@ BEGIN
     END IF;
 
     UPDATE adoption_application
-       SET status = 'APPROVED', reviewed_by = p_admin_id, reviewed_at = NOW(), admin_note = p_note
+       SET status = 'APPROVED', reviewed_at = NOW(), admin_note = p_note
      WHERE application_id = p_application_id;
 
     -- reject others for same animal
@@ -428,8 +409,7 @@ BEGIN
       FROM adoption_application
      WHERE animal_id = v_animal AND status = 'PENDING';
     UPDATE adoption_application
-       SET status = 'REJECTED', reviewed_by = p_admin_id, reviewed_at = NOW(),
-           admin_note = 'Animal adopted by another applicant'
+       SET status = 'REJECTED', reviewed_at = NOW(), admin_note = 'Animal adopted by another applicant'
      WHERE animal_id = v_animal AND status = 'PENDING';
 
     UPDATE animal SET status = 'ADOPTED' WHERE animal_id = v_animal;
@@ -458,13 +438,13 @@ BEGIN
     START TRANSACTION;
     SELECT ap.status, ap.user_id, COALESCE(a.name, CONCAT('#', a.animal_id)) INTO v_status, v_user, v_name
       FROM adoption_application ap JOIN animal a ON a.animal_id = ap.animal_id
-     WHERE ap.application_id = p_application_id FOR UPDATE;
+     WHERE ap.application_id = p_application_id;
     IF v_status IS NULL OR v_status <> 'PENDING' THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only pending applications can be rejected.';
     END IF;
 
     UPDATE adoption_application
-       SET status = 'REJECTED', reviewed_by = p_admin_id, reviewed_at = NOW(), admin_note = p_note
+       SET status = 'REJECTED', reviewed_at = NOW(), admin_note = p_note
      WHERE application_id = p_application_id;
     CALL sp_notify(v_user, 'APPLICATION_REJECTED', 'Adoption application result',
                    CONCAT('Your application #', p_application_id, ' for ', v_name, ' was not approved.',
@@ -535,15 +515,12 @@ END //
 -- triggers
 DROP TRIGGER IF EXISTS trg_report_ai //
 DROP TRIGGER IF EXISTS trg_report_au //
-DROP TRIGGER IF EXISTS trg_reaction_bi //
 DROP TRIGGER IF EXISTS trg_reaction_ai //
-DROP TRIGGER IF EXISTS trg_reaction_bu //
 DROP TRIGGER IF EXISTS trg_reaction_au //
 DROP TRIGGER IF EXISTS trg_reaction_ad //
 DROP TRIGGER IF EXISTS trg_application_bi //
 DROP TRIGGER IF EXISTS trg_application_ai //
 DROP TRIGGER IF EXISTS trg_vet_bu //
-DROP TRIGGER IF EXISTS trg_vet_bd //
 
 -- save status changes to log
 CREATE TRIGGER trg_report_ai AFTER INSERT ON injury_report FOR EACH ROW
@@ -557,32 +534,6 @@ BEGIN
     IF NEW.status <> OLD.status THEN
         INSERT INTO report_status_log (report_id, old_status, new_status, changed_by)
         VALUES (NEW.report_id, OLD.status, NEW.status, NEW.resolved_by);
-    END IF;
-END //
-
--- checks before adding emoji
-CREATE TRIGGER trg_reaction_bi BEFORE INSERT ON post_reaction FOR EACH ROW
-BEGIN
-    DECLARE v_owner INT UNSIGNED;
-    DECLARE v_deleted BOOLEAN;
-    SELECT user_id, is_deleted INTO v_owner, v_deleted FROM feeding_post WHERE post_id = NEW.post_id;
-    IF v_owner = NEW.user_id THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You cannot react to your own post.';
-    END IF;
-    IF v_deleted THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post was deleted.';
-    END IF;
-    IF (SELECT posted_at FROM feeding_post WHERE post_id = NEW.post_id) < NOW() - INTERVAL 24 HOUR THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post is older than 24 hours and is no longer on the map.';
-    END IF;
-END //
-
--- emoji can change only in 24 hours
-CREATE TRIGGER trg_reaction_bu BEFORE UPDATE ON post_reaction FOR EACH ROW
-BEGIN
-    IF NEW.emoji <> OLD.emoji
-       AND (SELECT posted_at FROM feeding_post WHERE post_id = NEW.post_id) < NOW() - INTERVAL 24 HOUR THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This post is older than 24 hours, its emoji cannot be changed.';
     END IF;
 END //
 
@@ -654,15 +605,6 @@ BEGIN
        AND (SELECT COUNT(*) FROM veterinarian v JOIN user_account u ON u.user_id = v.user_id
              WHERE v.clinic_id = OLD.clinic_id AND v.shift = OLD.shift
                AND v.vet_id <> OLD.vet_id AND u.is_active = TRUE) = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Every clinic needs at least one morning and one evening veterinarian.';
-    END IF;
-END //
-
-CREATE TRIGGER trg_vet_bd BEFORE DELETE ON veterinarian FOR EACH ROW
-BEGIN
-    IF (SELECT COUNT(*) FROM veterinarian v JOIN user_account u ON u.user_id = v.user_id
-         WHERE v.clinic_id = OLD.clinic_id AND v.shift = OLD.shift
-           AND v.vet_id <> OLD.vet_id AND u.is_active = TRUE) = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Every clinic needs at least one morning and one evening veterinarian.';
     END IF;
 END //

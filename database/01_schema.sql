@@ -18,7 +18,6 @@ CREATE TABLE role (
 CREATE TABLE district (
     district_id    SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     district_name  VARCHAR(50) NOT NULL,
-    side           ENUM('EUROPE','ASIA') NOT NULL,   -- europe or asia
     CONSTRAINT pk_district PRIMARY KEY (district_id),
     CONSTRAINT uq_district_name UNIQUE (district_name)
 );
@@ -44,7 +43,6 @@ CREATE TABLE user_account (
 CREATE TABLE user_role (                         -- m:n
     user_id     INT UNSIGNED     NOT NULL,
     role_id     TINYINT UNSIGNED NOT NULL,
-    granted_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_user_role PRIMARY KEY (user_id, role_id)
 );
 
@@ -132,7 +130,6 @@ CREATE TABLE animal (
     responsible_vet_id   SMALLINT UNSIGNED NULL,     -- vet for the vaccines
     description          VARCHAR(255) NULL,
     photo_path           VARCHAR(255) NULL,
-    created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_animal PRIMARY KEY (animal_id),
     CONSTRAINT chk_animal_age CHECK (age_weeks_at_intake <= 1500),
     CONSTRAINT chk_animal_shelter CHECK (status <> 'IN_SHELTER' OR shelter_id IS NOT NULL)
@@ -186,10 +183,8 @@ CREATE TABLE treatment (
     outcome               ENUM('UNDER_TREATMENT','DISCHARGED_TO_SHELTER','RELEASED','DECEASED')
                           NOT NULL DEFAULT 'UNDER_TREATMENT',
     ended_at              DATETIME NULL,
-    discharge_shelter_id  SMALLINT UNSIGNED NULL,
     CONSTRAINT pk_treatment PRIMARY KEY (treatment_id),
     CONSTRAINT uq_treatment_report UNIQUE (report_id),
-    CONSTRAINT chk_treatment_discharge CHECK (outcome <> 'DISCHARGED_TO_SHELTER' OR discharge_shelter_id IS NOT NULL),
     CONSTRAINT chk_treatment_ended CHECK (outcome = 'UNDER_TREATMENT' OR ended_at IS NOT NULL)
 );
 
@@ -245,7 +240,6 @@ CREATE TABLE vaccination_schedule (
     vet_id        SMALLINT UNSIGNED NOT NULL,         -- assigned vet
     status        ENUM('PLANNED','DONE','CANCELLED') NOT NULL DEFAULT 'PLANNED',
     done_date     DATE NULL,
-    done_by       SMALLINT UNSIGNED NULL,
     generated_from INT UNSIGNED NULL,                 -- which dose created this one
     CONSTRAINT pk_vaccination_schedule PRIMARY KEY (schedule_id),
     CONSTRAINT chk_schedule_done CHECK (status <> 'DONE' OR done_date IS NOT NULL)
@@ -299,7 +293,6 @@ CREATE TABLE adoption_application (
     agrees_home_visit    BOOLEAN NOT NULL,
     agrees_neutering     BOOLEAN NOT NULL,
     agrees_vaccination   BOOLEAN NOT NULL,
-    reviewed_by          INT UNSIGNED NULL,
     reviewed_at          DATETIME NULL,
     admin_note           VARCHAR(255) NULL,
     CONSTRAINT pk_adoption_application PRIMARY KEY (application_id),
@@ -384,8 +377,7 @@ ALTER TABLE report_status_log
 ALTER TABLE treatment
     ADD CONSTRAINT fk_treatment_animal  FOREIGN KEY (animal_id) REFERENCES animal (animal_id),
     ADD CONSTRAINT fk_treatment_vet     FOREIGN KEY (vet_id)    REFERENCES veterinarian (vet_id),
-    ADD CONSTRAINT fk_treatment_report  FOREIGN KEY (report_id) REFERENCES injury_report (report_id),
-    ADD CONSTRAINT fk_treatment_shelter FOREIGN KEY (discharge_shelter_id) REFERENCES shelter (shelter_id);
+    ADD CONSTRAINT fk_treatment_report  FOREIGN KEY (report_id) REFERENCES injury_report (report_id);
 
 ALTER TABLE prescription_item
     ADD CONSTRAINT fk_presc_treatment FOREIGN KEY (treatment_id) REFERENCES treatment (treatment_id) ON DELETE CASCADE,
@@ -399,7 +391,6 @@ ALTER TABLE vaccination_schedule
     ADD CONSTRAINT fk_sched_animal  FOREIGN KEY (animal_id)  REFERENCES animal (animal_id) ON DELETE CASCADE,
     ADD CONSTRAINT fk_sched_vaccine FOREIGN KEY (vaccine_id) REFERENCES vaccine (vaccine_id),
     ADD CONSTRAINT fk_sched_vet     FOREIGN KEY (vet_id)     REFERENCES veterinarian (vet_id),
-    ADD CONSTRAINT fk_sched_doneby  FOREIGN KEY (done_by)    REFERENCES veterinarian (vet_id),
     ADD CONSTRAINT fk_sched_generated FOREIGN KEY (generated_from) REFERENCES vaccination_schedule (schedule_id)
         ON DELETE CASCADE;                         -- unary
 
@@ -413,8 +404,7 @@ ALTER TABLE post_reaction
 ALTER TABLE adoption_application
     ADD CONSTRAINT fk_app_user     FOREIGN KEY (user_id)     REFERENCES user_account (user_id),
     ADD CONSTRAINT fk_app_animal   FOREIGN KEY (animal_id)   REFERENCES animal (animal_id),
-    ADD CONSTRAINT fk_app_district FOREIGN KEY (district_id) REFERENCES district (district_id),
-    ADD CONSTRAINT fk_app_reviewer FOREIGN KEY (reviewed_by) REFERENCES user_account (user_id);
+    ADD CONSTRAINT fk_app_district FOREIGN KEY (district_id) REFERENCES district (district_id);
 
 ALTER TABLE adoption
     ADD CONSTRAINT fk_adoption_application FOREIGN KEY (application_id) REFERENCES adoption_application (application_id);

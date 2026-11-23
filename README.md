@@ -36,7 +36,6 @@ or execute these files in MySQL Workbench in this order:
 `01_schema.sql`, `02_functions_views.sql`, `03_procedures_triggers.sql`, `05_seed_data.sql`.
 
 Running it again resets everything to the sample data.
-`04_roles_grants.sql` (optional, as root) shows the role privileges inside MySQL.
 `06_report_queries.sql` contains example report queries.
 
 ## 3. Run
