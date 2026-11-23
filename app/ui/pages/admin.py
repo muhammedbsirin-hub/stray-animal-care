@@ -695,13 +695,12 @@ class AnimalDialog(Dialog):
 # =============================================================================== users
 class UsersPage(Page):
     title = "Users"
-    subtitle = "Close or reopen accounts. Closing keeps the history (soft delete)."
+    subtitle = "Close accounts. A closed account keeps its data (soft delete) and cannot be reopened."
 
     def build(self):
         self.search = entry(self.toolbar, width=180, placeholder="Search")
         self.search.pack(side="left", padx=4)
         self.search.bind("<Return>", lambda e: self.refresh())
-        button(self.toolbar, "Reopen", self.reopen, kind="plain", width=100).pack(side="left", padx=4)
         button(self.toolbar, "Close account", self.close_account, kind="danger", width=140).pack(side="left", padx=4)
         self.table = DataTable(self.body, [("user_id", "No", 45), ("username", "Username", 120),
                                            ("full_name", "Name", 170), ("email", "E-mail", 230),
@@ -726,11 +725,3 @@ class UsersPage(Page):
             ok, _ = self.run(UserRepository.delete_account, u["user_id"], self.session.user_id)
             if ok:
                 self.refresh()
-
-    def reopen(self):
-        u = self.table.selected()
-        if u is None or u["is_active"]:
-            error("Select a closed account.")
-            return
-        self.run(UserRepository.reactivate, u["user_id"])
-        self.refresh()

@@ -5,11 +5,11 @@
 USE stray_db;
 SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 
-INSERT INTO role (role_name, description) VALUES
-  ('ADMIN', 'Reviews adoption applications, manages shelters, clinics and users'),
-  ('VET', 'Veterinarian: treats injured animals and follows vaccinations'),
-  ('VOLUNTEER', 'Every registered user: feeding posts, injured animal reports, adoption requests'),
-  ('ADOPTER', 'Volunteer whose adoption application was approved');
+INSERT INTO role (role_name) VALUES
+  ('ADMIN'),
+  ('VET'),
+  ('VOLUNTEER'),
+  ('ADOPTER');
 
 INSERT INTO district (district_name, side) VALUES
   ('Adalar', 'ASIA'),
@@ -337,10 +337,10 @@ INSERT INTO medicine (medicine_name, form) VALUES
   ('Gentamicin Eye Drops', 'DROPS'),
   ('Praziquantel', 'TABLET');
 
-INSERT INTO vaccine (vaccine_code, vaccine_name, description) VALUES
-  ('DHPP', 'Combo vaccine (DHPP / CPV-CDV-CAV-2)', 'Dogs: distemper, hepatitis, parvovirus, parainfluenza'),
-  ('FVRCP', 'Combo vaccine (FVRCP)', 'Cats: rhinotracheitis, calicivirus, panleukopenia'),
-  ('RABIES', 'Rabies vaccine', 'Cats and dogs; repeated every year (legal requirement in Turkey)');
+INSERT INTO vaccine (vaccine_code, vaccine_name) VALUES
+  ('DHPP', 'Dog combo vaccine (DHPP)'),
+  ('FVRCP', 'Cat combo vaccine (FVRCP)'),
+  ('RABIES', 'Rabies vaccine');
 
 -- species 1 = Cat, 2 = Dog ; vaccine 1 = DHPP, 2 = FVRCP, 3 = RABIES
 

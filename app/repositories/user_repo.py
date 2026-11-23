@@ -9,8 +9,9 @@ class UserRepository:
     @staticmethod
     def find_login(username):
         """Row with the password (only used by AuthService)."""
-        return db.query_one("SELECT user_id, password, is_active FROM user_account WHERE username = %s",
-                            (username,))
+        # an active account first; a closed one only to say "this account has been closed"
+        return db.query_one("""SELECT user_id, password, is_active FROM user_account WHERE username = %s
+                                ORDER BY is_active DESC, user_id DESC LIMIT 1""", (username,))
 
     @staticmethod
     def get(user_id) -> User:
@@ -24,6 +25,10 @@ class UserRepository:
         return user
 
     @staticmethod
+    def get_password(user_id):
+        return db.scalar("SELECT password FROM user_account WHERE user_id = %s", (user_id,))
+
+    @staticmethod
     def get_vet(user_id):
         row = db.query_one("""SELECT v.vet_id, v.user_id, v.clinic_id, c.clinic_name, v.shift, v.license_no
                                 FROM veterinarian v JOIN clinic c ON c.clinic_id = v.clinic_id
@@ -32,11 +37,12 @@ class UserRepository:
 
     @staticmethod
     def username_taken(username):
-        return db.scalar("SELECT COUNT(*) FROM user_account WHERE username = %s", (username,)) > 0
+        return db.scalar("SELECT COUNT(*) FROM user_account WHERE username = %s AND is_active = TRUE",
+                         (username,)) > 0
 
     @staticmethod
     def email_taken(email, except_user_id=0):
-        return db.scalar("SELECT COUNT(*) FROM user_account WHERE email = %s AND user_id <> %s",
+        return db.scalar("SELECT COUNT(*) FROM user_account WHERE email = %s AND user_id <> %s AND is_active = TRUE",
                          (email, except_user_id)) > 0
 
     @staticmethod
@@ -85,10 +91,6 @@ class UserRepository:
     def delete_account(user_id, actor_id):
         """actor_id = who asks (the user himself/herself or the admin); the rules are in the procedure."""
         db.call("sp_delete_account", (user_id, actor_id))
-
-    @staticmethod
-    def reactivate(user_id):
-        db.execute("UPDATE user_account SET is_active = TRUE WHERE user_id = %s", (user_id,))
 
     @staticmethod
     def list_users(search=""):

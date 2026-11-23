@@ -183,12 +183,7 @@ def main():
            "-- =====================================================================",
            "USE stray_db;", "SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;", ""]
 
-    sql.append(insert("role", ["role_name", "description"], [
-        ("ADMIN", "Reviews adoption applications, manages shelters, clinics and users"),
-        ("VET", "Veterinarian: treats injured animals and follows vaccinations"),
-        ("VOLUNTEER", "Every registered user: feeding posts, injured animal reports, adoption requests"),
-        ("ADOPTER", "Volunteer whose adoption application was approved"),
-    ]))
+    sql.append(insert("role", ["role_name"], [("ADMIN",), ("VET",), ("VOLUNTEER",), ("ADOPTER",)]))
     sql.append(insert("district", ["district_name", "side"], [(d[0], d[1]) for d in DISTRICTS]))
     sql.append(insert("species", ["species_name"], [("Cat",), ("Dog",)]))
     breed_rows, breed_ids, bid = [], {"Cat": [], "Dog": []}, 0
@@ -264,10 +259,10 @@ def main():
     sql.append(insert("shelter_species", ["shelter_id", "species_id"], shelter_species))
 
     sql.append(insert("medicine", ["medicine_name", "form"], MEDICINES))
-    sql.append(insert("vaccine", ["vaccine_code", "vaccine_name", "description"], [
-        ("DHPP", "Combo vaccine (DHPP / CPV-CDV-CAV-2)", "Dogs: distemper, hepatitis, parvovirus, parainfluenza"),
-        ("FVRCP", "Combo vaccine (FVRCP)", "Cats: rhinotracheitis, calicivirus, panleukopenia"),
-        ("RABIES", "Rabies vaccine", "Cats and dogs; repeated every year (legal requirement in Turkey)"),
+    sql.append(insert("vaccine", ["vaccine_code", "vaccine_name"], [
+        ("DHPP", "Dog combo vaccine (DHPP)"),
+        ("FVRCP", "Cat combo vaccine (FVRCP)"),
+        ("RABIES", "Rabies vaccine"),
     ]))
     sql.append("-- species 1 = Cat, 2 = Dog ; vaccine 1 = DHPP, 2 = FVRCP, 3 = RABIES\n")
     sql.append(insert("vaccine_rule", ["species_id", "vaccine_id", "first_dose_week", "series_interval_weeks",

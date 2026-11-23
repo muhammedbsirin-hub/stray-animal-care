@@ -50,6 +50,5 @@ class AuthService:
 
     @staticmethod
     def verify_password(user_id, password):
-        user = UserRepository.get(user_id)
-        row = UserRepository.find_login(user.username)
-        return row is not None and check_password(password, row["password"])
+        stored = UserRepository.get_password(user_id)
+        return stored is not None and check_password(password, stored)

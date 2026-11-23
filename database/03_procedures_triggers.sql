@@ -558,12 +558,8 @@ BEGIN
     END IF;
 
     START TRANSACTION;
-    -- release the username and e-mail so that they can be used for a new account
-    UPDATE user_account
-       SET is_active = FALSE,
-           username  = CONCAT('deleted_', user_id),
-           email     = CONCAT('deleted_', user_id, '@closed.invalid')
-     WHERE user_id = p_user_id;
+    -- the data stays as it is; only active accounts count for unique username / e-mail
+    UPDATE user_account SET is_active = FALSE WHERE user_id = p_user_id;
     UPDATE feeding_post SET is_deleted = TRUE WHERE user_id = p_user_id;
     DELETE FROM post_reaction WHERE user_id = p_user_id;
     UPDATE adoption_application SET status = 'WITHDRAWN' WHERE user_id = p_user_id AND status = 'PENDING';

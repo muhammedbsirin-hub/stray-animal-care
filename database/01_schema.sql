@@ -19,7 +19,6 @@ SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 CREATE TABLE role (
     role_id      TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
     role_name    VARCHAR(20)  NOT NULL,          -- ADMIN, VET, VOLUNTEER, ADOPTER
-    description  VARCHAR(150) NULL,
     CONSTRAINT pk_role PRIMARY KEY (role_id),
     CONSTRAINT uq_role_name UNIQUE (role_name)
 );
@@ -42,8 +41,10 @@ CREATE TABLE user_account (
     phone           CHAR(11)     NOT NULL,
     is_active       BOOLEAN      NOT NULL DEFAULT TRUE,  -- FALSE = account closed (soft delete)
     CONSTRAINT pk_user_account PRIMARY KEY (user_id),
-    CONSTRAINT uq_user_username UNIQUE (username),
-    CONSTRAINT uq_user_email UNIQUE (email),
+    -- a username / e-mail must be unique only among ACTIVE accounts: a closed account keeps its
+    -- data, and the same username can be registered again (NULL values do not clash in a unique index)
+    UNIQUE KEY uq_user_username ((CASE WHEN is_active THEN username END)),
+    UNIQUE KEY uq_user_email    ((CASE WHEN is_active THEN email END)),
     CONSTRAINT chk_user_username CHECK (REGEXP_LIKE(username, '^[A-Za-z0-9_]{3,20}$', 'c')),
     CONSTRAINT chk_user_phone    CHECK (REGEXP_LIKE(phone, '^05[0-9]{9}$')),
     CONSTRAINT chk_user_email    CHECK (REGEXP_LIKE(email, '^[^@ ]+@[^@ ]+[.][^@ ]+$'))
@@ -224,7 +225,6 @@ CREATE TABLE vaccine (
     vaccine_id    TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
     vaccine_code  VARCHAR(10)  NOT NULL,              -- DHPP, FVRCP, RABIES
     vaccine_name  VARCHAR(80)  NOT NULL,
-    description   VARCHAR(255) NULL,
     CONSTRAINT pk_vaccine PRIMARY KEY (vaccine_id),
     CONSTRAINT uq_vaccine_code UNIQUE (vaccine_code)
 );
@@ -256,7 +256,6 @@ CREATE TABLE vaccination_schedule (
     done_date     DATE NULL,
     done_by       SMALLINT UNSIGNED NULL,
     generated_from INT UNSIGNED NULL,                 -- dose planned automatically when this one was done
-    notes         VARCHAR(255) NULL,
     CONSTRAINT pk_vaccination_schedule PRIMARY KEY (schedule_id),
     CONSTRAINT chk_schedule_done CHECK (status <> 'DONE' OR done_date IS NOT NULL)
 );
