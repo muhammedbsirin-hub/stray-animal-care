@@ -1,18 +1,13 @@
--- =====================================================================
--- 04_roles_grants.sql  (OPTIONAL - run as root)
--- Shows that the privileges of the application roles can also be
--- defined inside MySQL.  The desktop app itself connects with one
--- account (stray_app) and checks the role of the signed-in user.
--- =====================================================================
+-- optional, run as root. roles in mysql (app itself uses stray_app)
 USE stray_db;
 
 DROP ROLE IF EXISTS 'r_admin', 'r_vet', 'r_volunteer';
 CREATE ROLE 'r_admin', 'r_vet', 'r_volunteer';
 
--- administrator: everything in the database
+-- admin
 GRANT ALL PRIVILEGES ON stray_db.* TO 'r_admin';
 
--- veterinarian: reads everything, writes cases, treatments and vaccinations
+-- vet
 GRANT SELECT ON stray_db.* TO 'r_vet';
 GRANT INSERT, UPDATE ON stray_db.animal               TO 'r_vet';
 GRANT INSERT, UPDATE ON stray_db.treatment            TO 'r_vet';
@@ -24,7 +19,7 @@ GRANT EXECUTE ON PROCEDURE stray_db.sp_finish_treatment     TO 'r_vet';
 GRANT EXECUTE ON PROCEDURE stray_db.sp_complete_vaccination TO 'r_vet';
 GRANT EXECUTE ON PROCEDURE stray_db.sp_undo_vaccination     TO 'r_vet';
 
--- volunteer: own posts, emojis, reports and applications
+-- volunteer
 GRANT SELECT ON stray_db.v_active_feeding_posts TO 'r_volunteer';
 GRANT SELECT ON stray_db.v_shelter_summary      TO 'r_volunteer';
 GRANT SELECT ON stray_db.v_animal_card          TO 'r_volunteer';

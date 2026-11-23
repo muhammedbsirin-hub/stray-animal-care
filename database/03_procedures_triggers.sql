@@ -1,7 +1,4 @@
--- =====================================================================
--- 03_procedures_triggers.sql : stored procedures, triggers and the
---                              end-of-day EVENT (business rules)
--- =====================================================================
+-- procedures, triggers and the event
 USE stray_db;
 SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 
@@ -19,9 +16,7 @@ DROP PROCEDURE IF EXISTS sp_delete_account;
 
 DELIMITER //
 
--- ---------------------------------------------------------------------
--- Helper: one notification per (user, event_key)  -> no duplicates
--- ---------------------------------------------------------------------
+-- adds a notification (no duplicates)
 CREATE PROCEDURE sp_notify(IN p_user_id INT UNSIGNED, IN p_type VARCHAR(30),
                            IN p_title VARCHAR(100), IN p_message VARCHAR(500),
                            IN p_event_key VARCHAR(80))
@@ -30,11 +25,7 @@ BEGIN
     VALUES (p_user_id, p_type, p_title, p_message, p_event_key);
 END //
 
--- ---------------------------------------------------------------------
--- Volunteer reports an injured animal.
--- Shift is decided from the current time, then a RANDOM vet of the
--- chosen clinic working in that shift is assigned.  (transaction)
--- ---------------------------------------------------------------------
+-- volunteer reports injured animal, random vet of clinic + shift is picked
 CREATE PROCEDURE sp_create_injury_report(
     IN  p_reporter_id INT UNSIGNED, IN p_species_id TINYINT UNSIGNED, IN p_age_weeks SMALLINT UNSIGNED,
     IN  p_color VARCHAR(40), IN p_condition VARCHAR(500),
@@ -84,10 +75,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Vet marks a case as NOT ARRIVED (ARRIVED is handled by the app in one
--- transaction because it also creates the animal + treatment + prescription)
--- ---------------------------------------------------------------------
+-- vet says the animal did not come
 CREATE PROCEDURE sp_report_not_arrived(IN p_report_id INT UNSIGNED, IN p_vet_user_id INT UNSIGNED)
 BEGIN
     DECLARE v_status VARCHAR(15);
@@ -124,12 +112,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- End of day: cases that are still PENDING become NOT_ARRIVED and the
--- vet's notification for them is cleaned.  Called by the EVENT at 23:59
--- (p_include_today = TRUE) and by the app when a vet logs in
--- (p_include_today = FALSE -> only cases from previous days).
--- ---------------------------------------------------------------------
+-- end of day: pending cases become not arrived
 CREATE PROCEDURE sp_close_day(IN p_include_today BOOLEAN)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
@@ -153,11 +136,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Builds the vaccination calendar of an animal that is in a shelter,
--- using the rules in vaccine_rule.  Assigns the least loaded vet of the
--- shelter's partner clinic.  (no own transaction: caller decides)
--- ---------------------------------------------------------------------
+-- makes the vaccine calendar from vaccine_rule
 CREATE PROCEDURE sp_generate_vaccination_schedule(IN p_animal_id INT UNSIGNED)
 BEGIN
     DECLARE v_species TINYINT UNSIGNED DEFAULT NULL;
@@ -204,7 +183,7 @@ BEGIN
     END IF;
     SELECT user_id INTO v_vet_user FROM veterinarian WHERE vet_id = v_vet;
 
-    -- an old calendar (e.g. animal returned to a shelter) is cancelled
+    -- cancel old calendar
     UPDATE vaccination_schedule SET status = 'CANCELLED' WHERE animal_id = p_animal_id AND status = 'PLANNED';
 
     SET v_done = FALSE;
@@ -214,7 +193,7 @@ BEGIN
         IF v_done THEN LEAVE rule_loop; END IF;
 
         IF v_age <= r_last THEN
-            -- puppy / kitten series
+            -- young animal
             SET v_wk = GREATEST(r_first, v_age);
             SET v_dose = 0;
             dose_loop: LOOP
@@ -232,7 +211,7 @@ BEGIN
             INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
             VALUES (p_animal_id, r_vaccine, 'Annual', CURDATE() + INTERVAL (v_wk + r_repeat - v_age) WEEK, v_vet);
         ELSE
-            -- adult or missed series: one catch-up dose now, then yearly
+            -- older animal: one dose now, then every year
             INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
             VALUES (p_animal_id, r_vaccine, 'Catch-up dose', CURDATE(), v_vet);
             INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
@@ -246,10 +225,7 @@ BEGIN
                    CONCAT('VACCINE_ASSIGNED:', p_animal_id, ':', CURDATE()));
 END //
 
--- ---------------------------------------------------------------------
--- Vet finishes a treatment: discharge to a shelter / release / deceased.
--- Discharge to a shelter creates the vaccination calendar.  (transaction)
--- ---------------------------------------------------------------------
+-- vet finishes treatment (shelter, released or deceased)
 CREATE PROCEDURE sp_finish_treatment(IN p_treatment_id INT UNSIGNED, IN p_vet_user_id INT UNSIGNED,
                                      IN p_outcome VARCHAR(25), IN p_shelter_id SMALLINT UNSIGNED)
 BEGIN
@@ -309,7 +285,7 @@ BEGIN
      WHERE treatment_id = p_treatment_id;
 
     IF p_outcome = 'DISCHARGED_TO_SHELTER' THEN
-        -- age is carried over: first the age, then the new intake date (MySQL assigns left to right)
+        -- age first, then intake date
         UPDATE animal SET age_weeks_at_intake = fn_current_age_weeks(age_weeks_at_intake, intake_date),
                           intake_date = CURDATE(),
                           status = 'IN_SHELTER', shelter_id = p_shelter_id, responsible_vet_id = NULL
@@ -332,10 +308,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Vet marks a vaccination as done; if it was the last planned dose of
--- that vaccine, the next yearly dose is planned automatically.
--- ---------------------------------------------------------------------
+-- vaccine done, next year is added
 CREATE PROCEDURE sp_complete_vaccination(IN p_schedule_id INT UNSIGNED, IN p_vet_user_id INT UNSIGNED)
 BEGIN
     DECLARE v_status VARCHAR(10);
@@ -377,10 +350,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Vet takes back a "done" mark (e.g. clicked by mistake).  The yearly dose
--- that was planned automatically because of it is removed again.
--- ---------------------------------------------------------------------
+-- undo a done vaccine
 CREATE PROCEDURE sp_undo_vaccination(IN p_schedule_id INT UNSIGNED, IN p_vet_user_id INT UNSIGNED)
 BEGIN
     DECLARE v_status VARCHAR(10);
@@ -412,11 +382,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Admin approves an application (transaction):
--- application APPROVED, other pending ones REJECTED, animal ADOPTED,
--- adoption record created, ADOPTER role granted, everybody notified.
--- ---------------------------------------------------------------------
+-- admin approves an application
 CREATE PROCEDURE sp_approve_application(IN p_application_id INT UNSIGNED, IN p_admin_id INT UNSIGNED,
                                         IN p_note VARCHAR(255))
 BEGIN
@@ -453,7 +419,7 @@ BEGIN
        SET status = 'APPROVED', reviewed_by = p_admin_id, reviewed_at = NOW(), admin_note = p_note
      WHERE application_id = p_application_id;
 
-    -- other people who applied for the same animal
+    -- reject others for same animal
     INSERT IGNORE INTO notification (user_id, notif_type, title, message, event_key)
     SELECT user_id, 'APPLICATION_REJECTED', 'Adoption application result',
            CONCAT('Sorry, ', v_name, ' has been adopted by another family. Your application #',
@@ -507,13 +473,7 @@ BEGIN
     COMMIT;
 END //
 
--- ---------------------------------------------------------------------
--- Account deletion = closing the account (history is kept).  (transaction)
---  * administrator accounts cannot be deleted
---  * a veterinarian account can only be closed by an administrator
---  * a volunteer can delete his/her own account (or an admin can close it)
---  * username and e-mail are released, so they can be registered again
--- ---------------------------------------------------------------------
+-- close an account (soft delete), admin cant be deleted, vet only by admin
 CREATE PROCEDURE sp_delete_account(IN p_user_id INT UNSIGNED, IN p_actor_id INT UNSIGNED)
 BEGIN
     DECLARE v_active BOOLEAN DEFAULT NULL;
@@ -558,23 +518,21 @@ BEGIN
     END IF;
 
     START TRANSACTION;
-    -- the data stays as it is; only active accounts count for unique username / e-mail
+    -- just deactivate
     UPDATE user_account SET is_active = FALSE WHERE user_id = p_user_id;
     UPDATE feeding_post SET is_deleted = TRUE WHERE user_id = p_user_id;
     DELETE FROM post_reaction WHERE user_id = p_user_id;
     UPDATE adoption_application SET status = 'WITHDRAWN' WHERE user_id = p_user_id AND status = 'PENDING';
     DELETE FROM notification WHERE user_id = p_user_id;
     IF v_vet IS NOT NULL THEN
-        -- animals and planned vaccinations go to a colleague of the same clinic
+        -- give animals and vaccines to another vet
         UPDATE animal SET responsible_vet_id = v_other WHERE responsible_vet_id = v_vet;
         UPDATE vaccination_schedule SET vet_id = v_other WHERE vet_id = v_vet AND status = 'PLANNED';
     END IF;
     COMMIT;
 END //
 
--- =====================================================================
--- TRIGGERS
--- =====================================================================
+-- triggers
 DROP TRIGGER IF EXISTS trg_report_ai //
 DROP TRIGGER IF EXISTS trg_report_au //
 DROP TRIGGER IF EXISTS trg_reaction_bi //
@@ -587,7 +545,7 @@ DROP TRIGGER IF EXISTS trg_application_ai //
 DROP TRIGGER IF EXISTS trg_vet_bu //
 DROP TRIGGER IF EXISTS trg_vet_bd //
 
--- every status of an injury report is written to the log table
+-- save status changes to log
 CREATE TRIGGER trg_report_ai AFTER INSERT ON injury_report FOR EACH ROW
 BEGIN
     INSERT INTO report_status_log (report_id, old_status, new_status, changed_by)
@@ -602,7 +560,7 @@ BEGIN
     END IF;
 END //
 
--- a volunteer cannot react to his/her own post or to a deleted post
+-- checks before adding emoji
 CREATE TRIGGER trg_reaction_bi BEFORE INSERT ON post_reaction FOR EACH ROW
 BEGIN
     DECLARE v_owner INT UNSIGNED;
@@ -619,7 +577,7 @@ BEGIN
     END IF;
 END //
 
--- changing an emoji is only possible while the post is on the map (24 hours)
+-- emoji can change only in 24 hours
 CREATE TRIGGER trg_reaction_bu BEFORE UPDATE ON post_reaction FOR EACH ROW
 BEGIN
     IF NEW.emoji <> OLD.emoji
@@ -628,7 +586,7 @@ BEGIN
     END IF;
 END //
 
--- the owner of the post is notified (only once per person per post)
+-- notify post owner
 CREATE TRIGGER trg_reaction_ai AFTER INSERT ON post_reaction FOR EACH ROW
 BEGIN
     CALL sp_notify((SELECT user_id FROM feeding_post WHERE post_id = NEW.post_id),
@@ -636,7 +594,7 @@ BEGIN
                    CONCAT('REACTION:', NEW.post_id, ':', NEW.user_id));
 END //
 
--- emoji changed -> the same notification shows the new emoji and becomes unread again
+-- emoji changed, update notification
 CREATE TRIGGER trg_reaction_au AFTER UPDATE ON post_reaction FOR EACH ROW
 BEGIN
     IF NEW.emoji <> OLD.emoji THEN
@@ -647,13 +605,13 @@ BEGIN
     END IF;
 END //
 
--- emoji removed -> its notification is removed too
+-- emoji removed, delete notification
 CREATE TRIGGER trg_reaction_ad AFTER DELETE ON post_reaction FOR EACH ROW
 BEGIN
     DELETE FROM notification WHERE event_key = CONCAT('REACTION:', OLD.post_id, ':', OLD.user_id);
 END //
 
--- adoption rules checked by the database itself
+-- adoption rules
 CREATE TRIGGER trg_application_bi BEFORE INSERT ON adoption_application FOR EACH ROW
 BEGIN
     DECLARE v_animal_status VARCHAR(20);
@@ -676,7 +634,7 @@ BEGIN
     END IF;
 END //
 
--- every active admin gets the new application in the inbox
+-- notify admin
 CREATE TRIGGER trg_application_ai AFTER INSERT ON adoption_application FOR EACH ROW
 BEGIN
     INSERT IGNORE INTO notification (user_id, notif_type, title, message, event_key)
@@ -689,7 +647,7 @@ BEGIN
      WHERE r.role_name = 'ADMIN' AND u.is_active = TRUE;
 END //
 
--- every clinic must keep at least one MORNING and one EVENING vet
+-- clinic needs a morning and an evening vet
 CREATE TRIGGER trg_vet_bu BEFORE UPDATE ON veterinarian FOR EACH ROW
 BEGIN
     IF (NEW.clinic_id <> OLD.clinic_id OR NEW.shift <> OLD.shift)
@@ -709,9 +667,7 @@ BEGIN
     END IF;
 END //
 
--- =====================================================================
--- EVENT: every day at 23:59 close the cases whose animal did not arrive
--- =====================================================================
+-- event: every day 23:59 close pending cases
 DROP EVENT IF EXISTS ev_close_day //
 CREATE EVENT ev_close_day
     ON SCHEDULE EVERY 1 DAY

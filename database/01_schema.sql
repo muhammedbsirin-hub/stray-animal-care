@@ -1,24 +1,16 @@
--- =====================================================================
--- Stray Animal Care System  --  SEN22321E Database System Design
--- 01_schema.sql : database, 24 tables, PK / UNIQUE / CHECK constraints,
---                 then all FOREIGN KEYs at the end (ALTER TABLE).
--- Run order: 01 -> 02 -> 03 -> 05 (04 is optional, run as root)
--- =====================================================================
+-- stray animal care - tables
+-- run order: 01, 02, 03, 05
 
 DROP DATABASE IF EXISTS stray_db;
 CREATE DATABASE stray_db CHARACTER SET utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 USE stray_db;
 SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 
--- =====================================================================
--- 1) TABLES
--- =====================================================================
-
--- ---------- Users and roles ------------------------------------------
+-- users and roles
 
 CREATE TABLE role (
     role_id      TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    role_name    VARCHAR(20)  NOT NULL,          -- ADMIN, VET, VOLUNTEER, ADOPTER
+    role_name    VARCHAR(20)  NOT NULL,          -- admin, vet, volunteer, adopter
     CONSTRAINT pk_role PRIMARY KEY (role_id),
     CONSTRAINT uq_role_name UNIQUE (role_name)
 );
@@ -26,7 +18,7 @@ CREATE TABLE role (
 CREATE TABLE district (
     district_id    SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     district_name  VARCHAR(50) NOT NULL,
-    side           ENUM('EUROPE','ASIA') NOT NULL,   -- side of the Bosphorus
+    side           ENUM('EUROPE','ASIA') NOT NULL,   -- europe or asia
     CONSTRAINT pk_district PRIMARY KEY (district_id),
     CONSTRAINT uq_district_name UNIQUE (district_name)
 );
@@ -34,15 +26,14 @@ CREATE TABLE district (
 CREATE TABLE user_account (
     user_id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username        VARCHAR(20)  NOT NULL,
-    password        VARCHAR(64)  NOT NULL,           -- stored as plain text (group decision)
+    password        VARCHAR(64)  NOT NULL,           -- plain text
     first_name      VARCHAR(50)  NOT NULL,
     last_name       VARCHAR(50)  NOT NULL,
     email           VARCHAR(100) NOT NULL,
     phone           CHAR(11)     NOT NULL,
-    is_active       BOOLEAN      NOT NULL DEFAULT TRUE,  -- FALSE = account closed (soft delete)
+    is_active       BOOLEAN      NOT NULL DEFAULT TRUE,  -- false = account closed
     CONSTRAINT pk_user_account PRIMARY KEY (user_id),
-    -- a username / e-mail must be unique only among ACTIVE accounts: a closed account keeps its
-    -- data, and the same username can be registered again (NULL values do not clash in a unique index)
+    -- username and email unique only for active accounts
     UNIQUE KEY uq_user_username ((CASE WHEN is_active THEN username END)),
     UNIQUE KEY uq_user_email    ((CASE WHEN is_active THEN email END)),
     CONSTRAINT chk_user_username CHECK (REGEXP_LIKE(username, '^[A-Za-z0-9_]{3,20}$', 'c')),
@@ -50,18 +41,18 @@ CREATE TABLE user_account (
     CONSTRAINT chk_user_email    CHECK (REGEXP_LIKE(email, '^[^@ ]+@[^@ ]+[.][^@ ]+$'))
 );
 
-CREATE TABLE user_role (                         -- M:N  user_account <-> role
+CREATE TABLE user_role (                         -- m:n
     user_id     INT UNSIGNED     NOT NULL,
     role_id     TINYINT UNSIGNED NOT NULL,
     granted_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_user_role PRIMARY KEY (user_id, role_id)
 );
 
--- ---------- Animals: species and breeds --------------------------------
+-- animals: species and breeds
 
 CREATE TABLE species (
     species_id    TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    species_name  VARCHAR(30) NOT NULL,          -- Cat, Dog
+    species_name  VARCHAR(30) NOT NULL,          -- cat, dog
     CONSTRAINT pk_species PRIMARY KEY (species_id),
     CONSTRAINT uq_species_name UNIQUE (species_name)
 );
@@ -72,10 +63,10 @@ CREATE TABLE breed (
     breed_name  VARCHAR(50) NOT NULL,
     CONSTRAINT pk_breed PRIMARY KEY (breed_id),
     CONSTRAINT uq_breed_name UNIQUE (species_id, breed_name),
-    CONSTRAINT uq_breed_species UNIQUE (breed_id, species_id)   -- target of composite FK from animal
+    CONSTRAINT uq_breed_species UNIQUE (breed_id, species_id)   -- for the fk in animal
 );
 
--- ---------- Clinics, veterinarians, shelters ---------------------------
+-- clinics, veterinarians, shelters
 
 CREATE TABLE clinic (
     clinic_id    SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -90,11 +81,11 @@ CREATE TABLE clinic (
     CONSTRAINT chk_clinic_phone CHECK (REGEXP_LIKE(phone, '^0[0-9]{10}$'))
 );
 
-CREATE TABLE veterinarian (                      -- specialisation of user_account (1:1)
+CREATE TABLE veterinarian (                      -- 1:1 with user_account
     vet_id      SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id     INT UNSIGNED      NOT NULL,
     clinic_id   SMALLINT UNSIGNED NOT NULL,
-    shift       ENUM('MORNING','EVENING') NOT NULL,  -- MORNING 07:00-16:59, EVENING 17:00-06:59
+    shift       ENUM('MORNING','EVENING') NOT NULL,  -- morning 07-17, evening 17-07
     license_no  VARCHAR(20) NOT NULL,
     CONSTRAINT pk_veterinarian PRIMARY KEY (vet_id),
     CONSTRAINT uq_vet_user UNIQUE (user_id),
@@ -111,34 +102,34 @@ CREATE TABLE shelter (
     capacity           SMALLINT UNSIGNED NOT NULL,
     latitude           DECIMAL(9,6) NOT NULL,
     longitude          DECIMAL(9,6) NOT NULL,
-    partner_clinic_id  SMALLINT UNSIGNED NOT NULL,   -- clinic whose vets follow the vaccinations
+    partner_clinic_id  SMALLINT UNSIGNED NOT NULL,   -- this clinic does the vaccines
     CONSTRAINT pk_shelter PRIMARY KEY (shelter_id),
     CONSTRAINT uq_shelter_name UNIQUE (shelter_name),
     CONSTRAINT chk_shelter_capacity CHECK (capacity BETWEEN 1 AND 2000),
     CONSTRAINT chk_shelter_phone CHECK (REGEXP_LIKE(phone, '^0[0-9]{10}$'))
 );
 
-CREATE TABLE shelter_species (                   -- M:N  which species a shelter accepts
+CREATE TABLE shelter_species (                   -- m:n
     shelter_id  SMALLINT UNSIGNED NOT NULL,
     species_id  TINYINT UNSIGNED  NOT NULL,
     CONSTRAINT pk_shelter_species PRIMARY KEY (shelter_id, species_id)
 );
 
--- ---------- Animals -----------------------------------------------------
+-- animals
 
 CREATE TABLE animal (
     animal_id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name                 VARCHAR(40)  NULL,          -- strays often have no name
+    name                 VARCHAR(40)  NULL,          -- can be empty
     species_id           TINYINT UNSIGNED  NOT NULL,
-    breed_id             SMALLINT UNSIGNED NULL,     -- NULL = unknown
+    breed_id             SMALLINT UNSIGNED NULL,     -- null = unknown
     sex                  ENUM('MALE','FEMALE','UNKNOWN') NOT NULL DEFAULT 'UNKNOWN',
     color                VARCHAR(40)  NULL,
-    age_weeks_at_intake  SMALLINT UNSIGNED NOT NULL, -- age is stored in WEEKS
-    intake_date          DATE NOT NULL,              -- current age = derived from these two
+    age_weeks_at_intake  SMALLINT UNSIGNED NOT NULL, -- age in weeks
+    intake_date          DATE NOT NULL,              -- used for current age
     is_neutered          BOOLEAN NOT NULL DEFAULT FALSE,
     status               ENUM('UNDER_TREATMENT','IN_SHELTER','ADOPTED','RELEASED','DECEASED') NOT NULL,
     shelter_id           SMALLINT UNSIGNED NULL,
-    responsible_vet_id   SMALLINT UNSIGNED NULL,     -- vet that follows the vaccination calendar
+    responsible_vet_id   SMALLINT UNSIGNED NULL,     -- vet for the vaccines
     description          VARCHAR(255) NULL,
     photo_path           VARCHAR(255) NULL,
     created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -147,7 +138,7 @@ CREATE TABLE animal (
     CONSTRAINT chk_animal_shelter CHECK (status <> 'IN_SHELTER' OR shelter_id IS NOT NULL)
 );
 
--- ---------- Injured animal reports and treatment -------------------------
+-- injured animal reports and treatment
 
 CREATE TABLE injury_report (
     report_id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -161,24 +152,24 @@ CREATE TABLE injury_report (
     longitude         DECIMAL(9,6) NULL,
     photo_path        VARCHAR(255) NULL,
     clinic_id         SMALLINT UNSIGNED NOT NULL,
-    shift             ENUM('MORNING','EVENING') NOT NULL,  -- decided from the report time
-    assigned_vet_id   SMALLINT UNSIGNED NOT NULL,          -- random vet of that clinic + shift
+    shift             ENUM('MORNING','EVENING') NOT NULL,  -- from report time
+    assigned_vet_id   SMALLINT UNSIGNED NOT NULL,          -- random vet
     status            ENUM('PENDING','ARRIVED','NOT_ARRIVED') NOT NULL DEFAULT 'PENDING',
     reported_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     resolved_at       DATETIME NULL,
-    resolved_by       INT UNSIGNED NULL,               -- NULL = closed by the system (end of day)
-    animal_id         INT UNSIGNED NULL,               -- filled when the animal arrives
+    resolved_by       INT UNSIGNED NULL,               -- null = closed by system
+    animal_id         INT UNSIGNED NULL,               -- set when animal arrives
     CONSTRAINT pk_injury_report PRIMARY KEY (report_id),
     CONSTRAINT uq_report_animal UNIQUE (animal_id),
     CONSTRAINT chk_report_resolved CHECK (status = 'PENDING' OR resolved_at IS NOT NULL)
 );
 
-CREATE TABLE report_status_log (                  -- transaction log: ARRIVED / NOT_ARRIVED history
+CREATE TABLE report_status_log (                  -- status history
     log_id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
     report_id   INT UNSIGNED NOT NULL,
     old_status  ENUM('PENDING','ARRIVED','NOT_ARRIVED') NULL,
     new_status  ENUM('PENDING','ARRIVED','NOT_ARRIVED') NOT NULL,
-    changed_by  INT UNSIGNED NULL,                 -- NULL = system
+    changed_by  INT UNSIGNED NULL,                 -- null = system
     changed_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_report_status_log PRIMARY KEY (log_id)
 );
@@ -210,7 +201,7 @@ CREATE TABLE medicine (
     CONSTRAINT uq_medicine_name UNIQUE (medicine_name)
 );
 
-CREATE TABLE prescription_item (                  -- M:N  treatment <-> medicine
+CREATE TABLE prescription_item (                  -- m:n
     treatment_id   INT UNSIGNED      NOT NULL,
     medicine_id    SMALLINT UNSIGNED NOT NULL,
     dosage         VARCHAR(60) NOT NULL,
@@ -219,25 +210,25 @@ CREATE TABLE prescription_item (                  -- M:N  treatment <-> medicine
     CONSTRAINT chk_prescription_days CHECK (duration_days BETWEEN 1 AND 90)
 );
 
--- ---------- Vaccination -------------------------------------------------
+-- vaccination
 
 CREATE TABLE vaccine (
     vaccine_id    TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    vaccine_code  VARCHAR(10)  NOT NULL,              -- DHPP, FVRCP, RABIES
+    vaccine_code  VARCHAR(10)  NOT NULL,              -- dhpp, fvrcp, rabies
     vaccine_name  VARCHAR(80)  NOT NULL,
     CONSTRAINT pk_vaccine PRIMARY KEY (vaccine_id),
     CONSTRAINT uq_vaccine_code UNIQUE (vaccine_code)
 );
 
-CREATE TABLE vaccine_rule (                         -- protocol used to build the calendar
+CREATE TABLE vaccine_rule (                         -- vaccine rules
     rule_id                SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     species_id             TINYINT UNSIGNED NOT NULL,
     vaccine_id             TINYINT UNSIGNED NOT NULL,
-    first_dose_week        TINYINT UNSIGNED NOT NULL,   -- age (weeks) of the first dose
-    series_interval_weeks  TINYINT UNSIGNED NULL,       -- NULL = single dose
-    series_last_week       TINYINT UNSIGNED NOT NULL,   -- series continues until this age
-    booster_week           TINYINT UNSIGNED NULL,       -- extra booster (cats: 26 weeks)
-    repeat_interval_weeks  TINYINT UNSIGNED NOT NULL,   -- adult repeat (52 = yearly)
+    first_dose_week        TINYINT UNSIGNED NOT NULL,   -- first dose (week)
+    series_interval_weeks  TINYINT UNSIGNED NULL,       -- null = one dose
+    series_last_week       TINYINT UNSIGNED NOT NULL,   -- last week of series
+    booster_week           TINYINT UNSIGNED NULL,       -- cats: 26
+    repeat_interval_weeks  TINYINT UNSIGNED NOT NULL,   -- 52 = every year
     CONSTRAINT pk_vaccine_rule PRIMARY KEY (rule_id),
     CONSTRAINT uq_vaccine_rule UNIQUE (species_id, vaccine_id),
     CONSTRAINT chk_rule_weeks CHECK (first_dose_week <= series_last_week),
@@ -249,18 +240,18 @@ CREATE TABLE vaccination_schedule (
     schedule_id   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     animal_id     INT UNSIGNED NOT NULL,
     vaccine_id    TINYINT UNSIGNED NOT NULL,
-    dose_label    VARCHAR(30) NOT NULL,               -- 'Dose 1', 'Booster', 'Annual'...
+    dose_label    VARCHAR(30) NOT NULL,               -- dose 1, booster, annual...
     planned_date  DATE NOT NULL,
     vet_id        SMALLINT UNSIGNED NOT NULL,         -- assigned vet
     status        ENUM('PLANNED','DONE','CANCELLED') NOT NULL DEFAULT 'PLANNED',
     done_date     DATE NULL,
     done_by       SMALLINT UNSIGNED NULL,
-    generated_from INT UNSIGNED NULL,                 -- dose planned automatically when this one was done
+    generated_from INT UNSIGNED NULL,                 -- which dose created this one
     CONSTRAINT pk_vaccination_schedule PRIMARY KEY (schedule_id),
     CONSTRAINT chk_schedule_done CHECK (status <> 'DONE' OR done_date IS NOT NULL)
 );
 
--- ---------- Volunteers: feeding posts and emoji reactions ---------------
+-- volunteers: feeding posts and emoji reactions
 
 CREATE TABLE feeding_post (
     post_id     INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -276,7 +267,7 @@ CREATE TABLE feeding_post (
     CONSTRAINT chk_post_lon CHECK (longitude BETWEEN -180 AND 180)
 );
 
-CREATE TABLE post_reaction (                       -- one emoji per user per post
+CREATE TABLE post_reaction (                       -- one emoji per user
     post_id     INT UNSIGNED NOT NULL,
     user_id     INT UNSIGNED NOT NULL,
     emoji       ENUM('HEART','CLAP','PAW','STRONG','THANKS') NOT NULL,
@@ -284,7 +275,7 @@ CREATE TABLE post_reaction (                       -- one emoji per user per pos
     CONSTRAINT pk_post_reaction PRIMARY KEY (post_id, user_id)
 );
 
--- ---------- Adoption ----------------------------------------------------
+-- adoption
 
 CREATE TABLE adoption_application (
     application_id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -325,11 +316,11 @@ CREATE TABLE adoption (
     adopted_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     contract_no     VARCHAR(20) NOT NULL,
     CONSTRAINT pk_adoption PRIMARY KEY (adoption_id),
-    CONSTRAINT uq_adoption_application UNIQUE (application_id),   -- 1:1 with an approved application
+    CONSTRAINT uq_adoption_application UNIQUE (application_id),   -- 1:1
     CONSTRAINT uq_adoption_contract UNIQUE (contract_no)
 );
 
--- ---------- Notifications -----------------------------------------------
+-- notifications
 
 CREATE TABLE notification (
     notification_id  INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -341,14 +332,12 @@ CREATE TABLE notification (
     message          VARCHAR(500) NOT NULL,
     is_read          BOOLEAN NOT NULL DEFAULT FALSE,
     created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    event_key        VARCHAR(80) NULL,               -- prevents duplicate notifications
+    event_key        VARCHAR(80) NULL,               -- no duplicates
     CONSTRAINT pk_notification PRIMARY KEY (notification_id),
     CONSTRAINT uq_notification_event UNIQUE (user_id, event_key)
 );
 
--- =====================================================================
--- 2) FOREIGN KEYS
--- =====================================================================
+-- foreign keys
 
 ALTER TABLE user_role
     ADD CONSTRAINT fk_user_role_user FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE,
@@ -412,7 +401,7 @@ ALTER TABLE vaccination_schedule
     ADD CONSTRAINT fk_sched_vet     FOREIGN KEY (vet_id)     REFERENCES veterinarian (vet_id),
     ADD CONSTRAINT fk_sched_doneby  FOREIGN KEY (done_by)    REFERENCES veterinarian (vet_id),
     ADD CONSTRAINT fk_sched_generated FOREIGN KEY (generated_from) REFERENCES vaccination_schedule (schedule_id)
-        ON DELETE CASCADE;                         -- recursive (unary) relationship
+        ON DELETE CASCADE;                         -- unary
 
 ALTER TABLE feeding_post
     ADD CONSTRAINT fk_post_user FOREIGN KEY (user_id) REFERENCES user_account (user_id);
@@ -433,9 +422,7 @@ ALTER TABLE adoption
 ALTER TABLE notification
     ADD CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE;
 
--- =====================================================================
--- 3) INDEXES used by the application screens
--- =====================================================================
+-- indexes
 CREATE INDEX ix_post_time        ON feeding_post (posted_at);
 CREATE INDEX ix_report_vet       ON injury_report (assigned_vet_id, status);
 CREATE INDEX ix_sched_vet_date   ON vaccination_schedule (vet_id, status, planned_date);

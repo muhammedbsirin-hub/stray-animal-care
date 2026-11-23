@@ -1,6 +1,4 @@
--- =====================================================================
--- 02_functions_views.sql : stored functions and views
--- =====================================================================
+-- functions and views
 USE stray_db;
 SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;
 
@@ -11,7 +9,7 @@ DROP FUNCTION IF EXISTS fn_reaction_message;
 
 DELIMITER //
 
--- Current age in weeks = age at intake + full weeks passed since intake (derived attribute)
+-- current age in weeks
 CREATE FUNCTION fn_current_age_weeks(p_age_weeks INT, p_intake_date DATE)
 RETURNS INT
 NOT DETERMINISTIC NO SQL
@@ -19,10 +17,7 @@ BEGIN
     RETURN p_age_weeks + FLOOR(GREATEST(DATEDIFF(CURDATE(), p_intake_date), 0) / 7);
 END //
 
--- Human readable age (no decimals, always rounded down):
---   < 12 weeks   -> weeks            e.g. '9 weeks'
---   12..52 weeks -> months           e.g. '5 months'
---   > 52 weeks   -> years + months   e.g. '1 year 8 months' (90 weeks), '3 years'
+-- age as text (weeks, months or years)
 CREATE FUNCTION fn_age_label(p_weeks INT)
 RETURNS VARCHAR(30)
 DETERMINISTIC NO SQL
@@ -41,7 +36,7 @@ BEGIN
                   IF(v_months = 0, '', CONCAT(' ', v_months, IF(v_months = 1, ' month', ' months'))));
 END //
 
--- MORNING shift 07:00-16:59, EVENING shift 17:00-06:59
+-- which shift for a time
 CREATE FUNCTION fn_shift_for_time(p_time TIME)
 RETURNS VARCHAR(10)
 DETERMINISTIC NO SQL
@@ -52,7 +47,7 @@ BEGIN
     RETURN 'EVENING';
 END //
 
--- Text of the notification a volunteer gets when somebody reacts to a feeding post
+-- emoji notification text
 CREATE FUNCTION fn_reaction_message(p_post_id INT UNSIGNED, p_user_id INT UNSIGNED, p_emoji VARCHAR(10))
 RETURNS VARCHAR(255)
 NOT DETERMINISTIC READS SQL DATA
@@ -67,9 +62,7 @@ END //
 
 DELIMITER ;
 
--- ---------------------------------------------------------------------
--- Animal card: everything the screens show about one animal
--- ---------------------------------------------------------------------
+-- all info of an animal
 CREATE OR REPLACE VIEW v_animal_card AS
 SELECT a.animal_id,
        COALESCE(a.name, CONCAT('#', a.animal_id)) AS display_name,
@@ -89,9 +82,7 @@ LEFT JOIN shelter sh  ON sh.shelter_id = a.shelter_id
 LEFT JOIN veterinarian v ON v.vet_id = a.responsible_vet_id
 LEFT JOIN user_account u ON u.user_id = v.user_id;
 
--- ---------------------------------------------------------------------
--- Feeding posts shown on the map: only the last 24 hours ("story" logic)
--- ---------------------------------------------------------------------
+-- posts of last 24 hours (map)
 CREATE OR REPLACE VIEW v_active_feeding_posts AS
 SELECT p.post_id, p.user_id, u.username, CONCAT(u.first_name, ' ', u.last_name) AS full_name,
        p.latitude, p.longitude, p.photo_path, p.note, p.posted_at,
@@ -102,9 +93,7 @@ WHERE p.is_deleted = FALSE
   AND u.is_active = TRUE
   AND p.posted_at >= NOW() - INTERVAL 24 HOUR;
 
--- ---------------------------------------------------------------------
--- Shelter summary: animal counts are derived, never stored
--- ---------------------------------------------------------------------
+-- shelters with animal counts
 CREATE OR REPLACE VIEW v_shelter_summary AS
 SELECT sh.shelter_id, sh.shelter_name, d.district_name, sh.address, sh.phone, sh.capacity,
        sh.latitude, sh.longitude, c.clinic_name AS partner_clinic,
@@ -122,9 +111,7 @@ LEFT JOIN animal a ON a.shelter_id = sh.shelter_id AND a.status = 'IN_SHELTER'
 GROUP BY sh.shelter_id, sh.shelter_name, d.district_name, sh.address, sh.phone, sh.capacity,
          sh.latitude, sh.longitude, c.clinic_name;
 
--- ---------------------------------------------------------------------
--- Vaccination follow-up for vets (only animals still in a shelter)
--- ---------------------------------------------------------------------
+-- planned vaccines of shelter animals
 CREATE OR REPLACE VIEW v_vaccination_due AS
 SELECT vs.schedule_id, vs.animal_id, ac.display_name, ac.species_name, ac.age_label, ac.shelter_name,
        vs.vaccine_id, vc.vaccine_code, vc.vaccine_name, vs.dose_label, vs.planned_date, vs.vet_id,
@@ -138,9 +125,7 @@ JOIN vaccine vc       ON vc.vaccine_id = vs.vaccine_id
 WHERE vs.status = 'PLANNED'
   AND ac.status = 'IN_SHELTER';
 
--- ---------------------------------------------------------------------
--- Daily vet statistics for the admin (one row per vet per day)
--- ---------------------------------------------------------------------
+-- daily stats of vets
 CREATE OR REPLACE VIEW v_vet_daily_stats AS
 SELECT x.vet_id,
        CONCAT('Dr. ', u.first_name, ' ', u.last_name) AS vet_name,
@@ -161,9 +146,7 @@ JOIN user_account u ON u.user_id = v.user_id
 JOIN clinic c       ON c.clinic_id = v.clinic_id
 GROUP BY x.vet_id, vet_name, c.clinic_name, v.shift, x.day;
 
--- ---------------------------------------------------------------------
--- Which vet is taking care of which animal right now
--- ---------------------------------------------------------------------
+-- animals under treatment
 CREATE OR REPLACE VIEW v_active_treatments AS
 SELECT t.treatment_id, t.animal_id, ac.display_name, ac.species_name, t.diagnosis, t.condition_level,
        t.started_at, t.vet_id, CONCAT('Dr. ', u.first_name, ' ', u.last_name) AS vet_name, c.clinic_name
@@ -174,9 +157,7 @@ JOIN user_account u   ON u.user_id = v.user_id
 JOIN clinic c         ON c.clinic_id = v.clinic_id
 WHERE t.outcome = 'UNDER_TREATMENT';
 
--- ---------------------------------------------------------------------
--- Application "dossier" (CV-like) for the admin
--- ---------------------------------------------------------------------
+-- application details for admin
 CREATE OR REPLACE VIEW v_application_dossier AS
 SELECT ap.application_id, ap.status, ap.applied_at,
        ap.user_id, u.username, CONCAT(u.first_name, ' ', u.last_name) AS applicant_name,
