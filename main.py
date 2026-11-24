@@ -2,7 +2,7 @@
 Stray Animal Care - desktop application
 Run:  python main.py   (in PyCharm: right click main.py -> Run)
 """
-from app.ui.app_window import App
+from app.ui import App
 
 
 def main():

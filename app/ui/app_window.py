@@ -6,7 +6,10 @@ from app.db import DbError
 from app.repositories import CaseRepository, NotificationRepository
 from app.services import AuthService
 from app.ui.auth_views import LoginView, RegisterView
-from app.ui.pages import admin, common, vet, volunteer
+from app.ui.pages import (AdminMapPage, AdoptPage, AnimalsPage, ApplicationsPage, CasesPage, ClinicsPage, MapPage,
+                          MyAdoptionsPage, MyApplicationsPage, MyPostsPage, MyReactionsPage, MyReportsPage,
+                          NotificationsPage, OverviewPage, ReportInjuryPage, SettingsPage, SheltersPage, TreatmentsPage,
+                          UsersPage, VaccinationPage, VetReportPage, VetsPage)
 from app.ui.widgets import DANGER, FONT, FONT_BOLD, FONT_SMALL, MUTED, PRIMARY, error, style_tables
 
 
@@ -46,21 +49,21 @@ class App(ctk.CTk):
 def build_menu(session):
     items = []
     if session.is_admin():
-        items += [("Overview", admin.OverviewPage), ("Adoption applications", admin.ApplicationsPage),
-                  ("Feeding map", admin.AdminMapPage), ("Daily vet report", admin.VetReportPage),
-                  ("Shelters", admin.SheltersPage), ("Clinics", admin.ClinicsPage),
-                  ("Veterinarians", admin.VetsPage), ("Animals", admin.AnimalsPage), ("Users", admin.UsersPage)]
+        items += [("Overview", OverviewPage), ("Adoption applications", ApplicationsPage),
+                  ("Feeding map", AdminMapPage), ("Daily vet report", VetReportPage),
+                  ("Shelters", SheltersPage), ("Clinics", ClinicsPage),
+                  ("Veterinarians", VetsPage), ("Animals", AnimalsPage), ("Users", UsersPage)]
     if session.is_vet():
-        items += [("Incoming cases", vet.CasesPage), ("Under treatment", vet.TreatmentsPage),
-                  ("Vaccination follow-up", vet.VaccinationPage)]
+        items += [("Incoming cases", CasesPage), ("Under treatment", TreatmentsPage),
+                  ("Vaccination follow-up", VaccinationPage)]
     if session.is_volunteer():
-        items += [("Feeding map", volunteer.MapPage), ("My posts", volunteer.MyPostsPage),
-                  ("My emojis", volunteer.MyReactionsPage), ("Report injured animal", volunteer.ReportInjuryPage),
-                  ("My reports", volunteer.MyReportsPage), ("Adopt a friend", volunteer.AdoptPage),
-                  ("My applications", volunteer.MyApplicationsPage)]
+        items += [("Feeding map", MapPage), ("My posts", MyPostsPage),
+                  ("My emojis", MyReactionsPage), ("Report injured animal", ReportInjuryPage),
+                  ("My reports", MyReportsPage), ("Adopt a friend", AdoptPage),
+                  ("My applications", MyApplicationsPage)]
         if session.is_adopter():
-            items.append(("My adoptions", volunteer.MyAdoptionsPage))
-    items += [("Notifications", common.NotificationsPage), ("Settings", common.SettingsPage)]
+            items.append(("My adoptions", MyAdoptionsPage))
+    items += [("Notifications", NotificationsPage), ("Settings", SettingsPage)]
     return items
 
 
