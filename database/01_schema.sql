@@ -129,7 +129,6 @@ CREATE TABLE animal (
     shelter_id           SMALLINT UNSIGNED NULL,
     responsible_vet_id   SMALLINT UNSIGNED NULL,     -- vet for the vaccines
     description          VARCHAR(255) NULL,
-    photo_path           VARCHAR(255) NULL,
     CONSTRAINT pk_animal PRIMARY KEY (animal_id),
     CONSTRAINT chk_animal_age CHECK (age_weeks_at_intake <= 1500),
     CONSTRAINT chk_animal_shelter CHECK (status <> 'IN_SHELTER' OR shelter_id IS NOT NULL)
@@ -147,7 +146,6 @@ CREATE TABLE injury_report (
     district_id       SMALLINT UNSIGNED NULL,
     latitude          DECIMAL(9,6) NULL,
     longitude         DECIMAL(9,6) NULL,
-    photo_path        VARCHAR(255) NULL,
     clinic_id         SMALLINT UNSIGNED NOT NULL,
     shift             ENUM('MORNING','EVENING') NOT NULL,  -- from report time
     assigned_vet_id   SMALLINT UNSIGNED NOT NULL,          -- random vet
@@ -215,20 +213,15 @@ CREATE TABLE vaccine (
     CONSTRAINT uq_vaccine_code UNIQUE (vaccine_code)
 );
 
-CREATE TABLE vaccine_rule (                         -- vaccine rules
-    rule_id                SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    species_id             TINYINT UNSIGNED NOT NULL,
-    vaccine_id             TINYINT UNSIGNED NOT NULL,
-    first_dose_week        TINYINT UNSIGNED NOT NULL,   -- first dose (week)
-    series_interval_weeks  TINYINT UNSIGNED NULL,       -- null = one dose
-    series_last_week       TINYINT UNSIGNED NOT NULL,   -- last week of series
-    booster_week           TINYINT UNSIGNED NULL,       -- cats: 26
-    repeat_interval_weeks  TINYINT UNSIGNED NOT NULL,   -- 52 = every year
+CREATE TABLE vaccine_rule (                         -- one row = one dose of a young animal
+    rule_id      SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    species_id   TINYINT UNSIGNED NOT NULL,
+    vaccine_id   TINYINT UNSIGNED NOT NULL,
+    dose_label   VARCHAR(30) NOT NULL,              -- dose 1, dose 2, booster
+    dose_week    TINYINT UNSIGNED NOT NULL,         -- age in weeks for this dose
     CONSTRAINT pk_vaccine_rule PRIMARY KEY (rule_id),
-    CONSTRAINT uq_vaccine_rule UNIQUE (species_id, vaccine_id),
-    CONSTRAINT chk_rule_weeks CHECK (first_dose_week <= series_last_week),
-    CONSTRAINT chk_rule_interval CHECK (series_interval_weeks IS NULL OR series_interval_weeks > 0),
-    CONSTRAINT chk_rule_repeat CHECK (repeat_interval_weeks > 0)
+    CONSTRAINT uq_vaccine_rule UNIQUE (species_id, vaccine_id, dose_label),
+    CONSTRAINT chk_rule_week CHECK (dose_week BETWEEN 1 AND 104)
 );
 
 CREATE TABLE vaccination_schedule (
@@ -296,7 +289,6 @@ CREATE TABLE adoption_application (
     reviewed_at          DATETIME NULL,
     admin_note           VARCHAR(255) NULL,
     CONSTRAINT pk_adoption_application PRIMARY KEY (application_id),
-    CONSTRAINT uq_application_user_animal UNIQUE (user_id, animal_id),
     CONSTRAINT chk_app_household CHECK (household_size BETWEEN 1 AND 20),
     CONSTRAINT chk_app_hours CHECK (hours_alone_per_day <= 24),
     CONSTRAINT chk_app_tenant CHECK (ownership = 'OWNER' OR landlord_permission IS NOT NULL),

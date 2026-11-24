@@ -274,7 +274,6 @@ class ReportInjuryPage(Page):
     subtitle = "Choose a clinic: a veterinarian of the current shift is assigned at random."
 
     def build(self):
-        self.photo_path = None
         self.location = None
         self.body.grid_columnconfigure(1, weight=1)
         self.body.grid_rowconfigure(0, weight=1)
@@ -288,11 +287,6 @@ class ReportInjuryPage(Page):
         self.condition = form_row(f, 3, "Condition", ctk.CTkTextbox(f, width=260, height=90, font=FONT), True)
         self.district = form_row(f, 4, "District", ChoiceBox(f, placeholder="(optional)"))
         self.clinic = form_row(f, 5, "Clinic", ChoiceBox(f, command=lambda v: self.show_clinic()), True)
-        pbar = ctk.CTkFrame(f, fg_color="transparent")
-        form_row(f, 6, "Photo", pbar)
-        button(pbar, "Choose...", self.choose_photo, kind="plain", width=100).pack(side="left")
-        self.photo_label = ctk.CTkLabel(pbar, text="(optional)", font=FONT_SMALL, text_color=MUTED)
-        self.photo_label.pack(side="left", padx=8)
         self.shift_label = ctk.CTkLabel(left, text="", font=FONT_BOLD, text_color=PRIMARY, justify="left")
         self.shift_label.pack(anchor="w", padx=16)
         button(left, "Send report", self.submit, kind="accent", width=200).pack(anchor="w", padx=16, pady=16)
@@ -333,12 +327,6 @@ class ReportInjuryPage(Page):
         self.map.pick_location(self._picked)
         self.map_hint.configure(text=f"Location selected: {coords[0]:.5f}, {coords[1]:.5f}", text_color=PRIMARY)
 
-    def choose_photo(self):
-        path = filedialog.askopenfilename(parent=self, title="Choose a photo", filetypes=IMAGE_TYPES)
-        if path:
-            self.photo_path = path
-            self.photo_label.configure(text=path.replace("\\", "/").split("/")[-1][:28], text_color=PRIMARY)
-
     def submit(self):
         condition = text_value(self.condition)
         err = validators.first_error(
@@ -350,11 +338,10 @@ class ReportInjuryPage(Page):
         if err:
             error(err)
             return
-        photo = store_photo(self.photo_path, "reports") if self.photo_path else None
         lat, lon = self.location if self.location else (None, None)
         ok, result = self.run(CaseRepository.create_report, self.session.user_id, self.species.value(),
                               int(self.age.get()) if self.age.get().strip() else None, self.color.get().strip(),
-                              condition, self.district.value(), lat, lon, photo, self.clinic.value())
+                              condition, self.district.value(), lat, lon, self.clinic.value())
         if not ok:
             return
         _, vet_name, shift = result
@@ -364,8 +351,7 @@ class ReportInjuryPage(Page):
         for w in (self.age, self.color):
             w.delete(0, "end")
         self.condition.delete("1.0", "end")
-        self.photo_path, self.location = None, None
-        self.photo_label.configure(text="(optional)", text_color=MUTED)
+        self.location = None
         self.map_hint.configure(text="Click on the map where you found the animal (red pin).", text_color=MUTED)
         self.main.refresh_badge()
         self.refresh()
@@ -460,9 +446,6 @@ class AdoptPage(Page):
             return
         for w in self.detail.winfo_children():
             w.destroy()
-        img = photo_image(a.photo_path, 360, 220)
-        if img:
-            ctk.CTkLabel(self.detail, image=img, text="").pack(pady=(8, 4))
         icon = "\U0001F431" if a.species_name == "Cat" else "\U0001F436"
         ctk.CTkLabel(self.detail, text=f"{icon}  {a.display_name}", font=FONT_SUB).pack(anchor="w", padx=12,
                                                                                          pady=(8, 2))

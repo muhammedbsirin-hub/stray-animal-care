@@ -30,7 +30,7 @@ CREATE PROCEDURE sp_create_injury_report(
     IN  p_reporter_id INT UNSIGNED, IN p_species_id TINYINT UNSIGNED, IN p_age_weeks SMALLINT UNSIGNED,
     IN  p_color VARCHAR(40), IN p_condition VARCHAR(500),
     IN  p_district_id SMALLINT UNSIGNED, IN p_lat DECIMAL(9,6), IN p_lon DECIMAL(9,6),
-    IN  p_photo_path VARCHAR(255), IN p_clinic_id SMALLINT UNSIGNED,
+    IN  p_clinic_id SMALLINT UNSIGNED,
     OUT p_report_id INT UNSIGNED, OUT p_vet_name VARCHAR(120), OUT p_shift VARCHAR(10))
 BEGIN
     DECLARE v_vet_id SMALLINT UNSIGNED DEFAULT NULL;
@@ -56,9 +56,9 @@ BEGIN
     SELECT species_name INTO v_species FROM species WHERE species_id = p_species_id;
 
     INSERT INTO injury_report (reporter_id, species_id, approx_age_weeks, color, condition_desc,
-                               district_id, latitude, longitude, photo_path, clinic_id, shift, assigned_vet_id)
+                               district_id, latitude, longitude, clinic_id, shift, assigned_vet_id)
     VALUES (p_reporter_id, p_species_id, p_age_weeks, p_color, TRIM(p_condition),
-            p_district_id, p_lat, p_lon, p_photo_path, p_clinic_id, p_shift, v_vet_id);
+            p_district_id, p_lat, p_lon, p_clinic_id, p_shift, v_vet_id);
     SET p_report_id = LAST_INSERT_ID();
 
     CALL sp_notify(v_vet_user, 'NEW_CASE', 'New injured animal is on the way',
@@ -140,15 +140,6 @@ BEGIN
     DECLARE v_vet SMALLINT UNSIGNED DEFAULT NULL;
     DECLARE v_vet_user INT UNSIGNED;
     DECLARE v_name VARCHAR(60);
-    DECLARE v_wk INT;
-    DECLARE v_dose INT;
-    DECLARE r_vaccine TINYINT UNSIGNED;
-    DECLARE r_first, r_interval, r_last, r_booster, r_repeat INT;
-    DECLARE v_done BOOLEAN DEFAULT FALSE;
-    DECLARE cur_rules CURSOR FOR
-        SELECT vaccine_id, first_dose_week, series_interval_weeks, series_last_week, booster_week, repeat_interval_weeks
-          FROM vaccine_rule WHERE species_id = v_species ORDER BY vaccine_id;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
 
     SELECT species_id, fn_current_age_weeks(age_weeks_at_intake, intake_date), shelter_id, responsible_vet_id,
            COALESCE(name, CONCAT('#', animal_id))
@@ -181,39 +172,26 @@ BEGIN
     -- cancel old calendar
     UPDATE vaccination_schedule SET status = 'CANCELLED' WHERE animal_id = p_animal_id AND status = 'PLANNED';
 
-    SET v_done = FALSE;
-    OPEN cur_rules;
-    rule_loop: LOOP
-        FETCH cur_rules INTO r_vaccine, r_first, r_interval, r_last, r_booster, r_repeat;
-        IF v_done THEN LEAVE rule_loop; END IF;
+    -- 1) doses that are still ahead of the animal's age
+    INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
+    SELECT p_animal_id, r.vaccine_id, r.dose_label, CURDATE() + INTERVAL (r.dose_week - v_age) WEEK, v_vet
+      FROM vaccine_rule r
+     WHERE r.species_id = v_species AND r.dose_week >= v_age;
 
-        IF v_age <= r_last THEN
-            -- young animal
-            SET v_wk = GREATEST(r_first, v_age);
-            SET v_dose = 0;
-            dose_loop: LOOP
-                SET v_dose = v_dose + 1;
-                INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-                VALUES (p_animal_id, r_vaccine, CONCAT('Dose ', v_dose), CURDATE() + INTERVAL (v_wk - v_age) WEEK, v_vet);
-                IF r_interval IS NULL OR v_wk >= r_last THEN LEAVE dose_loop; END IF;
-                SET v_wk = v_wk + r_interval;
-            END LOOP;
-            IF r_booster IS NOT NULL AND r_booster > v_wk THEN
-                INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-                VALUES (p_animal_id, r_vaccine, 'Booster', CURDATE() + INTERVAL (r_booster - v_age) WEEK, v_vet);
-                SET v_wk = r_booster;
-            END IF;
-            INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-            VALUES (p_animal_id, r_vaccine, 'Annual', CURDATE() + INTERVAL (v_wk + r_repeat - v_age) WEEK, v_vet);
-        ELSE
-            -- older animal: one dose now, then every year
-            INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-            VALUES (p_animal_id, r_vaccine, 'Catch-up dose', CURDATE(), v_vet);
-            INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
-            VALUES (p_animal_id, r_vaccine, 'Annual', CURDATE() + INTERVAL r_repeat WEEK, v_vet);
-        END IF;
-    END LOOP;
-    CLOSE cur_rules;
+    -- 2) a dose was missed and no dose is planned for today: one catch-up dose today
+    INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
+    SELECT p_animal_id, r.vaccine_id, 'Catch-up dose', CURDATE(), v_vet
+      FROM vaccine_rule r
+     WHERE r.species_id = v_species
+     GROUP BY r.vaccine_id
+    HAVING MIN(r.dose_week) < v_age AND SUM(r.dose_week = v_age) = 0;
+
+    -- 3) one year after the last dose: annual dose
+    INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id)
+    SELECT p_animal_id, r.vaccine_id, 'Annual', CURDATE() + INTERVAL (GREATEST(MAX(r.dose_week), v_age) - v_age + 52) WEEK, v_vet
+      FROM vaccine_rule r
+     WHERE r.species_id = v_species
+     GROUP BY r.vaccine_id;
 
     CALL sp_notify(v_vet_user, 'VACCINE_ASSIGNED', 'New animal assigned to you',
                    CONCAT(v_name, ' was added to your vaccination list.'),
@@ -300,7 +278,6 @@ BEGIN
     DECLARE v_vaccine TINYINT UNSIGNED;
     DECLARE v_assigned SMALLINT UNSIGNED;
     DECLARE v_me SMALLINT UNSIGNED;
-    DECLARE v_repeat INT;
     DECLARE v_left INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
 
@@ -324,11 +301,8 @@ BEGIN
     SELECT COUNT(*) INTO v_left FROM vaccination_schedule
      WHERE animal_id = v_animal AND vaccine_id = v_vaccine AND status = 'PLANNED';
     IF v_left = 0 THEN
-        SELECT r.repeat_interval_weeks INTO v_repeat
-          FROM vaccine_rule r JOIN animal a ON a.species_id = r.species_id
-         WHERE a.animal_id = v_animal AND r.vaccine_id = v_vaccine;
         INSERT INTO vaccination_schedule (animal_id, vaccine_id, dose_label, planned_date, vet_id, generated_from)
-        VALUES (v_animal, v_vaccine, 'Annual', CURDATE() + INTERVAL v_repeat WEEK, v_assigned, p_schedule_id);
+        VALUES (v_animal, v_vaccine, 'Annual', CURDATE() + INTERVAL 52 WEEK, v_assigned, p_schedule_id);
     END IF;
     COMMIT;
 END //
@@ -578,6 +552,10 @@ BEGIN
     END IF;
     IF NEW.ownership = 'TENANT' AND NEW.landlord_permission = FALSE THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tenants need the permission of the landlord.';
+    END IF;
+    IF EXISTS (SELECT 1 FROM adoption_application
+                WHERE user_id = NEW.user_id AND animal_id = NEW.animal_id AND status <> 'WITHDRAWN') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You have already applied for this animal.';
     END IF;
     IF (SELECT COUNT(*) FROM adoption_application
          WHERE user_id = NEW.user_id AND status = 'PENDING') >= 3 THEN

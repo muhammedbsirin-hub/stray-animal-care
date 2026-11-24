@@ -86,23 +86,6 @@ class ApplicationsPage(Page):
         DossierDialog(self, row["application_id"])
 
 
-def checklist(d):
-    """(ok?, text) lines shown in the dossier; hard rules are also checked by the database."""
-    items = [(d["applicant_age"] >= 18, f"Age {d['applicant_age']} (18+ required)")]
-    if d["ownership"] == "TENANT":
-        items.append((bool(d["landlord_permission"]), "Tenant with landlord permission"))
-    else:
-        items.append((True, "Owns the home"))
-    items.append((d["hours_alone_per_day"] <= 8, f"Animal alone {d['hours_alone_per_day']} h/day (8 h or less advised)"))
-    items.append((d["pet_experience"] != "NONE", f"Experience: {nice(d['pet_experience'])}"))
-    items.append((d["feeding_posts"] + d["injury_reports"] > 0,
-                  f"Volunteer activity: {d['feeding_posts']} feeding posts, {d['injury_reports']} injury reports"))
-    items.append((True, f"Previous adoptions: {d['previous_adoptions']}"))
-    items.append((d["agrees_home_visit"] and d["agrees_neutering"] and d["agrees_vaccination"],
-                  "Accepted home visits, neutering and vaccinations"))
-    return items
-
-
 class DossierDialog(Dialog):
     def __init__(self, page, application_id):
         super().__init__(page, f"Application #{application_id}", 760, 760)
@@ -131,21 +114,18 @@ class DossierDialog(Dialog):
                     side="left", fill="x")
             ctk.CTkFrame(card, height=6, fg_color="transparent").pack()
 
-        card = ctk.CTkFrame(box, corner_radius=10, fg_color=CARD)
-        card.pack(fill="x", padx=6, pady=5)
-        ctk.CTkLabel(card, text="Checklist", font=FONT_BOLD).pack(anchor="w", padx=12, pady=(8, 2))
-        for ok, text in checklist(d):
-            ctk.CTkLabel(card, text=("✓  " if ok else "⚠  ") + text, font=FONT_SMALL,
-                         text_color=PRIMARY if ok else ACCENT, anchor="w").pack(anchor="w", padx=14)
-        ctk.CTkFrame(card, height=6, fg_color="transparent").pack()
         block("Home and family", [
             ("Address", f"{d['full_address']} ({d['district_name']})"),
             ("Housing", nice(d["housing_type"])), ("Home", nice(d["ownership"])),
+            ("Landlord permission", "-" if d["landlord_permission"] is None else fmt(bool(d["landlord_permission"]))),
             ("People at home", str(d["household_size"])), ("Children", fmt(bool(d["has_children"]))),
             ("Other pets", (d["other_pets_note"] or "Yes") if d["has_other_pets"] else "No")])
         block("About the applicant", [
             ("Age", str(d["applicant_age"])), ("Experience", nice(d["pet_experience"])),
             ("Alone per day", f"{d['hours_alone_per_day']} hours"), ("Reason", d["reason"])])
+        block("Agreements", [
+            ("Home visits", fmt(bool(d["agrees_home_visit"]))), ("Neutering", fmt(bool(d["agrees_neutering"]))),
+            ("Vaccinations", fmt(bool(d["agrees_vaccination"])))])
         competing = AdoptionRepository.competing(application_id)
         if competing and d["status"] == "PENDING":
             ctk.CTkLabel(box, text=f"Note: {competing} other pending application(s) for the same animal will be "

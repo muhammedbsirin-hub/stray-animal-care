@@ -19,7 +19,8 @@ class AdoptionRepository:
 
     @staticmethod
     def already_applied(user_id, animal_id):
-        return db.scalar("SELECT COUNT(*) FROM adoption_application WHERE user_id = %s AND animal_id = %s",
+        return db.scalar("""SELECT COUNT(*) FROM adoption_application
+                             WHERE user_id = %s AND animal_id = %s AND status <> 'WITHDRAWN'""",
                          (user_id, animal_id)) > 0
 
     @staticmethod

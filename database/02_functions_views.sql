@@ -68,7 +68,7 @@ SELECT a.animal_id,
        COALESCE(a.name, CONCAT('#', a.animal_id)) AS display_name,
        a.name, a.species_id, s.species_name,
        a.breed_id, COALESCE(b.breed_name, 'Unknown') AS breed_name,
-       a.sex, a.color, a.is_neutered, a.status, a.description, a.photo_path,
+       a.sex, a.color, a.is_neutered, a.status, a.description,
        a.age_weeks_at_intake, a.intake_date,
        fn_current_age_weeks(a.age_weeks_at_intake, a.intake_date) AS age_weeks,
        fn_age_label(fn_current_age_weeks(a.age_weeks_at_intake, a.intake_date)) AS age_label,
@@ -168,10 +168,6 @@ SELECT ap.application_id, ap.status, ap.applied_at,
        ap.pet_experience, ap.hours_alone_per_day, ap.reason,
        ap.agrees_home_visit, ap.agrees_neutering, ap.agrees_vaccination,
        ap.animal_id, ac.display_name AS animal_name, ac.species_name, ac.age_label, ac.shelter_name,
-       (SELECT COUNT(*) FROM feeding_post p WHERE p.user_id = ap.user_id AND p.is_deleted = FALSE) AS feeding_posts,
-       (SELECT COUNT(*) FROM injury_report r WHERE r.reporter_id = ap.user_id) AS injury_reports,
-       (SELECT COUNT(*) FROM adoption_application o
-         WHERE o.user_id = ap.user_id AND o.status = 'APPROVED') AS previous_adoptions,
        ap.reviewed_at, ap.admin_note
 FROM adoption_application ap
 JOIN user_account u   ON u.user_id = ap.user_id

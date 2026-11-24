@@ -23,12 +23,12 @@ class CaseRepository:
     # ------------------------------------------------------------ volunteer side
     @staticmethod
     def create_report(reporter_id, species_id, age_weeks, color, condition, district_id,
-                      lat, lon, photo_path, clinic_id):
+                      lat, lon, clinic_id):
         """Calls sp_create_injury_report -> (report_id, vet_name, shift)."""
         args = db.call("sp_create_injury_report",
                        (reporter_id, species_id, age_weeks, color or None, condition,
-                        district_id, lat, lon, photo_path, clinic_id, 0, "", ""))
-        return args[10], args[11], args[12]
+                        district_id, lat, lon, clinic_id, 0, "", ""))
+        return args[9], args[10], args[11]
 
     @staticmethod
     def my_reports(user_id):

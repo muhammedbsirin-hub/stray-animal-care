@@ -175,11 +175,16 @@ INSERT INTO vaccine (vaccine_code, vaccine_name) VALUES
 
 -- species 1 = cat, 2 = dog / vaccine 1 = dhpp, 2 = fvrcp, 3 = rabies
 
-INSERT INTO vaccine_rule (species_id, vaccine_id, first_dose_week, series_interval_weeks, series_last_week, booster_week, repeat_interval_weeks) VALUES
-  (2, 1, 8, 3, 14, NULL, 52),
-  (2, 3, 12, NULL, 12, NULL, 52),
-  (1, 2, 8, 4, 16, 26, 52),
-  (1, 3, 12, NULL, 12, NULL, 52);
+INSERT INTO vaccine_rule (species_id, vaccine_id, dose_label, dose_week) VALUES
+  (2, 1, 'Dose 1', 8),
+  (2, 1, 'Dose 2', 11),
+  (2, 1, 'Dose 3', 14),
+  (2, 3, 'Dose 1', 12),
+  (1, 2, 'Dose 1', 8),
+  (1, 2, 'Dose 2', 12),
+  (1, 2, 'Dose 3', 16),
+  (1, 2, 'Booster', 26),
+  (1, 3, 'Dose 1', 12);
 
 INSERT INTO animal (name, species_id, breed_id, sex, color, age_weeks_at_intake, intake_date, is_neutered, status, shelter_id, description) VALUES
   ('Leo', 1, 6, 'UNKNOWN', 'Grey', 18, CURDATE() - INTERVAL 20 DAY, FALSE, 'IN_SHELTER', 1, 'Found near a park, healthy now.'),
@@ -325,47 +330,45 @@ UPDATE report_status_log l JOIN injury_report r ON r.report_id = l.report_id
 
 -- feeding posts and emojis
 INSERT INTO feeding_post (user_id, latitude, longitude, photo_path, note, posted_at) VALUES
-  (17, 41.064447, 28.973801, 'media/seed/post_01.jpg', NULL, NOW() - INTERVAL 529 MINUTE),
-  (21, 40.928209, 29.140267, 'media/seed/post_02.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 390 MINUTE),
-  (16, 41.026684, 29.027371, 'media/seed/post_03.jpg', NULL, NOW() - INTERVAL 569 MINUTE),
-  (19, 40.969138, 28.8818, 'media/seed/post_04.jpg', 'Wet food for the kittens.', NOW() - INTERVAL 791 MINUTE),
-  (14, 40.981557, 29.035907, 'media/seed/post_05.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 1205 MINUTE),
-  (17, 41.046597, 28.98256, 'media/seed/post_06.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 1218 MINUTE),
-  (17, 41.067515, 28.976774, 'media/seed/post_07.jpg', 'Refilled the bowl, the area is clean.', NOW() - INTERVAL 410 MINUTE),
-  (16, 41.041345, 29.003255, 'media/seed/post_08.jpg', NULL, NOW() - INTERVAL 400 MINUTE),
-  (21, 40.925434, 29.117598, 'media/seed/post_09.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 553 MINUTE),
-  (17, 41.050943, 28.989848, 'media/seed/post_10.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 912 MINUTE),
-  (14, 41.016269, 28.93613, 'media/seed/post_11.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 753 MINUTE),
-  (16, 41.120938, 29.097191, 'media/seed/post_12.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 897 MINUTE);
+  (17, 41.064447, 28.973801, 'media/seed/post_01.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 828 MINUTE),
+  (16, 41.024768, 29.007565, 'media/seed/post_02.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 694 MINUTE),
+  (20, 41.14454, 29.092488, 'media/seed/post_03.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 34 MINUTE),
+  (17, 41.06482, 29.00026, 'media/seed/post_04.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 678 MINUTE),
+  (17, 41.022685, 28.936083, 'media/seed/post_05.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 1148 MINUTE),
+  (17, 41.045342, 28.974868, 'media/seed/post_06.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 685 MINUTE),
+  (21, 40.940194, 29.136165, 'media/seed/post_07.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 182 MINUTE),
+  (20, 41.031242, 29.000126, 'media/seed/post_08.jpg', 'Left dry food and fresh water.', NOW() - INTERVAL 869 MINUTE),
+  (16, 41.023403, 29.006941, 'media/seed/post_09.jpg', 'Water bowl was empty, filled it.', NOW() - INTERVAL 974 MINUTE),
+  (19, 40.974535, 28.872391, 'media/seed/post_10.jpg', NULL, NOW() - INTERVAL 1010 MINUTE),
+  (18, 41.0187, 28.925653, 'media/seed/post_11.jpg', NULL, NOW() - INTERVAL 759 MINUTE),
+  (21, 40.928209, 29.140267, 'media/seed/post_12.jpg', 'Three cats were waiting here today.', NOW() - INTERVAL 829 MINUTE),
+  (14, 41.029777, 29.019364, 'media/seed/post_13.jpg', 'Dogs of the park are fed.', NOW() - INTERVAL 1052 MINUTE);
 
 INSERT INTO post_reaction (post_id, user_id, emoji) VALUES
-  (3, 15, 'STRONG'),
-  (3, 20, 'HEART'),
-  (3, 18, 'PAW'),
-  (5, 15, 'STRONG'),
-  (5, 16, 'CLAP'),
-  (6, 16, 'CLAP'),
-  (7, 20, 'HEART'),
-  (7, 14, 'THANKS'),
-  (7, 21, 'STRONG'),
-  (8, 15, 'CLAP'),
-  (8, 18, 'CLAP'),
-  (9, 15, 'STRONG'),
-  (9, 16, 'PAW'),
-  (10, 21, 'STRONG'),
-  (10, 18, 'CLAP'),
-  (10, 19, 'HEART'),
-  (11, 18, 'THANKS'),
-  (11, 17, 'THANKS'),
-  (11, 16, 'THANKS'),
-  (12, 17, 'PAW'),
-  (12, 21, 'THANKS'),
-  (12, 15, 'HEART');
+  (1, 18, 'HEART'),
+  (1, 19, 'THANKS'),
+  (2, 18, 'PAW'),
+  (2, 17, 'PAW'),
+  (3, 14, 'THANKS'),
+  (4, 21, 'PAW'),
+  (5, 20, 'CLAP'),
+  (5, 14, 'HEART'),
+  (5, 19, 'STRONG'),
+  (6, 15, 'STRONG'),
+  (7, 18, 'CLAP'),
+  (8, 21, 'STRONG'),
+  (8, 19, 'CLAP'),
+  (9, 17, 'STRONG'),
+  (9, 20, 'THANKS'),
+  (10, 15, 'THANKS'),
+  (11, 20, 'CLAP'),
+  (12, 20, 'THANKS');
 
-UPDATE feeding_post SET posted_at = posted_at - INTERVAL 6 DAY WHERE post_id = 9;
-UPDATE feeding_post SET posted_at = posted_at - INTERVAL 10 DAY WHERE post_id = 10;
-UPDATE feeding_post SET posted_at = posted_at - INTERVAL 5 DAY WHERE post_id = 11;
-UPDATE feeding_post SET posted_at = posted_at - INTERVAL 9 DAY WHERE post_id = 12;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 12 DAY WHERE post_id = 9;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 7 DAY WHERE post_id = 10;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 6 DAY WHERE post_id = 11;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 6 DAY WHERE post_id = 12;
+UPDATE feeding_post SET posted_at = posted_at - INTERVAL 12 DAY WHERE post_id = 13;
 UPDATE post_reaction r JOIN feeding_post p ON p.post_id = r.post_id
    SET r.reacted_at = p.posted_at + INTERVAL 2 HOUR WHERE p.posted_at < NOW() - INTERVAL 24 HOUR;
 UPDATE notification n JOIN post_reaction r ON n.event_key = CONCAT('REACTION:', r.post_id, ':', r.user_id)
@@ -373,14 +376,14 @@ UPDATE notification n JOIN post_reaction r ON n.event_key = CONCAT('REACTION:', 
 
 -- adoption applications
 INSERT INTO adoption_application (user_id, animal_id, applied_at, full_address, district_id, birth_year, housing_type, ownership, landlord_permission, household_size, has_children, has_other_pets, other_pets_note, pet_experience, hours_alone_per_day, reason, agrees_home_visit, agrees_neutering, agrees_vaccination) VALUES
-  (14, 11, NOW() - INTERVAL 5 DAY, 'Example Sk. No:89 D:3, Kadıköy / Istanbul', 19, 2000, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 1, TRUE, FALSE, NULL, 'EXPERIENCED', 4, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (17, 11, NOW() - INTERVAL 4 DAY, 'Example Sk. No:60 D:11, Şişli / Istanbul', 27, 2002, 'APARTMENT', 'OWNER', NULL, 1, FALSE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (15, 2, NOW() - INTERVAL 6 DAY, 'Example Sk. No:66 D:14, Beşiktaş / Istanbul', 9, 1990, 'APARTMENT', 'TENANT', TRUE, 4, TRUE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (18, 16, NOW() - INTERVAL 3 DAY, 'Example Sk. No:36 D:4, Fatih / Istanbul', 17, 2002, 'APARTMENT', 'OWNER', NULL, 1, FALSE, TRUE, NULL, 'NONE', 10, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (16, 18, NOW() - INTERVAL 1 DAY, 'Example Sk. No:42 D:19, Üsküdar / Istanbul', 30, 1990, 'DETACHED_HOUSE', 'OWNER', NULL, 2, TRUE, FALSE, NULL, 'EXPERIENCED', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (20, 1, NOW() - INTERVAL 0 DAY, 'Example Sk. No:2 D:10, Ataşehir / Istanbul', 2, 1985, 'APARTMENT', 'TENANT', TRUE, 5, FALSE, FALSE, NULL, 'SOME', 8, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (21, 1, NOW() - INTERVAL 0 DAY, 'Example Sk. No:36 D:15, Maltepe / Istanbul', 23, 1996, 'APARTMENT', 'OWNER', NULL, 1, FALSE, TRUE, NULL, 'SOME', 5, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
-  (19, 14, NOW() - INTERVAL 2 DAY, 'Example Sk. No:35 D:13, Bakırköy / Istanbul', 6, 1980, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 2, TRUE, TRUE, NULL, 'EXPERIENCED', 3, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE);
+  (14, 11, NOW() - INTERVAL 5 DAY, 'Example Sk. No:70 D:1, Kadıköy / Istanbul', 19, 1989, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 2, FALSE, FALSE, NULL, 'EXPERIENCED', 4, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (17, 11, NOW() - INTERVAL 4 DAY, 'Example Sk. No:12 D:15, Şişli / Istanbul', 27, 2001, 'APARTMENT', 'OWNER', NULL, 4, TRUE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (15, 17, NOW() - INTERVAL 6 DAY, 'Example Sk. No:66 D:2, Beşiktaş / Istanbul', 9, 1995, 'APARTMENT', 'TENANT', TRUE, 1, TRUE, FALSE, NULL, 'SOME', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (18, 15, NOW() - INTERVAL 3 DAY, 'Example Sk. No:90 D:9, Fatih / Istanbul', 17, 1990, 'APARTMENT', 'OWNER', NULL, 1, TRUE, TRUE, NULL, 'NONE', 10, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (16, 4, NOW() - INTERVAL 1 DAY, 'Example Sk. No:12 D:14, Üsküdar / Istanbul', 30, 2001, 'DETACHED_HOUSE', 'OWNER', NULL, 4, TRUE, FALSE, NULL, 'EXPERIENCED', 6, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (20, 13, NOW() - INTERVAL 0 DAY, 'Example Sk. No:31 D:8, Ataşehir / Istanbul', 2, 2001, 'APARTMENT', 'TENANT', TRUE, 4, TRUE, TRUE, NULL, 'SOME', 8, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (21, 13, NOW() - INTERVAL 0 DAY, 'Example Sk. No:55 D:14, Maltepe / Istanbul', 23, 1994, 'APARTMENT', 'OWNER', NULL, 3, FALSE, FALSE, NULL, 'SOME', 5, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE),
+  (19, 21, NOW() - INTERVAL 2 DAY, 'Example Sk. No:81 D:15, Bakırköy / Istanbul', 6, 1997, 'HOUSE_WITH_GARDEN', 'OWNER', NULL, 5, FALSE, FALSE, NULL, 'EXPERIENCED', 3, 'I have been volunteering for a long time and I want to give this animal a warm home.', TRUE, TRUE, TRUE);
 
 CALL sp_approve_application(1, 1, 'Great home with a garden. Welcome!');
 CALL sp_approve_application(3, 1, 'Landlord permission checked by phone.');

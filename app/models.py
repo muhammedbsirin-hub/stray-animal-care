@@ -86,7 +86,6 @@ class Animal:
     age_label: str
     is_neutered: bool = False
     description: Optional[str] = None
-    photo_path: Optional[str] = None
     shelter_id: Optional[int] = None
     shelter_name: Optional[str] = None
     responsible_vet_name: Optional[str] = None

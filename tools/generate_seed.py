@@ -1,5 +1,5 @@
 """
-Generates database/05_seed_data.sql and the sample photos in media/seed/.
+Generates database/05_seed_data.sql (feeding post photos are in media/seed/).
 
 Run from the project root:   python tools/generate_seed.py
 All demo accounts use the password  Demo1234!
@@ -10,11 +10,9 @@ import math
 import random
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_SQL = ROOT / "database" / "05_seed_data.sql"
-MEDIA = ROOT / "media" / "seed"
 DEMO_PASSWORD = "Demo1234!"
 
 random.seed(2026)
@@ -127,44 +125,7 @@ def phone():
 
 
 # ----------------------------------------------------------------------------
-# Sample photos for feeding posts (simple drawn pictures)
-# ----------------------------------------------------------------------------
-def make_post_image(path, idx, district):
-    w, h = 640, 480
-    palettes = [((250, 236, 214), (214, 170, 120)), ((222, 236, 222), (120, 170, 130)),
-                ((226, 232, 244), (120, 140, 190)), ((246, 226, 226), (190, 120, 120))]
-    bg, accent = palettes[idx % len(palettes)]
-    img = Image.new("RGB", (w, h), bg)
-    d = ImageDraw.Draw(img)
-    # pavement lines
-    for y in range(300, h, 36):
-        d.line([(0, y), (w, y + 20)], fill=tuple(max(c - 18, 0) for c in bg), width=3)
-    # bowl
-    d.ellipse([200, 250, 440, 330], fill=accent)
-    d.rectangle([215, 290, 425, 360], fill=accent)
-    d.ellipse([215, 335, 425, 385], fill=tuple(max(c - 30, 0) for c in accent))
-    d.ellipse([215, 245, 425, 300], fill=(120, 80, 50))
-    for _ in range(40):  # kibbles
-        x, y = random.randint(230, 410), random.randint(252, 292)
-        d.ellipse([x, y, x + 9, y + 7], fill=(160, 110, 60))
-    # paw prints
-    for (px, py) in [(90, 120), (150, 70), (520, 140), (560, 80)]:
-        d.ellipse([px, py, px + 34, py + 30], fill=accent)
-        for dx, dy in [(-12, -22), (4, -30), (20, -28), (34, -18)]:
-            d.ellipse([px + dx, py + dy, px + dx + 13, py + dy + 13], fill=accent)
-    try:
-        font = ImageFont.truetype("segoeui.ttf", 30)
-        small = ImageFont.truetype("segoeui.ttf", 22)
-    except OSError:
-        font = small = ImageFont.load_default()
-    d.text((24, 400), f"Feeding spot - {district}", fill=(60, 50, 40), font=font)
-    d.text((24, 440), f"Sample photo #{idx}", fill=(90, 80, 70), font=small)
-    img.save(path, "JPEG", quality=82)
-
-
-# ----------------------------------------------------------------------------
 def main():
-    MEDIA.mkdir(parents=True, exist_ok=True)
     sql = ["-- sample data (made by tools/generate_seed.py), all passwords: Demo1234!",
            "USE stray_db;", "SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;", ""]
 
@@ -250,12 +211,11 @@ def main():
         ("RABIES", "Rabies vaccine"),
     ]))
     sql.append("-- species 1 = cat, 2 = dog / vaccine 1 = dhpp, 2 = fvrcp, 3 = rabies\n")
-    sql.append(insert("vaccine_rule", ["species_id", "vaccine_id", "first_dose_week", "series_interval_weeks",
-                                       "series_last_week", "booster_week", "repeat_interval_weeks"], [
-        (2, 1, 8, 3, 14, None, 52),     # dog combo: 8, 11, 14 weeks, then yearly
-        (2, 3, 12, None, 12, None, 52),  # dog rabies: 12 weeks, then yearly
-        (1, 2, 8, 4, 16, 26, 52),       # cat combo: 8, 12, 16 weeks, booster at 26 weeks, then yearly
-        (1, 3, 12, None, 12, None, 52),  # cat rabies: 12 weeks, then yearly
+    sql.append(insert("vaccine_rule", ["species_id", "vaccine_id", "dose_label", "dose_week"], [
+        (2, 1, "Dose 1", 8), (2, 1, "Dose 2", 11), (2, 1, "Dose 3", 14),                         # dog combo
+        (2, 3, "Dose 1", 12),                                                                  # dog rabies
+        (1, 2, "Dose 1", 8), (1, 2, "Dose 2", 12), (1, 2, "Dose 3", 16), (1, 2, "Booster", 26),  # cat combo
+        (1, 3, "Dose 1", 12),                                                                  # cat rabies
     ]))
 
     # ---------------------------------------------------------------- animals in shelters
@@ -411,13 +371,12 @@ def main():
     # ---------------------------------------------------------------- feeding posts
     sql.append("-- feeding posts and emojis")
     post_rows, post_owner, old_dates = [], [], []
-    for i in range(1, 13):
+    for i in range(1, 14):        # 13 real photos in media/seed
         owner_idx = random.randrange(len(VOLUNTEERS))
         owner = vol_ids[owner_idx]
         dist = VOLUNTEERS[owner_idx][3] if random.random() < 0.7 else random.choice(SHELTER_DISTRICTS)
         lat, lon = jitter(D_POS[dist], 0.015)
         photo = f"media/seed/post_{i:02d}.jpg"
-        make_post_image(ROOT / photo, i, dist)
         # old posts are first inserted as recent ones (emojis are only allowed for 24 hours),
         # and moved back to their real date after the emojis are added
         when = raw(f"NOW() - INTERVAL {random.randint(10, 1380)} MINUTE")
