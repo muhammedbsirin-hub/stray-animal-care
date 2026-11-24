@@ -64,7 +64,6 @@ class RegisterView(ctk.CTkFrame):
         self.phone = form_row(form, 4, "Phone", entry(form, placeholder="05XXXXXXXXX"), True)
         self.password = form_row(form, 5, "Password", entry(form, show="•"), True)
         self.password2 = form_row(form, 6, "Repeat password", entry(form, show="•"), True)
-        # fixed size: the form must not grow or shrink while the hint text changes
         self.rules = ctk.CTkLabel(form, text="", font=FONT_SMALL, text_color=MUTED, justify="left", anchor="nw",
                                   width=260, height=48, wraplength=255)
         self.rules.grid(row=7, column=1, sticky="w")
@@ -76,7 +75,6 @@ class RegisterView(ctk.CTkFrame):
         button(bar, "Back to sign in", app.show_login, kind="plain").pack(side="left", padx=6)
         button(bar, "Create account", self.register, width=180).pack(side="left", padx=6)
         self.password.bind("<KeyRelease>", lambda e: self._show_rules(), add="+")
-        # an old warning disappears as soon as the user corrects a field
         for w in (self.first, self.last, self.username, self.email, self.phone, self.password, self.password2):
             w.bind("<KeyRelease>", lambda e: self.status.configure(text=""), add="+")
         self._show_rules()

@@ -20,7 +20,6 @@ TILE_SERVER = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 CACHE_DIR = ROOT_DIR / ".tile_cache"
 CACHE_DAYS = 30
 
-# Istanbul: the centre of the map has to stay inside this box
 LAT_MIN, LAT_MAX = 40.80, 41.45
 LON_MIN, LON_MAX = 28.20, 29.60
 MIN_ZOOM = 10
@@ -77,8 +76,8 @@ class IstanbulMapView(TkinterMapView):
         zoom = round(self.zoom)
         cx = (self.upper_left_tile_pos[0] + self.lower_right_tile_pos[0]) / 2
         cy = (self.upper_left_tile_pos[1] + self.lower_right_tile_pos[1]) / 2
-        min_x, min_y = _mw.decimal_to_osm(LAT_MAX, LON_MIN, zoom)     # north-west corner
-        max_x, max_y = _mw.decimal_to_osm(LAT_MIN, LON_MAX, zoom)     # south-east corner
+        min_x, min_y = _mw.decimal_to_osm(LAT_MAX, LON_MIN, zoom)
+        max_x, max_y = _mw.decimal_to_osm(LAT_MIN, LON_MAX, zoom)
         dx = min(max(cx, min_x), max_x) - cx
         dy = min(max(cy, min_y), max_y) - cy
         if dx or dy:

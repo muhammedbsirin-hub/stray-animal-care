@@ -20,7 +20,7 @@ SELECT r.report_id, r.reported_at, s.species_name, r.species_id, r.condition_des
 
 class CaseRepository:
 
-    # ------------------------------------------------------------ volunteer side
+    # ============================================================ volunteer side
     @staticmethod
     def create_report(reporter_id, species_id, age_weeks, color, condition, district_id,
                       lat, lon, clinic_id):
@@ -35,7 +35,7 @@ class CaseRepository:
         rows = db.query(_REPORT_SELECT + " WHERE r.reporter_id = %s ORDER BY r.reported_at DESC", (user_id,))
         return [InjuryReport.from_row(r) for r in rows]
 
-    # ------------------------------------------------------------ vet side
+    # ============================================================ vet side
     @staticmethod
     def close_old_cases():
         """Cases of previous days that are still pending become NOT_ARRIVED."""
@@ -103,7 +103,7 @@ class CaseRepository:
                          f"REPORT_ARRIVED:{report_id}"))
         return animal_id, treatment_id
 
-    # ------------------------------------------------------------ treatments
+    # ============================================================ treatments
     @staticmethod
     def active_treatments(vet_id):
         return db.query("""SELECT t.treatment_id, t.animal_id, ac.display_name, ac.species_id, ac.species_name,

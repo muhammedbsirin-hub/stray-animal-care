@@ -18,7 +18,6 @@ class DbError(Exception):
     """Error with a user friendly message."""
 
 
-# constraint name -> message shown to the user
 CONSTRAINT_MESSAGES = {
     "uq_user_username": "This username is already taken.",
     "uq_user_email": "This e-mail address is already registered.",
@@ -46,7 +45,7 @@ CONSTRAINT_MESSAGES = {
 def _friendly(err: MySQLError) -> str:
     msg = getattr(err, "msg", str(err)) or str(err)
     code = getattr(err, "errno", None)
-    if code == 1644:                      # SIGNAL from a trigger / procedure
+    if code == 1644:
         return msg
     for name, text in CONSTRAINT_MESSAGES.items():
         if name in msg:

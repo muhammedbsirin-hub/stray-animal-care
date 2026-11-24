@@ -111,7 +111,7 @@ class PostDialog(Dialog):
             ctk.CTkLabel(self, text="This post is not available any more.", font=FONT).pack(pady=40)
             return
         self.own = post["user_id"] == self.me
-        self.expired = not post["on_map"]           # older than 24 hours: emojis can no longer be changed
+        self.expired = not post["on_map"]
         self.read_only = self.own or self.expired or not page.session.is_volunteer()
         img = photo_image(post["photo_path"], 500, 330)
         ctk.CTkLabel(self, image=img, text="" if img else "(photo not found)").pack(padx=20, pady=(18, 8))
@@ -385,14 +385,12 @@ class AdoptPage(Page):
         self.back_btn = button(self.toolbar, "← All shelters", self.show_shelters, kind="plain", width=140)
         self.view_btn = button(self.toolbar, "Show animals", self.open_shelter, width=150)
         self.view_btn.pack(side="left", padx=4)
-        # shelters
         self.shelters_frame = ctk.CTkFrame(self.body, fg_color="transparent")
         self.shelters = DataTable(self.shelters_frame, [
             ("shelter_name", "Shelter", 280), ("district_name", "District", 110), ("address", "Address", 330),
             ("accepted_species", "Accepts", 90), ("animal_count", "Animals", 70)],
             height=20, key="shelter_id", on_double=lambda r: self.open_shelter())
         self.shelters.pack(fill="both", expand=True)
-        # animals
         self.animals_frame = ctk.CTkFrame(self.body, fg_color="transparent")
         self.animals_frame.grid_columnconfigure(0, weight=3)
         self.animals_frame.grid_columnconfigure(1, weight=2)

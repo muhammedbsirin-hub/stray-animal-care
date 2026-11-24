@@ -48,10 +48,8 @@ def insert(table, cols, rows):
     return "\n".join(out) + "\n" + ",\n".join(body) + ";\n"
 
 
-# ----------------------------------------------------------------------------
-# Reference data
-# ----------------------------------------------------------------------------
-DISTRICTS = [  # name, side, lat, lon
+# ============================================================================ reference data
+DISTRICTS = [
     ("Adalar", "ASIA", 40.8740, 29.0880), ("Ataşehir", "ASIA", 40.9840, 29.1060),
     ("Avcılar", "EUROPE", 40.9790, 28.7210), ("Bağcılar", "EUROPE", 41.0390, 28.8560),
     ("Bahçelievler", "EUROPE", 41.0000, 28.8610), ("Bakırköy", "EUROPE", 40.9800, 28.8730),
@@ -72,14 +70,14 @@ DISTRICTS = [  # name, side, lat, lon
 D_ID = {d[0]: i + 1 for i, d in enumerate(DISTRICTS)}
 D_POS = {d[0]: (d[2], d[3]) for d in DISTRICTS}
 
-CLINICS = [  # name, district
+CLINICS = [
     ("Moda Paws Veterinary Clinic", "Kadıköy"),
     ("Bosphorus Animal Hospital", "Beşiktaş"),
     ("Mecidiyeköy Vet Clinic", "Şişli"),
     ("Üsküdar Friends Veterinary Clinic", "Üsküdar"),
     ("Bakırköy Seaside Animal Clinic", "Bakırköy"),
 ]
-VETS_PER_CLINIC = [3, 2, 3, 2, 2]  # every clinic: at least 1 morning + 1 evening vet, total 12
+VETS_PER_CLINIC = [3, 2, 3, 2, 2]
 
 SHELTER_DISTRICTS = ["Kadıköy", "Üsküdar", "Beşiktaş", "Şişli", "Fatih", "Bakırköy", "Ataşehir", "Beykoz"]
 CAT_ONLY = {"Beyoğlu", "Kadıköy", "Fatih"}
@@ -91,7 +89,7 @@ FIRST = ["Ayşe", "Mehmet", "Zeynep", "Ahmet", "Elif", "Mustafa", "Fatma", "Emre
 LAST = ["Yılmaz", "Kaya", "Demir", "Şahin", "Çelik", "Yıldız", "Aydın", "Öztürk", "Arslan", "Doğan",
         "Kılıç", "Aslan", "Çetin", "Koç", "Kurt", "Özdemir", "Polat", "Erdem", "Güneş", "Aksoy"]
 
-VOLUNTEERS = [  # username, first, last, district
+VOLUNTEERS = [
     ("elif_yildiz", "Elif", "Yıldız", "Kadıköy"), ("mert_kaya", "Mert", "Kaya", "Beşiktaş"),
     ("zeynep_ak", "Zeynep", "Ak", "Üsküdar"), ("can_demir", "Can", "Demir", "Şişli"),
     ("selin_arslan", "Selin", "Arslan", "Fatih"), ("burak_celik", "Burak", "Çelik", "Bakırköy"),
@@ -124,7 +122,7 @@ def phone():
     return "05" + random.choice("3459") + "".join(random.choice("0123456789") for _ in range(8))
 
 
-# ----------------------------------------------------------------------------
+# ============================================================================ main
 def main():
     sql = ["-- sample data (made by tools/generate_seed.py), all passwords: Demo1234!",
            "USE stray_db;", "SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;", ""]
@@ -140,7 +138,6 @@ def main():
             breed_ids[sp].append(bid)
     sql.append(insert("breed", ["species_id", "breed_name"], breed_rows))
 
-    # clinics
     clinic_rows, clinic_pos = [], []
     for i, (name, dist) in enumerate(CLINICS, start=1):
         lat, lon = jitter(D_POS[dist], 0.006)
@@ -151,7 +148,6 @@ def main():
     sql.append(insert("clinic", ["clinic_name", "district_id", "address", "phone", "latitude", "longitude"],
                       clinic_rows))
 
-    # users: admins, vets, volunteers
     users, roles = [], []
     users.append(("admin", "System", "Admin", "admin@straycare.org", "05300000001"))
     roles += [(1, 1)]
@@ -183,14 +179,13 @@ def main():
     sql.append(insert("user_role", ["user_id", "role_id"], roles))
     sql.append(insert("veterinarian", ["user_id", "clinic_id", "shift", "license_no"], vet_rows))
 
-    # shelters
     shelter_rows, shelter_species, shelter_meta = [], [], []
     for s_idx, dist in enumerate(SHELTER_DISTRICTS, start=1):
         lat, lon = jitter(D_POS[dist], 0.02)
         nearest = min(range(len(clinic_pos)),
                       key=lambda i: (clinic_pos[i][0] - lat) ** 2 + (clinic_pos[i][1] - lon) ** 2) + 1
         if dist == "Kadıköy":
-            nearest = 1          # demo: vet01 (Moda Paws, Kadıköy) always follows the Kadıköy shelter
+            nearest = 1
         area = "0216" if dict((d[0], d[1]) for d in DISTRICTS)[dist] == "ASIA" else "0212"
         shelter_rows.append((f"{dist} Municipality Animal Shelter", D_ID[dist],
                              f"Hayvan Bakımevi Cd. No:{random.randint(1, 60)}, {dist} / Istanbul",
@@ -212,13 +207,13 @@ def main():
     ]))
     sql.append("-- species 1 = cat, 2 = dog / vaccine 1 = dhpp, 2 = fvrcp, 3 = rabies\n")
     sql.append(insert("vaccine_rule", ["species_id", "vaccine_id", "dose_label", "dose_week"], [
-        (2, 1, "Dose 1", 8), (2, 1, "Dose 2", 11), (2, 1, "Dose 3", 14),                         # dog combo
-        (2, 3, "Dose 1", 12),                                                                  # dog rabies
-        (1, 2, "Dose 1", 8), (1, 2, "Dose 2", 12), (1, 2, "Dose 3", 16), (1, 2, "Booster", 26),  # cat combo
-        (1, 3, "Dose 1", 12),                                                                  # cat rabies
+        (2, 1, "Dose 1", 8), (2, 1, "Dose 2", 11), (2, 1, "Dose 3", 14),
+        (2, 3, "Dose 1", 12),
+        (1, 2, "Dose 1", 8), (1, 2, "Dose 2", 12), (1, 2, "Dose 3", 16), (1, 2, "Booster", 26),
+        (1, 3, "Dose 1", 12),
     ]))
 
-    # ---------------------------------------------------------------- animals in shelters
+    # ================================================================ animals in shelters
     animal_rows, animal_meta = [], []
     cat_names, dog_names = CAT_NAMES[:], DOG_NAMES[:]
     random.shuffle(cat_names)
@@ -273,7 +268,7 @@ def main():
 
     next_animal = len(animal_rows)
 
-    # ---------------------------------------------------------------- injured animal reports
+    # ================================================================ injured animal reports
     sql.append("-- injured animal reports")
 
     def vet_of(clinic, shift, n=0):
@@ -295,7 +290,6 @@ def main():
                             vet["vet_id"], raw(f"NOW() - INTERVAL {minutes_ago} MINUTE"))]).rstrip())
         return report_no
 
-    # 1) pending cases today (shown in the vet panel of vet01 and the first evening vet of clinic 1)
     v_m, v_e = vet_of(1, "MORNING"), vet_of(1, "EVENING")
     for (rep, sp, vet, mins, cond, dist) in [
         (vol_ids[0], "Cat", v_m, 35, "Limping on the front left leg, cannot step on it.", "Kadıköy"),
@@ -311,7 +305,6 @@ def main():
         sql.append(f"CALL sp_notify({rep}, 'REPORT_ASSIGNED', 'Veterinarian assigned', {q(rep_msg)}, "
                    f"'REPORT_ASSIGNED:{r}');")
 
-    # 2) arrived cases -> animal + treatment (+ some discharged today)
     treat_no = 0
     arrived_cases = [
         (vol_ids[1], "Dog", 2, "MORNING", 300, "Hit by a car, back leg injured.", "Beşiktaş", "Fractured femur",
@@ -354,7 +347,6 @@ def main():
             shelter_arg = target["id"] if finish == "DISCHARGED_TO_SHELTER" else "NULL"
             sql.append(f"CALL sp_finish_treatment({treat_no}, {vet['user_id']}, '{finish}', {shelter_arg});")
 
-    # 3) yesterday: animals that never arrived (closed by the end-of-day job)
     for (rep, sp, clinic, dist) in [(vol_ids[2], "Dog", 2, "Beşiktaş"), (vol_ids[6], "Cat", 5, "Bakırköy")]:
         vet = vet_of(clinic, "EVENING")
         r = add_report(rep, sp, clinic, "EVENING", vet, 60 * 26, "Seen limping, ran away when approached.", dist)
@@ -368,17 +360,15 @@ def main():
                "UPDATE report_status_log l JOIN injury_report r ON r.report_id = l.report_id\n"
                "   SET l.changed_at = IF(l.old_status IS NULL, r.reported_at, r.resolved_at);\n")
 
-    # ---------------------------------------------------------------- feeding posts
+    # ================================================================ feeding posts
     sql.append("-- feeding posts and emojis")
     post_rows, post_owner, old_dates = [], [], []
-    for i in range(1, 14):        # 13 real photos in media/seed
+    for i in range(1, 14):
         owner_idx = random.randrange(len(VOLUNTEERS))
         owner = vol_ids[owner_idx]
         dist = VOLUNTEERS[owner_idx][3] if random.random() < 0.7 else random.choice(SHELTER_DISTRICTS)
         lat, lon = jitter(D_POS[dist], 0.015)
         photo = f"media/seed/post_{i:02d}.jpg"
-        # old posts are first inserted as recent ones (emojis are only allowed for 24 hours),
-        # and moved back to their real date after the emojis are added
         when = raw(f"NOW() - INTERVAL {random.randint(10, 1380)} MINUTE")
         if i > 8:
             old_dates.append((i, random.randint(2, 12)))
@@ -402,7 +392,7 @@ def main():
     sql.append("UPDATE notification n JOIN post_reaction r ON n.event_key = CONCAT('REACTION:', r.post_id, ':', r.user_id)\n"
                "   SET n.message = fn_reaction_message(r.post_id, r.user_id, r.emoji), n.created_at = r.reacted_at;\n")
 
-    # ---------------------------------------------------------------- adoption applications
+    # ================================================================ adoption applications
     sql.append("-- adoption applications")
     shelter_animals = [a for a in animal_meta]
     random.shuffle(shelter_animals)
@@ -422,14 +412,14 @@ def main():
                 True, True, True)
 
     apps = [
-        app_row(0, picks[0], 5, housing="HOUSE_WITH_GARDEN", hours=4, exp="EXPERIENCED"),   # 1 -> approved
-        app_row(3, picks[0], 4),                                                          # 2 -> auto rejected
-        app_row(1, picks[1], 6, ownership="TENANT"),                                      # 3 -> approved
-        app_row(4, picks[2], 3, hours=10, exp="NONE"),                                    # 4 -> rejected
-        app_row(2, picks[3], 1, housing="DETACHED_HOUSE", exp="EXPERIENCED"),            # 5 pending
-        app_row(6, picks[4], 0, ownership="TENANT", hours=8),                             # 6 pending
-        app_row(7, picks[4], 0, exp="SOME", hours=5),                                     # 7 pending (same animal)
-        app_row(5, picks[5], 2, housing="HOUSE_WITH_GARDEN", exp="EXPERIENCED", hours=3), # 8 pending
+        app_row(0, picks[0], 5, housing="HOUSE_WITH_GARDEN", hours=4, exp="EXPERIENCED"),
+        app_row(3, picks[0], 4),
+        app_row(1, picks[1], 6, ownership="TENANT"),
+        app_row(4, picks[2], 3, hours=10, exp="NONE"),
+        app_row(2, picks[3], 1, housing="DETACHED_HOUSE", exp="EXPERIENCED"),
+        app_row(6, picks[4], 0, ownership="TENANT", hours=8),
+        app_row(7, picks[4], 0, exp="SOME", hours=5),
+        app_row(5, picks[5], 2, housing="HOUSE_WITH_GARDEN", exp="EXPERIENCED", hours=3),
     ]
     sql.append(insert("adoption_application", app_cols, apps))
     sql.append("CALL sp_approve_application(1, 1, 'Great home with a garden. Welcome!');")

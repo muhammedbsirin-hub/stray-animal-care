@@ -127,7 +127,6 @@ class SettingsPage(Page):
             ctk.CTkLabel(work, text=f"Clinic: {v.clinic_name}\nShift: {v.shift_text}\nLicense no: {v.license_no}",
                          font=FONT, justify="left").pack(anchor="w", padx=16, pady=(0, 14))
             row += 1
-        # only volunteers can delete their own account (vets are closed by the admin, the admin cannot be deleted)
         if self.session.is_admin() or self.session.is_vet():
             return
         danger = self.card()

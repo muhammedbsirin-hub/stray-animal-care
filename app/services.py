@@ -17,7 +17,7 @@ class AuthService:
             raise DbError("There is no user with this username.")
         if not row["is_active"]:
             raise DbError("This account has been closed.")
-        if password != row["password"]:          # plain text (group decision)
+        if password != row["password"]:
             raise DbError("Wrong password.")
         user = UserRepository.get(row["user_id"])
         vet = UserRepository.get_vet(user.user_id) if user.has_role("VET") else None

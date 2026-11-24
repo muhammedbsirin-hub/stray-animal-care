@@ -92,7 +92,7 @@ class MainView(ctk.CTkFrame):
         self.open_page(self.menu[0][0])
         self.refresh_badge()
 
-    # ---------------------------------------------------------------- sidebar
+    # ================================================================ sidebar
     def _build_sidebar(self):
         u = self.session.user
         ctk.CTkLabel(self.sidebar, text="\U0001F43E Stray Animal Care", font=("Segoe UI", 16, "bold"),
@@ -137,10 +137,10 @@ class MainView(ctk.CTkFrame):
                         text_color="#ffffff" if n == name else ("#1f2937", "#e5e7eb"))
         try:
             page.refresh()
-        except Exception as e:  # keep the app alive, show the reason
+        except Exception as e:
             error(str(e))
 
-    # ---------------------------------------------------------------- notifications
+    # ================================================================ notifications
     def refresh_badge(self):
         if self._poll_id is not None:
             self.after_cancel(self._poll_id)

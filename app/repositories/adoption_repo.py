@@ -47,7 +47,7 @@ class AdoptionRepository:
                              JOIN v_animal_card ac ON ac.animal_id = ap.animal_id
                             WHERE ap.user_id = %s ORDER BY ad.adopted_at DESC""", (user_id,))
 
-    # ------------------------------------------------------------ admin
+    # ============================================================ admin
     @staticmethod
     def dossiers(status=None):
         if status:

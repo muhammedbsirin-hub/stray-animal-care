@@ -3,13 +3,11 @@ from app import db
 from app.models import User, Veterinarian
 
 
-
 class UserRepository:
 
     @staticmethod
     def find_login(username):
         """Row with the password (only used by AuthService)."""
-        # an active account first; a closed one only to say "this account has been closed"
         return db.query_one("""SELECT user_id, password, is_active FROM user_account WHERE username = %s
                                 ORDER BY is_active DESC, user_id DESC LIMIT 1""", (username,))
 

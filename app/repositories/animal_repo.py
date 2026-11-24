@@ -48,7 +48,7 @@ class AnimalRepository:
         db.execute("UPDATE animal SET name = %s, color = %s, is_neutered = %s, description = %s WHERE animal_id = %s",
                    (name or None, color or None, is_neutered, description or None, animal_id))
 
-    # ------------------------------------------------------------ vaccinations
+    # ============================================================ vaccinations
     @staticmethod
     def schedule(animal_id):
         rows = db.query("""SELECT vs.schedule_id, vs.animal_id, v.vaccine_code, v.vaccine_name, vs.dose_label,

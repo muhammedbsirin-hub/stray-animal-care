@@ -23,7 +23,7 @@ MUTED = "#6b7280"
 CARD = ("#ffffff", "#2b2b2b")
 
 
-# ---------------------------------------------------------------- formatting
+# ================================================================ formatting
 def fmt(value):
     if value is None:
         return ""
@@ -56,7 +56,7 @@ def time_ago(moment):
     return f"{sec // 86400} days ago"
 
 
-# ---------------------------------------------------------------- messages
+# ================================================================ messages
 def info(text, title="Information"):
     messagebox.showinfo(title, text)
 
@@ -69,7 +69,7 @@ def confirm(text, title="Are you sure?"):
     return messagebox.askyesno(title, text)
 
 
-# ---------------------------------------------------------------- table
+# ================================================================ table
 def style_tables():
     style = ttk.Style()
     style.theme_use("clam")
@@ -94,7 +94,7 @@ class DataTable(ctk.CTkFrame):
         self.tree = ttk.Treeview(self, columns=[c[0] for c in columns], show="headings", height=height,
                                  selectmode="browse")
         for k, heading, width in columns:
-            self.tree.heading(k, text=heading, anchor="w")   # same alignment as the cells
+            self.tree.heading(k, text=heading, anchor="w")
             self.tree.column(k, width=width, minwidth=40, anchor="w", stretch=True)
         bar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=bar.set)
@@ -140,7 +140,7 @@ class DataTable(ctk.CTkFrame):
         return self.rows.get(sel[0]) if sel else None
 
 
-# ---------------------------------------------------------------- choice box
+# ================================================================ choice box
 class ChoiceBox(ctk.CTkOptionMenu):
     """Option menu that remembers (value, label) pairs."""
 
@@ -180,7 +180,7 @@ class ChoiceBox(ctk.CTkOptionMenu):
         self.set(self._placeholder)
 
 
-# ---------------------------------------------------------------- dialogs and layout
+# ================================================================ dialogs and layout
 class Dialog(ctk.CTkToplevel):
     def __init__(self, master, title, width=520, height=560):
         super().__init__(master)
@@ -224,7 +224,7 @@ def text_value(widget):
     return widget.get("1.0", "end").strip() if isinstance(widget, ctk.CTkTextbox) else widget.get().strip()
 
 
-# ---------------------------------------------------------------- photos
+# ================================================================ photos
 def resolve_media(path):
     if not path:
         return None
@@ -250,12 +250,12 @@ def set_label_image(label, image, text=""):
     """
     if image is None:
         label.configure(image=None)
-        label._label.configure(image="")          # really remove the old picture
+        label._label.configure(image="")
         label.configure(text=text)
     else:
         label.configure(image=image)
         label.configure(text=text)
-    label.current_image = image                   # keep a reference so it is not garbage collected
+    label.current_image = image
 
 
 def store_photo(source_path, folder):
@@ -273,7 +273,7 @@ def store_photo(source_path, folder):
     return f"media/{folder}/{name}"
 
 
-# ---------------------------------------------------------------- emoji pictures (Tk cannot draw colour emoji)
+# ================================================================ emoji pictures (tk cannot draw colour emoji)
 EMOJI_CHARS = {"HEART": "❤️", "CLAP": "\U0001F44F", "PAW": "\U0001F43E", "STRONG": "\U0001F4AA",
                "THANKS": "\U0001F64F"}
 EMOJI_NAMES = {"HEART": "Love", "CLAP": "Applause", "PAW": "Paw", "STRONG": "Strong", "THANKS": "Thank you"}
