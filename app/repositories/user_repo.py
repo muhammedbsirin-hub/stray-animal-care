@@ -1,4 +1,3 @@
-"""Accounts, roles, login, registration and settings."""
 from app import db
 from app.models import User, Veterinarian
 
@@ -7,7 +6,6 @@ class UserRepository:
 
     @staticmethod
     def find_login(username):
-        """Row with the password (only used by AuthService)."""
         return db.query_one("""SELECT user_id, password, is_active FROM user_account WHERE username = %s
                                 ORDER BY is_active DESC, user_id DESC LIMIT 1""", (username,))
 
@@ -45,7 +43,6 @@ class UserRepository:
 
     @staticmethod
     def register_volunteer(data):
-        """New account + VOLUNTEER role in one transaction."""
         with db.transaction() as cur:
             cur.execute("""INSERT INTO user_account (username, password, first_name, last_name, email, phone)
                            VALUES (%s, %s, %s, %s, %s, %s)""",
@@ -61,7 +58,6 @@ class UserRepository:
 
     @staticmethod
     def create_vet(data):
-        """Admin creates a veterinarian: account + VET role + veterinarian row (transaction)."""
         with db.transaction() as cur:
             cur.execute("""INSERT INTO user_account (username, password, first_name, last_name, email, phone)
                            VALUES (%s, %s, %s, %s, %s, %s)""",
@@ -87,7 +83,6 @@ class UserRepository:
 
     @staticmethod
     def delete_account(user_id, actor_id):
-        """actor_id = who asks (the user himself/herself or the admin); the rules are in the procedure."""
         db.call("sp_delete_account", (user_id, actor_id))
 
     @staticmethod

@@ -1,4 +1,3 @@
-"""Screens every user has: notifications and account settings."""
 import customtkinter as ctk
 
 from app import validators
@@ -68,7 +67,6 @@ class NotificationsPage(Page):
 
 
 class PasswordDialog(Dialog):
-    """Asks the current password before a dangerous action."""
 
     def __init__(self, master, text, on_ok):
         super().__init__(master, "Confirm with your password", 420, 230)

@@ -1,4 +1,3 @@
-"""Reusable widgets: tables, choice boxes, dialogs, photos, emoji images."""
 import shutil
 import uuid
 from datetime import date, datetime
@@ -23,7 +22,6 @@ MUTED = "#6b7280"
 CARD = ("#ffffff", "#2b2b2b")
 
 
-# ================================================================ formatting
 def fmt(value):
     if value is None:
         return ""
@@ -37,7 +35,6 @@ def fmt(value):
 
 
 def nice(enum_value):
-    """'DISCHARGED_TO_SHELTER' -> 'Discharged to shelter'"""
     if enum_value is None:
         return ""
     return str(enum_value).replace("_", " ").capitalize()
@@ -56,7 +53,6 @@ def time_ago(moment):
     return f"{sec // 86400} days ago"
 
 
-# ================================================================ messages
 def info(text, title="Information"):
     messagebox.showinfo(title, text)
 
@@ -69,7 +65,6 @@ def confirm(text, title="Are you sure?"):
     return messagebox.askyesno(title, text)
 
 
-# ================================================================ table
 def style_tables():
     style = ttk.Style()
     style.theme_use("clam")
@@ -84,7 +79,6 @@ BOOLEAN_COLUMNS = {"on_map", "has_children", "has_other_pets", "landlord_permiss
 
 
 class DataTable(ctk.CTkFrame):
-    """columns: list of (key, heading, width).  Rows are dicts or objects."""
 
     def __init__(self, master, columns, height=10, key="id", on_select=None, on_double=None):
         super().__init__(master, fg_color="transparent")
@@ -140,9 +134,7 @@ class DataTable(ctk.CTkFrame):
         return self.rows.get(sel[0]) if sel else None
 
 
-# ================================================================ choice box
 class ChoiceBox(ctk.CTkOptionMenu):
-    """Option menu that remembers (value, label) pairs."""
 
     def __init__(self, master, options=(), placeholder="Select...", command=None, width=260, **kw):
         self._pairs = []
@@ -180,7 +172,6 @@ class ChoiceBox(ctk.CTkOptionMenu):
         self.set(self._placeholder)
 
 
-# ================================================================ dialogs and layout
 class Dialog(ctk.CTkToplevel):
     def __init__(self, master, title, width=520, height=560):
         super().__init__(master)
@@ -224,7 +215,6 @@ def text_value(widget):
     return widget.get("1.0", "end").strip() if isinstance(widget, ctk.CTkTextbox) else widget.get().strip()
 
 
-# ================================================================ photos
 def resolve_media(path):
     if not path:
         return None
@@ -233,7 +223,6 @@ def resolve_media(path):
 
 
 def photo_image(path, max_w=420, max_h=320):
-    """CTkImage that fits in max_w x max_h, or None."""
     p = resolve_media(path)
     if p is None or not p.exists():
         return None
@@ -244,10 +233,6 @@ def photo_image(path, max_w=420, max_h=320):
 
 
 def set_label_image(label, image, text=""):
-    """
-    Safely changes the picture of a CTkLabel.  CustomTkinter does not clear the
-    inner Tk label when image=None, which later crashes with 'image doesn't exist'.
-    """
     if image is None:
         label.configure(image=None)
         label._label.configure(image="")
@@ -259,7 +244,6 @@ def set_label_image(label, image, text=""):
 
 
 def store_photo(source_path, folder):
-    """Copies a chosen picture into media/<folder>/ (resized) and returns the relative path for the database."""
     target_dir = MEDIA_DIR / folder
     target_dir.mkdir(parents=True, exist_ok=True)
     name = f"{uuid.uuid4().hex[:16]}.jpg"
@@ -273,7 +257,6 @@ def store_photo(source_path, folder):
     return f"media/{folder}/{name}"
 
 
-# ================================================================ emoji pictures (tk cannot draw colour emoji)
 EMOJI_CHARS = {"HEART": "❤️", "CLAP": "\U0001F44F", "PAW": "\U0001F43E", "STRONG": "\U0001F4AA",
                "THANKS": "\U0001F64F"}
 EMOJI_NAMES = {"HEART": "Love", "CLAP": "Applause", "PAW": "Paw", "STRONG": "Strong", "THANKS": "Thank you"}

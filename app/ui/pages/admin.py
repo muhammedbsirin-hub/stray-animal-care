@@ -1,4 +1,3 @@
-"""Administrator screens."""
 import customtkinter as ctk
 
 from app import validators
@@ -12,7 +11,6 @@ from app.ui.widgets import (ACCENT, CARD, FONT, FONT_BOLD, FONT_SMALL, FONT_SUB,
                             DataTable, Dialog, button, confirm, entry, error, fmt, form_row, info, nice, text_value)
 
 
-# =============================================================================== overview
 class OverviewPage(Page):
     title = "Overview"
     subtitle = "The system at a glance."
@@ -52,7 +50,6 @@ class OverviewPage(Page):
         self.shelters.set_rows(rows, tag_fn=lambda r: ("red",) if (r.occupancy_pct or 0) >= 90 else ())
 
 
-# =============================================================================== applications
 class ApplicationsPage(Page):
     title = "Adoption applications"
     subtitle = "Every application arrives here like a CV. Open one to approve or reject it."
@@ -166,7 +163,6 @@ class DossierDialog(Dialog):
             self.page.refresh()
 
 
-# =============================================================================== map
 class AdminMapPage(Page):
     title = "Feeding map"
     subtitle = "Where volunteers left food. Blue = shelters, purple = clinics."
@@ -201,7 +197,6 @@ class AdminMapPage(Page):
         self.count.configure(text=f"{len(posts)} feeding posts")
 
 
-# =============================================================================== daily vet report
 class VetReportPage(Page):
     title = "Daily vet report"
     subtitle = "Arrivals and discharges per veterinarian, and which vet is caring for which animal."
@@ -243,7 +238,6 @@ class VetReportPage(Page):
         self.log.set_rows(rows, formatters={"old_status": nice, "new_status": nice})
 
 
-# =============================================================================== shelters
 class SheltersPage(Page):
     title = "Shelters"
     subtitle = "Animal counts are calculated from the animal table (never typed in)."
@@ -281,7 +275,6 @@ class SheltersPage(Page):
 
 
 class LocationPicker(ctk.CTkFrame):
-    """Small map: the admin clicks the place instead of typing coordinates."""
 
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
@@ -373,7 +366,6 @@ class ShelterDialog(Dialog):
             self.page.refresh()
 
 
-# =============================================================================== clinics
 class ClinicsPage(Page):
     title = "Clinics"
     subtitle = "Clinics where volunteers bring injured animals."
@@ -453,7 +445,6 @@ class ClinicDialog(Dialog):
             self.page.refresh()
 
 
-# =============================================================================== veterinarians
 class VetsPage(Page):
     title = "Veterinarians"
     subtitle = "Every clinic must keep at least one morning (07:00-16:59) and one evening (17:00-06:59) vet."
@@ -554,7 +545,6 @@ class VetDialog(Dialog):
             self.page.refresh()
 
 
-# =============================================================================== animals
 class AnimalsPage(Page):
     title = "Animals"
     subtitle = "All animals in the system. New shelter animals get a vaccination calendar automatically."
@@ -667,7 +657,6 @@ class AnimalDialog(Dialog):
             self.page.refresh()
 
 
-# =============================================================================== users
 class UsersPage(Page):
     title = "Users"
     subtitle = "Close accounts. A closed account keeps its data (soft delete) and cannot be reopened."

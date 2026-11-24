@@ -1,7 +1,3 @@
-"""
-Entity classes.  Each class corresponds to one table (or view) of the
-database; repositories turn query rows into these objects.
-"""
 from dataclasses import dataclass, field, fields
 from datetime import date, datetime
 from typing import Optional
@@ -51,7 +47,6 @@ class Veterinarian:
 
 @dataclass
 class Session:
-    """The user that is logged in."""
     user: User
     vet: Optional[Veterinarian] = None
 

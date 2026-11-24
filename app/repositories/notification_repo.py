@@ -1,4 +1,3 @@
-"""Personal notifications (every user only sees his/her own)."""
 from app import db
 from app.models import Notification
 

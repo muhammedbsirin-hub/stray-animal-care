@@ -1,4 +1,3 @@
-"""All pages of the menu, so app_window can import them from one place."""
 from app.ui.pages.admin import (AdminMapPage, AnimalsPage, ApplicationsPage, ClinicsPage, OverviewPage, SheltersPage,
                                 UsersPage, VetReportPage, VetsPage)
 from app.ui.pages.vet import CasesPage, TreatmentsPage, VaccinationPage

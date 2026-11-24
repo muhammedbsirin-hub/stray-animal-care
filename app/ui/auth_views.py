@@ -1,4 +1,3 @@
-"""Login and registration screens."""
 import customtkinter as ctk
 
 from app import validators

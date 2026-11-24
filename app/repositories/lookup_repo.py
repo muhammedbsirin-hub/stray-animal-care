@@ -1,4 +1,3 @@
-"""Small reference lists used by combo boxes."""
 from app import db
 
 

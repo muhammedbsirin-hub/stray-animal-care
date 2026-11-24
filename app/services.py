@@ -1,4 +1,3 @@
-"""Business services that use several repositories."""
 from app import validators
 from app.db import DbError
 from app.models import Session
@@ -30,7 +29,6 @@ class AuthService:
 
     @staticmethod
     def validate_registration(d):
-        """Returns the first problem or None (form level + uniqueness)."""
         err = validators.first_error(
             validators.person_name(d["first_name"], "First name"),
             validators.person_name(d["last_name"], "Last name"),

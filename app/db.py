@@ -1,10 +1,3 @@
-"""
-Database access helpers.
-
-* One shared connection (desktop app, one user at a time) with autocommit on.
-* transaction() groups several statements: COMMIT if all succeed, ROLLBACK otherwise.
-* Every MySQL error is turned into DbError with a message a user can understand.
-"""
 from contextlib import contextmanager
 from decimal import Decimal
 
@@ -15,7 +8,7 @@ from app.config import DB_CONFIG
 
 
 class DbError(Exception):
-    """Error with a user friendly message."""
+    pass
 
 
 CONSTRAINT_MESSAGES = {
@@ -110,7 +103,6 @@ def scalar(sql, params=()):
 
 
 def execute(sql, params=()):
-    """INSERT/UPDATE/DELETE outside a transaction; returns lastrowid or rowcount."""
     try:
         cur = get_connection().cursor()
         cur.execute(sql, params)
@@ -122,7 +114,6 @@ def execute(sql, params=()):
 
 
 def call(proc, args=()):
-    """Calls a stored procedure; returns the argument list (OUT values filled)."""
     try:
         cur = get_connection().cursor()
         result = cur.callproc(proc, args)
@@ -136,7 +127,6 @@ def call(proc, args=()):
 
 @contextmanager
 def transaction():
-    """with transaction() as cur:  ...  -> COMMIT, or ROLLBACK on any error."""
     conn = get_connection()
     cur = conn.cursor(dictionary=True, buffered=True)
     try:

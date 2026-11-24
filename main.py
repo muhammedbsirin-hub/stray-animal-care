@@ -1,7 +1,3 @@
-"""
-Stray Animal Care - desktop application
-Run:  python main.py   (in PyCharm: right click main.py -> Run)
-"""
 from app.ui import App
 
 

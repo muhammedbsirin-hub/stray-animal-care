@@ -1,4 +1,3 @@
-"""Injured animal reports (volunteer -> vet) and treatments."""
 from app import db
 from app.models import InjuryReport
 
@@ -20,11 +19,9 @@ SELECT r.report_id, r.reported_at, s.species_name, r.species_id, r.condition_des
 
 class CaseRepository:
 
-    # ============================================================ volunteer side
     @staticmethod
     def create_report(reporter_id, species_id, age_weeks, color, condition, district_id,
                       lat, lon, clinic_id):
-        """Calls sp_create_injury_report -> (report_id, vet_name, shift)."""
         args = db.call("sp_create_injury_report",
                        (reporter_id, species_id, age_weeks, color or None, condition,
                         district_id, lat, lon, clinic_id, 0, "", ""))
@@ -35,10 +32,8 @@ class CaseRepository:
         rows = db.query(_REPORT_SELECT + " WHERE r.reporter_id = %s ORDER BY r.reported_at DESC", (user_id,))
         return [InjuryReport.from_row(r) for r in rows]
 
-    # ============================================================ vet side
     @staticmethod
     def close_old_cases():
-        """Cases of previous days that are still pending become NOT_ARRIVED."""
         db.call("sp_close_day", (False,))
 
     @staticmethod
@@ -60,10 +55,6 @@ class CaseRepository:
 
     @staticmethod
     def mark_arrived(report_id, vet, animal, treatment, prescriptions):
-        """
-        One transaction: check the case, create the animal, the treatment and the
-        prescription, close the case as ARRIVED and notify the volunteer.
-        """
         with db.transaction() as cur:
             cur.execute("""SELECT status, reporter_id, assigned_vet_id, species_id FROM injury_report
                             WHERE report_id = %s""", (report_id,))
@@ -103,7 +94,6 @@ class CaseRepository:
                          f"REPORT_ARRIVED:{report_id}"))
         return animal_id, treatment_id
 
-    # ============================================================ treatments
     @staticmethod
     def active_treatments(vet_id):
         return db.query("""SELECT t.treatment_id, t.animal_id, ac.display_name, ac.species_id, ac.species_name,

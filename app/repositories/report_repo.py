@@ -1,4 +1,3 @@
-"""Read-only statistics for the admin screens."""
 from app import db
 
 
@@ -19,7 +18,6 @@ class ReportRepository:
 
     @staticmethod
     def vet_daily_stats(days_back):
-        """days_back = 0 -> today, 1 -> yesterday only, 7 -> last 7 days (summed)."""
         if days_back == 1:
             cond, params = "day = CURDATE() - INTERVAL 1 DAY", ()
         else:

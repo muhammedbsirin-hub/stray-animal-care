@@ -1,4 +1,3 @@
-"""Animals, shelters and vaccination calendars."""
 from app import db
 from app.models import Animal, Shelter, VaccinationItem
 
@@ -27,7 +26,6 @@ class AnimalRepository:
 
     @staticmethod
     def add_to_shelter(data):
-        """Admin registers an animal directly into a shelter; the vaccination calendar is created too."""
         with db.transaction() as cur:
             cur.execute("""SELECT COUNT(*) AS n FROM shelter_species WHERE shelter_id = %s AND species_id = %s""",
                         (data["shelter_id"], data["species_id"]))
@@ -48,7 +46,6 @@ class AnimalRepository:
         db.execute("UPDATE animal SET name = %s, color = %s, is_neutered = %s, description = %s WHERE animal_id = %s",
                    (name or None, color or None, is_neutered, description or None, animal_id))
 
-    # ============================================================ vaccinations
     @staticmethod
     def schedule(animal_id):
         rows = db.query("""SELECT vs.schedule_id, vs.animal_id, v.vaccine_code, v.vaccine_name, vs.dose_label,
@@ -85,7 +82,6 @@ class ShelterRepository:
 
     @staticmethod
     def accepting(species_id):
-        """Shelters that accept the species and still have room."""
         return db.query("""SELECT s.shelter_id, s.shelter_name, s.district_name, s.capacity, s.animal_count
                              FROM v_shelter_summary s
                              JOIN shelter_species ss ON ss.shelter_id = s.shelter_id AND ss.species_id = %s
@@ -101,7 +97,6 @@ class ShelterRepository:
 
     @staticmethod
     def save(data, shelter_id=None):
-        """Insert or update a shelter together with its accepted species (transaction)."""
         if not data["species_ids"]:
             raise db.DbError("Choose at least one accepted species.")
         with db.transaction() as cur:

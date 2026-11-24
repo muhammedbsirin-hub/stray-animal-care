@@ -1,11 +1,3 @@
-"""
-Generates database/05_seed_data.sql (feeding post photos are in media/seed/).
-
-Run from the project root:   python tools/generate_seed.py
-All demo accounts use the password  Demo1234!
-Dates are written relative to NOW()/CURDATE(), so the demo data always
-looks fresh on the day the script is executed.
-"""
 import math
 import random
 from pathlib import Path
@@ -19,7 +11,6 @@ random.seed(2026)
 
 
 def q(value):
-    """SQL literal."""
     if value is None:
         return "NULL"
     if isinstance(value, bool):
@@ -30,7 +21,6 @@ def q(value):
 
 
 def raw(expr):
-    """Marks an SQL expression that must not be quoted."""
     return _Raw(expr)
 
 
@@ -48,7 +38,6 @@ def insert(table, cols, rows):
     return "\n".join(out) + "\n" + ",\n".join(body) + ";\n"
 
 
-# ============================================================================ reference data
 DISTRICTS = [
     ("Adalar", "ASIA", 40.8740, 29.0880), ("Ataşehir", "ASIA", 40.9840, 29.1060),
     ("Avcılar", "EUROPE", 40.9790, 28.7210), ("Bağcılar", "EUROPE", 41.0390, 28.8560),
@@ -122,7 +111,6 @@ def phone():
     return "05" + random.choice("3459") + "".join(random.choice("0123456789") for _ in range(8))
 
 
-# ============================================================================ main
 def main():
     sql = ["-- sample data (made by tools/generate_seed.py), all passwords: Demo1234!",
            "USE stray_db;", "SET NAMES utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci;", ""]
@@ -213,7 +201,6 @@ def main():
         (1, 3, "Dose 1", 12),
     ]))
 
-    # ================================================================ animals in shelters
     animal_rows, animal_meta = [], []
     cat_names, dog_names = CAT_NAMES[:], DOG_NAMES[:]
     random.shuffle(cat_names)
@@ -268,7 +255,6 @@ def main():
 
     next_animal = len(animal_rows)
 
-    # ================================================================ injured animal reports
     sql.append("-- injured animal reports")
 
     def vet_of(clinic, shift, n=0):
@@ -360,7 +346,6 @@ def main():
                "UPDATE report_status_log l JOIN injury_report r ON r.report_id = l.report_id\n"
                "   SET l.changed_at = IF(l.old_status IS NULL, r.reported_at, r.resolved_at);\n")
 
-    # ================================================================ feeding posts
     sql.append("-- feeding posts and emojis")
     post_rows, post_owner, old_dates = [], [], []
     for i in range(1, 14):
@@ -392,7 +377,6 @@ def main():
     sql.append("UPDATE notification n JOIN post_reaction r ON n.event_key = CONCAT('REACTION:', r.post_id, ':', r.user_id)\n"
                "   SET n.message = fn_reaction_message(r.post_id, r.user_id, r.emoji), n.created_at = r.reacted_at;\n")
 
-    # ================================================================ adoption applications
     sql.append("-- adoption applications")
     shelter_animals = [a for a in animal_meta]
     random.shuffle(shelter_animals)

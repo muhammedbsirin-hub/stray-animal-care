@@ -1,4 +1,3 @@
-"""Feeding posts on the map and emoji reactions."""
 from app import db
 from app.models import FeedingPost
 
@@ -9,7 +8,6 @@ class FeedingRepository:
 
     @staticmethod
     def active_posts():
-        """Posts of the last 24 hours (view v_active_feeding_posts)."""
         return [FeedingPost.from_row(r) for r in db.query("SELECT * FROM v_active_feeding_posts ORDER BY posted_at")]
 
     @staticmethod
@@ -53,7 +51,6 @@ class FeedingRepository:
 
     @staticmethod
     def react(post_id, user_id, emoji):
-        """One emoji per user per post: a new choice replaces the old one."""
         if emoji not in EMOJIS:
             raise ValueError("Unknown emoji")
         db.execute("""INSERT INTO post_reaction (post_id, user_id, emoji) VALUES (%s, %s, %s)
@@ -83,6 +80,5 @@ class FeedingRepository:
 
     @staticmethod
     def delete_post(post_id, user_id):
-        """Only the owner can delete; the row is kept (soft delete) for history."""
         return db.execute("UPDATE feeding_post SET is_deleted = TRUE WHERE post_id = %s AND user_id = %s",
                           (post_id, user_id))

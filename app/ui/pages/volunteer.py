@@ -1,4 +1,3 @@
-"""Volunteer screens: map + feeding posts + emojis, injured animal reports, adoption."""
 from datetime import datetime
 from tkinter import filedialog
 
@@ -17,7 +16,6 @@ from app.ui.widgets import (ACCENT, CARD, DANGER, EMOJI_NAMES, FONT, FONT_BOLD, 
 IMAGE_TYPES = [("Pictures", "*.jpg *.jpeg *.png *.bmp *.webp")]
 
 
-# =============================================================================== feeding map
 class MapPage(Page):
     title = "Feeding map"
     subtitle = "Food left by volunteers in the last 24 hours. Your spots are orange. Click a pin to see the photo."
@@ -100,7 +98,6 @@ class NewPostDialog(Dialog):
 
 
 class PostDialog(Dialog):
-    """Photo of a feeding post + emoji support."""
 
     def __init__(self, page, post_id):
         super().__init__(page, "Feeding spot", 540, 660)
@@ -268,7 +265,6 @@ class MyReactionsPage(Page):
             self.refresh()
 
 
-# =============================================================================== injured animals
 class ReportInjuryPage(Page):
     title = "Report an injured animal"
     subtitle = "Choose a clinic: a veterinarian of the current shift is assigned at random."
@@ -375,7 +371,6 @@ class MyReportsPage(Page):
                             formatters={"status": nice, "shift": nice, "result": nice})
 
 
-# =============================================================================== adoption
 class AdoptPage(Page):
     title = "Adopt a friend"
     subtitle = "Choose a shelter, meet its animals and send an application."
@@ -476,7 +471,6 @@ class AdoptPage(Page):
 
 
 class ApplicationDialog(Dialog):
-    """The adoption form; it goes to the admin like a CV."""
 
     def __init__(self, page, animal):
         super().__init__(page, f"Adoption application – {animal.display_name}", 640, 760)

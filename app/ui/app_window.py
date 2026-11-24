@@ -1,4 +1,3 @@
-"""Main window: switches between sign-in, registration and the role based main view."""
 import customtkinter as ctk
 
 from app.config import APP_TITLE, NOTIFICATION_REFRESH_MS
@@ -92,7 +91,6 @@ class MainView(ctk.CTkFrame):
         self.open_page(self.menu[0][0])
         self.refresh_badge()
 
-    # ================================================================ sidebar
     def _build_sidebar(self):
         u = self.session.user
         ctk.CTkLabel(self.sidebar, text="\U0001F43E Stray Animal Care", font=("Segoe UI", 16, "bold"),
@@ -140,7 +138,6 @@ class MainView(ctk.CTkFrame):
         except Exception as e:
             error(str(e))
 
-    # ================================================================ notifications
     def refresh_badge(self):
         if self._poll_id is not None:
             self.after_cancel(self._poll_id)
@@ -154,7 +151,6 @@ class MainView(ctk.CTkFrame):
         self._poll_id = self.after(NOTIFICATION_REFRESH_MS, self.refresh_badge)
 
     def reload_session(self):
-        """Roles may change (e.g. ADOPTER after approval)."""
         new = AuthService.reload(self.session)
         if new.user.roles != self.session.user.roles:
             self.session = new

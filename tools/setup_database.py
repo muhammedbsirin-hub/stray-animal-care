@@ -1,9 +1,3 @@
-"""
-(Re)creates the database from the SQL files:  01 -> 02 -> 03 -> 05
-Run from the project root:   python tools/setup_database.py
-Needs: 00_setup_user.sql executed once as root, and the .env file.
-WARNING: drops and recreates stray_db (all data is reset to the sample data).
-"""
 import os
 import shutil
 import subprocess

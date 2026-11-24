@@ -5,7 +5,6 @@ from app.ui.widgets import CARD, FONT, FONT_TITLE, MUTED, error
 
 
 class Page(ctk.CTkFrame):
-    """Base class of every screen: title + toolbar on the first row, explanation below, then the body."""
     title = ""
     subtitle = ""
 
@@ -39,7 +38,6 @@ class Page(ctk.CTkFrame):
         pass
 
     def run(self, fn, *args):
-        """Runs a database action; shows the friendly error message if it fails."""
         try:
             return True, fn(*args)
         except DbError as e:

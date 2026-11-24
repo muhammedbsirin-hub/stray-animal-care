@@ -1,10 +1,3 @@
-"""
-Map panel (tkintermapview, OpenStreetMap data).  Needs an internet connection the first time.
-
-* Tiles are requested with our own User-Agent (OpenStreetMap blocks the library's default one).
-* Downloaded tiles are saved in .tile_cache/ so the map opens fast the next time.
-* The map cannot be zoomed out or moved away from Istanbul.
-"""
 import io
 import time
 
@@ -26,7 +19,6 @@ MIN_ZOOM = 10
 
 
 class _Response:
-    """Tiny stand-in for requests.Response (the library only reads .raw / .content)."""
 
     def __init__(self, content, status_code=200):
         self.content = content
@@ -35,7 +27,6 @@ class _Response:
 
 
 class _CachedRequests:
-    """Replaces 'requests' inside tkintermapview: own User-Agent + disk cache for tiles."""
 
     def __getattr__(self, name):
         return getattr(requests, name)
@@ -66,7 +57,6 @@ _mw.requests = _CachedRequests()
 
 
 class IstanbulMapView(TkinterMapView):
-    """Map that stays inside Istanbul (limited zoom-out and panning)."""
 
     def set_zoom(self, zoom, relative_pointer_x=0.5, relative_pointer_y=0.5):
         super().set_zoom(max(zoom, MIN_ZOOM), relative_pointer_x, relative_pointer_y)
@@ -107,7 +97,6 @@ class MapPanel(ctk.CTkFrame):
                                    text_color=color, font=("Segoe UI", 10, "bold"))
 
     def pick_location(self, callback):
-        """The next click on the map calls callback((lat, lon))."""
         self._pick_callback = callback
 
     def stop_picking(self):

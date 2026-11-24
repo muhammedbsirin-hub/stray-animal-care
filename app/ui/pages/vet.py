@@ -1,4 +1,3 @@
-"""Veterinarian screens: incoming cases, treatments, vaccination follow-up."""
 import customtkinter as ctk
 
 from app import validators
@@ -65,7 +64,6 @@ class CasesPage(Page):
 
 
 class ArrivalDialog(Dialog):
-    """Animal arrived: register the animal, the examination and the prescription in one transaction."""
 
     def __init__(self, page, case):
         super().__init__(page, f"Case #{case.report_id} – animal arrived", 760, 780)

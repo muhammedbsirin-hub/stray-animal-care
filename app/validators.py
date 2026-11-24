@@ -1,8 +1,3 @@
-"""
-Input validation used by every form.  Each function returns an error
-message (str) or None when the value is valid.  The database checks the
-most important rules again (UNIQUE, CHECK, triggers).
-"""
 import re
 from datetime import date
 

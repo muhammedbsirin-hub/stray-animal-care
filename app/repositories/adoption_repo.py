@@ -1,4 +1,3 @@
-"""Adoption applications, approvals and adoptions."""
 from app import db
 
 APPLICATION_COLUMNS = ["full_address", "district_id", "birth_year", "housing_type", "ownership",
@@ -11,7 +10,6 @@ class AdoptionRepository:
 
     @staticmethod
     def submit(user_id, animal_id, form):
-        """The BEFORE INSERT trigger checks age, availability and the 3-pending limit."""
         cols = ["user_id", "animal_id"] + APPLICATION_COLUMNS
         values = [user_id, animal_id] + [form.get(c) for c in APPLICATION_COLUMNS]
         sql = f"INSERT INTO adoption_application ({', '.join(cols)}) VALUES ({', '.join(['%s'] * len(cols))})"
@@ -47,7 +45,6 @@ class AdoptionRepository:
                              JOIN v_animal_card ac ON ac.animal_id = ap.animal_id
                             WHERE ap.user_id = %s ORDER BY ad.adopted_at DESC""", (user_id,))
 
-    # ============================================================ admin
     @staticmethod
     def dossiers(status=None):
         if status:
